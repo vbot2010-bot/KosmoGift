@@ -143,125 +143,130 @@ pay.onclick = async () => {
   }
 };
 
-// DAILY CASE
-openDailyCase.onclick = () => dailyModal.style.display = "flex";
-closeDaily.onclick = () => dailyModal.style.display = "none";
+    // ----------------------
+// Модалки
+// ----------------------
+const subscribeModal = document.getElementById("subscribeModal");
+const caseModal = document.getElementById("caseModal");
 
-// ссылка на канал
-subscribeBtn.onclick = () => {
-  window.open("https://t.me/KosmoGiftOfficial", "_blank");
-};
+const subscribeBtn = document.getElementById("subscribeBtn");
+const openCaseBtn = document.getElementById("openCaseBtn");
 
-// Открытие кейса
-closeCase.onclick = () => caseModal.style.display = "none";
+const wheel = document.getElementById("wheel");
+
+// ----------------------
+// Кнопка "Открыть кейс" на главной
+// ----------------------
+const openDailyCase = document.getElementById("openDailyCase"); // должна быть у тебя кнопка
 
 openDailyCase.onclick = () => {
-  if (!localStorage.getItem("dailyAccepted")) {
-    dailyModal.style.display = "flex";
-  } else {
-    caseModal.style.display = "flex";
+  // 1-й раз: показать подписку
+  if (!localStorage.getItem("subscribed")) {
+    subscribeModal.style.display = "flex";
+    return;
   }
-};
 
-subscribeBtn.onclick = () => {
-  window.open("https://t.me/KosmoGiftOfficial", "_blank");
-  localStorage.setItem("dailyAccepted", "true");
-  dailyModal.style.display = "none";
+  // если подписан — открыть кейс
   caseModal.style.display = "flex";
 };
 
-// Рулетка + шансы
-const drops = [
-  { name: "0.01 TON", chance: 90, icon: "💎" },
-  { name: "0.02 TON", chance: 5, icon: "💠" },
-  { name: "0.03 TON", chance: 2.5, icon: "🔹" },
-  { name: "0.04 TON", chance: 1, icon: "🔷" },
-  { name: "0.05 TON", chance: 0.75, icon: "🔶" },
-  { name: "0.06 TON", chance: 0.5, icon: "🟣" },
-  { name: "0.07 TON", chance: 0.24, icon: "🟦" },
-  { name: "NFT lol pop", chance: 0.01, icon: "🧩" },
+// ----------------------
+// Закрытие модалок кликом по фону
+// ----------------------
+subscribeModal.onclick = (e) => {
+  if (e.target === subscribeModal) subscribeModal.style.display = "none";
+};
+
+caseModal.onclick = (e) => {
+  if (e.target === caseModal) caseModal.style.display = "none";
+};
+
+// ----------------------
+// Подписка (переход в канал)
+// ----------------------
+subscribeBtn.onclick = () => {
+  window.open("https://t.me/KosmoGiftOfficial", "_blank");
+  localStorage.setItem("subscribed", "true");
+  subscribeModal.style.display = "none";
+  caseModal.style.display = "flex";
+};
+
+// ----------------------
+// Дропы и шансы
+// ----------------------
+const prizes = [
+  { name: "0.01 TON", chance: 90, value: 0.01 },
+  { name: "0.02 TON", chance: 5, value: 0.02 },
+  { name: "0.03 TON", chance: 2.5, value: 0.03 },
+  { name: "0.04 TON", chance: 1, value: 0.04 },
+  { name: "0.05 TON", chance: 0.75, value: 0.05 },
+  { name: "0.06 TON", chance: 0.5, value: 0.06 },
+  { name: "0.07 TON", chance: 0.24, value: 0.07 },
+  { name: "NFT lol pop", chance: 0.01, value: 0, nft: true }
 ];
 
-function createRoulette() {
-  roulette.innerHTML = "";
-  const track = document.createElement("div");
-  track.className = "rouletteTrack";
-
-  for (let i = 0; i < 40; i++) {
-    const item = drops[i % drops.length];
-    const div = document.createElement("div");
-    div.className = "rouletteItem";
-    div.innerHTML = `<div>${item.icon}</div><div>${item.name}</div>`;
-    track.appendChild(div);
-  }
-
-  roulette.appendChild(track);
-}
-createRoulette();
-
-function getDrop() {
-  const rand = Math.random() * 100;
+function choosePrize() {
+  const rnd = Math.random() * 100;
   let sum = 0;
-  for (let d of drops) {
-    sum += d.chance;
-    if (rand <= sum) return d;
+
+  for (let p of prizes) {
+    sum += p.chance;
+    if (rnd <= sum) return p;
   }
-  return drops[0];
+
+  return prizes[0];
 }
 
-spinBtn.onclick = async () => {
-  spinBtn.disabled = true;
+// ----------------------
+// Анимация рулетки
+// ----------------------
+openCaseBtn.onclick = async () => {
+  openCaseBtn.disabled = true;
 
-  const selected = getDrop();
+  const prize = choosePrize();
+  const index = prizes.indexOf(prize);
 
-  // Находим индекс выбранного предмета в треке
-  const track = document.querySelector(".rouletteTrack");
-  const items = track.querySelectorAll(".rouletteItem");
+  // каждый сектор = 360 / 8 = 45 градусов
+  const sectorAngle = 360 / prizes.length;
 
-  let targetIndex = 0;
-  for (let i = 0; i < items.length; i++) {
-    if (items[i].innerText.includes(selected.name)) {
-      targetIndex = i;
-      break;
+  // случайное число оборотов + позиция
+  const spins = 6; // сколько оборотов
+  const finalAngle = 360 * spins + (index * sectorAngle + sectorAngle / 2);
+
+  wheel.style.transition = "transform 6s cubic-bezier(0.2, 0.8, 0.2, 1)";
+  wheel.style.transform = `rotate(-${finalAngle}deg)`; // справа налево
+
+  setTimeout(() => {
+    // выпало
+    alert("Выпало: " + prize.name);
+
+    if (prize.nft) {
+      // добавляем в инвентарь
+      addToInventory(prize.name);
+    } else {
+      // добавляем баланс
+      addBalance(prize.value);
     }
-  }
 
-  // анимация движения вправо->влево
-  const offset = targetIndex * 150; // ширина item
-  track.style.transition = "transform 3.5s cubic-bezier(0.25, 0.1, 0.25, 1)";
-  track.style.transform = `translateX(-${offset}px)`;
-
-  await new Promise(r => setTimeout(r, 3600));
-
-  dropInfo.innerText = "Выпало: " + selected.name;
-
-  // если TON — добавляем баланс
-  if (selected.name.includes("TON")) {
-    const amount = parseFloat(selected.name.replace(" TON", ""));
-    const newBalance = parseFloat(balance.innerText) + amount;
-    balance.innerText = newBalance.toFixed(2) + " TON";
-  } else {
-    // NFT в инвентарь
-    const item = document.createElement("div");
-    item.className = "inventoryItem";
-    item.innerHTML = `
-      <img src="https://cdn-icons-png.flaticon.com/512/190/190411.png" alt="nft">
-      <div>
-        <div>${selected.name}</div>
-        <div style="font-size:12px; opacity:0.7;">NFT предмет</div>
-      </div>
-    `;
-    inventoryList.appendChild(item);
-  }
-
-  spinBtn.disabled = false;
+    openCaseBtn.disabled = false;
+  }, 6000);
 };
 
-// Inventory
-openInventory.onclick = () => {
-  inventoryModal.style.display = "flex";
-};
+// ----------------------
+// Баланс
+// ----------------------
+function addBalance(value) {
+  let current = parseFloat(localStorage.getItem("balance") || "0");
+  current += value;
+  localStorage.setItem("balance", current.toFixed(2));
+  balance.innerText = current.toFixed(2) + " TON";
+}
 
-closeInventory.onclick = () => {
-  inventoryModal.style.display = "none";
-};
+// ----------------------
+// Инвентарь
+// ----------------------
+function addToInventory(itemName) {
+  let inv = JSON.parse(localStorage.getItem("inventory") || "[]");
+  inv.push({ name: itemName, date: Date.now() });
+  localStorage.setItem("inventory", JSON.stringify(inv));
+}
