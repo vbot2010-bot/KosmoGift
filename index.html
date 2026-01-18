@@ -1,4 +1,4 @@
-    <!DOCTYPE html>
+        <!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -19,10 +19,10 @@
     </div>
   </div>
 
-  <div class="caseBox">
-    <div class="caseIcon"></div>
+  <div class="dailyCaseBlock">
+    <div class="caseIcon">🎁</div>
     <div class="caseTitle">Daily Case</div>
-    <button id="openDailyCase" class="btn">Open Case</button>
+    <button id="openDaily" class="caseBtn">Open Case</button>
   </div>
 </div>
 
@@ -40,46 +40,48 @@
   <button id="disconnectWallet" style="display:none">Отключить кошелёк</button>
   <button id="deposit">Пополнить баланс</button>
 
-  <div id="modal" class="modal">
-    <div class="modalContent">
-      <button id="closeModal" class="closeBtn">✕</button>
-      <input id="amount" type="number" placeholder="Минимум 0.1 TON" step="0.1">
-      <button id="pay">Оплатить</button>
-    </div>
-  </div>
-
   <button id="openInventory">Инвентарь</button>
 </div>
 
-<div id="inventoryModal" class="modal inventoryModal">
-  <div class="inventoryContent">
-    <button id="closeInventory" class="closeBtn">✕</button>
-    <div class="inventoryList"></div>
+<!-- Модалка пополнения -->
+<div id="modal" class="modal">
+  <div class="modalContent">
+    <button id="closeModal" class="closeBtn">✕</button>
+    <input id="amount" type="number" placeholder="Минимум 0.1 TON" step="0.1">
+    <button id="pay">Оплатить</button>
   </div>
 </div>
 
 <!-- Модалка подписки -->
 <div id="subscribeModal" class="modal">
   <div class="subscribeContent">
-    <div class="subscribeText">
-      Для открытия кейса необходимо подписаться на канал
-    </div>
-    <button id="subscribeBtn" class="btn">Подписаться</button>
+    <div class="subscribeText">Для открытия кейса нужно подписаться на канал</div>
+    <button id="subscribeBtn" class="subscribeBtn">Subscribe</button>
   </div>
 </div>
 
-<!-- Модалка открытия кейса -->
-<div id="caseModal" class="modal">
+<!-- Модалка кейса -->
+<div id="caseModal" class="modal caseModal">
   <div class="caseContent">
-    <div class="pointer"></div>
+    <div class="caseTop">
+      <div class="caseTitle2">Daily Case</div>
+      <div class="caseArrow"></div>
+    </div>
 
     <div class="stripWrap">
       <div id="strip" class="strip"></div>
     </div>
 
-    <div class="resultText" id="resultText">Выпало: —</div>
+    <div class="resultText" id="resultText"></div>
+    <button id="openCaseBtn" class="caseOpenBtn">Open Case</button>
+  </div>
+</div>
 
-    <button id="openCaseBtn" class="btn">Открыть кейс</button>
+<!-- Инвентарь -->
+<div id="inventoryModal" class="modal inventoryModal">
+  <div class="inventoryContent">
+    <button id="closeInventory" class="closeBtn">✕</button>
+    <div class="inventoryList" id="inventoryList"></div>
   </div>
 </div>
 
