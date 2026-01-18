@@ -1,4 +1,4 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -12,7 +12,6 @@
 <body>
 
 <div id="home" class="page active">
-
   <div class="top">
     <div class="userBar">
       <img id="avatar" class="avatar">
@@ -20,11 +19,10 @@
     </div>
   </div>
 
-  <!-- CASE BOX -->
   <div class="caseBox">
-    <div class="caseIcon">📦</div>
+    <div class="caseIcon"></div>
     <div class="caseTitle">Daily Case</div>
-    <button id="openDailyCase" class="caseBtn">Open Case</button>
+    <button id="openDailyCase" class="btn">Open Case</button>
   </div>
 </div>
 
@@ -42,7 +40,6 @@
   <button id="disconnectWallet" style="display:none">Отключить кошелёк</button>
   <button id="deposit">Пополнить баланс</button>
 
-  <!-- Модалка пополнения -->
   <div id="modal" class="modal">
     <div class="modalContent">
       <button id="closeModal" class="closeBtn">✕</button>
@@ -52,6 +49,13 @@
   </div>
 
   <button id="openInventory">Инвентарь</button>
+</div>
+
+<div id="inventoryModal" class="modal inventoryModal">
+  <div class="inventoryContent">
+    <button id="closeInventory" class="closeBtn">✕</button>
+    <div class="inventoryList"></div>
+  </div>
 </div>
 
 <!-- Модалка подписки -->
@@ -91,33 +95,6 @@
   </div>
 </div>
 
-    <div class="caseHeader">
-      <div class="caseTitleSmall">Daily Case</div>
-      <div class="caseArrow"></div>
-    </div>
-
-    <div class="roulette" id="roulette">
-      <!-- items будут добавляться JS -->
-    </div>
-
-    <button id="spinBtn" class="caseBtn" style="width:100%; margin-top: 20px;">
-      Открыть кейс
-    </button>
-
-    <div class="dropInfo" id="dropInfo"></div>
-  </div>
-</div>
-
-<!-- Модалка инвентаря -->
-<div id="inventoryModal" class="modal inventoryModal">
-  <div class="inventoryContent">
-    <button id="closeInventory" class="closeBtn">✕</button>
-    <div class="inventoryList" id="inventoryList">
-      <!-- Тут будут предметы -->
-    </div>
-  </div>
-</div>
-
 <div class="nav">
   <button id="btnHome">Главная</button>
   <button id="btnProfile">Профиль</button>
@@ -125,4 +102,4 @@
 
 <script src="main.js"></script>
 </body>
-      </html>
+</html>
