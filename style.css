@@ -5,11 +5,21 @@ body {
   font-family: Arial, sans-serif;
 }
 
-.page { display: none; }
-.page.active { display: block; }
+/* ===================== */
+/* Страницы              */
+/* ===================== */
+.page {
+  display: none;
+}
+.page.active {
+  display: block;
+}
 
+/* ===================== */
+/* Верхняя панель        */
+/* ===================== */
 .top {
-  padding: 50px 20px 0 20px; /* ниже */
+  padding: 30px 20px 0 20px;
   display: flex;
   justify-content: flex-end;
 }
@@ -31,39 +41,48 @@ body {
   box-shadow: 0 4px 10px rgba(0,0,0,0.4);
 }
 
-#balance { font-size: 14px; font-weight: bold; color: #6cf; }
+#balance {
+  font-size: 14px;
+  font-weight: bold;
+  color: #6cf;
+}
 
-.homeContent {
+/* ===================== */
+/* CASE BOX              */
+/* ===================== */
+.caseBox {
+  width: 90%;
+  margin: 60px auto 0;
   padding: 20px;
+  background: #1b2635;
+  border-radius: 20px;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  gap: 10px;
 }
 
-.caseSquare {
-  width: 120px;
-  height: 120px;
-  background: #1b2635;
-  border-radius: 20px;
+.caseIcon {
+  font-size: 40px;
 }
 
-.caseText {
-  margin-top: 10px;
-  font-size: 18px;
-  font-weight: bold;
+.caseTitle {
+  font-size: 20px;
 }
 
-.openCaseBtn {
-  margin-top: 10px;
-  padding: 12px;
-  background: #1b2635;
+.caseBtn {
+  padding: 12px 20px;
   border: none;
-  border-radius: 20px;
-  color: white;
-  font-size: 16px;
+  border-radius: 15px;
+  background: #6cf;
+  color: #000;
+  font-weight: bold;
   cursor: pointer;
 }
 
+/* ===================== */
+/* Навигация             */
+/* ===================== */
 .nav {
   position: fixed;
   bottom: 0;
@@ -71,8 +90,15 @@ body {
   display: flex;
   z-index: 10;
 }
-.nav button { flex: 1; padding: 15px; }
 
+.nav button {
+  flex: 1;
+  padding: 15px;
+}
+
+/* ===================== */
+/* Модалки               */
+/* ===================== */
 .modal {
   display: none;
   position: fixed;
@@ -82,35 +108,11 @@ body {
   height: 100%;
   background: rgba(0,0,0,0.5);
   justify-content: center;
-  align-items: center;
+  align-items: flex-end;
   z-index: 1000;
 }
 
-.bottomModal {
-  align-items: flex-end;
-}
-
-.modalContent {
-  width: 100%;
-  max-width: 600px;
-  background: #7d7d7d;
-  border-radius: 20px;
-  padding: 20px;
-  padding-top: 50px;
-  box-sizing: border-box;
-  position: relative;
-}
-
-.subscribeContent {
-  height: 25vh;
-  border-radius: 20px 20px 0 0;
-}
-
-.caseModalContent {
-  height: 75vh;
-  border-radius: 20px 20px 0 0;
-}
-
+/* крестик */
 .closeBtn {
   background: transparent;
   border: none;
@@ -122,6 +124,74 @@ body {
   cursor: pointer;
 }
 
+/* pop-up */
+.modalContent {
+  width: 100%;
+  max-width: 400px;
+  background: #7d7d7d;
+  border-radius: 20px 20px 0 0;
+  padding: 20px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+/* CASE MODAL */
+.caseModalContent {
+  width: 100%;
+  height: 75vh;
+  background: #7d7d7d;
+  border-radius: 20px 20px 0 0;
+  padding: 20px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.caseHeader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.arrow {
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-bottom: 18px solid #000;
+}
+
+.caseTitleSmall {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* roulette */
+.roulette {
+  margin-top: 20px;
+  height: 120px;
+  background: #000;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+}
+
+.rouletteItem {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+/* drop info */
+.dropInfo {
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+/* inventory */
 .inventoryContent {
   width: 90%;
   max-width: 600px;
@@ -129,87 +199,28 @@ body {
   background: #7d7d7d;
   border-radius: 20px;
   padding: 20px;
-  padding-top: 50px;
   box-sizing: border-box;
   position: relative;
   overflow-y: auto;
 }
 
-.inventoryList { display: flex; flex-direction: column; gap: 10px; }
-
-.roulette {
-  margin-top: 20px;
-  width: 100%;
-  height: 140px;
-  overflow: hidden;
-  position: relative;
-  background: #1b2635;
-  border-radius: 20px;
+.inventoryList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.rouletteTrack {
+.inventoryItem {
+  background: #000;
+  border-radius: 15px;
+  padding: 10px;
   display: flex;
   gap: 10px;
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
   align-items: center;
 }
 
-.rouletteItem {
-  width: 120px;
-  height: 100px;
-  border-radius: 20px;
-  background: #2a3a4f;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  font-weight: bold;
+.inventoryItem img {
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
 }
-.roulette {
-  margin-top: 20px;
-  width: 100%;
-  height: 140px;
-  overflow: hidden;
-  position: relative;
-  background: #1b2635;
-  border-radius: 20px;
-}
-
-/* Маркер сверху */
-.roulette::before {
-  content: "";
-  position: absolute;
-  top: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 12px solid transparent;
-  border-right: 12px solid transparent;
-  border-bottom: 18px solid #6cf;
-}
-
-.rouletteTrack {
-  display: flex;
-  gap: 10px;
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  align-items: center;
-}
-
-.rouletteItem {
-  width: 120px;
-  height: 100px;
-  border-radius: 20px;
-  background: #2a3a4f;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  font-weight: bold;
-  }
