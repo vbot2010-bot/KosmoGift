@@ -74,7 +74,7 @@
   padding: 15px;
 }
 
-/* Модалки */
+  /* Модалки */
 .modal {
   display: none;
   position: fixed;
@@ -82,137 +82,98 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0,0,0,0.6);
   justify-content: center;
   align-items: flex-end;
   z-index: 1000;
 }
-.closeBtn {
-  background: transparent;
-  border: none;
-  font-size: 24px;
-  color: #000;
-  position: absolute;
-  top: 15px;
-  left: 15px;
-  cursor: pointer;
-}
-.modalContent {
-  width: 100%;
-  max-width: 400px;
-  background: #7d7d7d;
-  border-radius: 20px 20px 0 0;
-  padding: 20px;
-  box-sizing: border-box;
-  position: relative;
-}
 
-/* Большая кнопка подписаться */
-.bigBtn {
-  width: 100%;
-  padding: 15px;
-  border: none;
-  border-radius: 15px;
-  background: #6cf;
-  color: #000;
-  font-weight: bold;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-/* Case Modal */
-.caseModalContent {
+.subscribeContent,
+.caseContent {
   width: 100%;
   height: 75vh;
-  background: #7d7d7d;
+  background: #1b2635;
   border-radius: 20px 20px 0 0;
   padding: 20px;
   box-sizing: border-box;
   position: relative;
 }
 
-.caseHeader {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-}
-
-.caseArrow {
-  width: 4px;
-  height: 60px;
-  background: #000;
-}
-
-/* Рулетка справа-налево */
-.roulette {
-  margin-top: 20px;
-  height: 120px;
-  background: #000;
-  border-radius: 20px;
-  overflow: hidden;
-  position: relative;
-  display: flex;
-  flex-direction: row; /* horizontal */
-  align-items: center;
-}
-
-.rouletteTrack {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-
-.rouletteItem {
-  width: 150px;
-  height: 120px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
+/* Кнопки */
+.btn {
+  width: 100%;
+  padding: 14px;
+  background: #6cf;
+  border: none;
+  border-radius: 12px;
   font-weight: bold;
+  cursor: pointer;
+}
+
+/* Подписка */
+.subscribeText {
+  color: #fff;
   font-size: 16px;
+  text-align: center;
+  margin: 40px 0;
 }
 
-.rouletteItem img {
-  width: 40px;
-  height: 40px;
-}
-
-/* Drop info */
-.dropInfo {
-  margin-top: 20px;
-  font-size: 14px;
-}
-
-/* Inventory */
-.inventoryContent {
-  width: 90%;
-  max-width: 600px;
-  height: 50vh;
-  background: #7d7d7d;
-  border-radius: 20px;
-  padding: 20px;
-  box-sizing: border-box;
+/* Рулетка */
+.wheelWrap {
   position: relative;
-  overflow-y: auto;
-}
-.inventoryList {
+  width: 100%;
   display: flex;
-  flex-direction: column;
-  gap: 10px;
+  justify-content: center;
+  margin-top: 10px;
 }
-.inventoryItem {
-  background: #000;
-  border-radius: 15px;
-  padding: 10px;
+
+.wheel {
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  border: 8px solid #333;
+  background: conic-gradient(
+    #6cf 0deg 45deg,
+    #fff 45deg 90deg,
+    #6cf 90deg 135deg,
+    #fff 135deg 180deg,
+    #6cf 180deg 225deg,
+    #fff 225deg 270deg,
+    #6cf 270deg 315deg,
+    #fff 315deg 360deg
+  );
+  transition: transform 5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Указатель (палка) */
+.pointer {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 30px;
+  background: #6cf;
+  border-radius: 4px;
+  z-index: 2;
+}
+
+/* Список дропов */
+.caseInfo {
+  margin-top: 15px;
+  color: #fff;
+}
+
+.dropList {
   display: flex;
-  gap: 10px;
-  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
 }
-.inventoryItem img {
-  width: 50px;
-  height: 50px;
+
+.dropItem {
+  padding: 8px 10px;
+  background: #2a3748;
   border-radius: 10px;
-  }
+  font-size: 12px;
+}
