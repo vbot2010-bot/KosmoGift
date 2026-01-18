@@ -4,13 +4,10 @@ tg.expand();
 const user = tg.initDataUnsafe.user || {};
 const userId = user.id;
 
-// ====== Элементы ======
 const avatar = document.getElementById("avatar");
 const profileAvatar = document.getElementById("profileAvatar");
 const username = document.getElementById("username");
-
 const balance = document.getElementById("balance");
-const balanceProfile = document.getElementById("balanceProfile");
 
 const btnHome = document.getElementById("btnHome");
 const btnProfile = document.getElementById("btnProfile");
@@ -24,30 +21,27 @@ const amountInput = document.getElementById("amount");
 const pay = document.getElementById("pay");
 const closeModal = document.getElementById("closeModal");
 
-// ====== Инвентарь ======
-const openInventory = document.getElementById("openInventory");
+const dailyCaseBtn = document.getElementById("dailyCaseBtn");
+const rouletteTrack = document.getElementById("rouletteTrack");
+
 const inventoryModal = document.getElementById("inventoryModal");
+const openInventory = document.getElementById("openInventory");
 const closeInventory = document.getElementById("closeInventory");
 const inventoryList = document.getElementById("inventoryList");
 
-// ====== Данные пользователя ======
 avatar.src = user.photo_url || "";
 profileAvatar.src = user.photo_url || "";
 username.innerText = user.username || "Telegram User";
 
 const API_URL = "https://kosmogift-worker.v-bot-2010.workers.dev";
 
-// ====== Загрузка баланса ======
 async function loadBalance() {
   const res = await fetch(API_URL + "/balance?user_id=" + userId);
   const data = await res.json();
-  const bal = (data.balance || 0).toFixed(2) + " TON";
-  balance.innerText = bal;
-  balanceProfile.innerText = bal;
+  balance.innerText = (data.balance || 0).toFixed(2) + " TON";
 }
 loadBalance();
 
-// ====== Навигация ======
 btnHome.onclick = () => switchPage("home");
 btnProfile.onclick = () => switchPage("profile");
 
@@ -56,18 +50,12 @@ function switchPage(id) {
   document.getElementById(id).classList.add("active");
 }
 
-// ====== TON CONNECT ======
 const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
   manifestUrl: "https://kosmogift.pages.dev//tonconnect-manifest.json"
 });
 
-connectWallet.onclick = async () => {
-  await tonConnectUI.connectWallet();
-};
-
-disconnectWallet.onclick = async () => {
-  await tonConnectUI.disconnect();
-};
+connectWallet.onclick = async () => await tonConnectUI.connectWallet();
+disconnectWallet.onclick = async () => await tonConnectUI.disconnect();
 
 tonConnectUI.onStatusChange(wallet => {
   if (wallet) {
@@ -79,30 +67,24 @@ tonConnectUI.onStatusChange(wallet => {
   }
 });
 
-// ====== Пополнение ======
-deposit.onclick = async () => {
-  modal.style.display = "flex";
-};
-
+deposit.onclick = () => modal.style.display = "flex";
 closeModal.onclick = () => modal.style.display = "none";
 
-// ====== Оплата ======
 pay.onclick = async () => {
   const amount = parseFloat(amountInput.value);
   if (amount < 0.1) return alert("Минимум 0.1 TON");
 
-  // 1) Создаём платёж
   const createRes = await fetch(API_URL + "/create-payment", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ user_id: userId, amount })
   });
+
   const createData = await createRes.json();
   if (createData.error) return alert(createData.error);
 
   const paymentId = createData.paymentId;
 
-  // 2) Отправляем транзакцию
   let tx;
   try {
     tx = await tonConnectUI.sendTransaction({
@@ -112,32 +94,28 @@ pay.onclick = async () => {
         amount: (amount * 1e9).toString()
       }]
     });
-  } catch (e) {
+  } catch {
     return alert("Оплата отменена или не прошла.");
   }
 
   const txId = tx.id;
   if (!txId) return alert("Не удалось получить txId");
 
-  // 3) Polling: проверяем оплату каждые 3 сек
   let attempts = 0;
   let paid = false;
 
   while (attempts < 20 && !paid) {
     attempts++;
-
     const checkRes = await fetch(API_URL + "/check-payment", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ payment_id: paymentId, tx_id: txId })
     });
-
     const checkData = await checkRes.json();
 
     if (!checkData.error) {
       paid = true;
       balance.innerText = checkData.balance.toFixed(2) + " TON";
-      balanceProfile.innerText = checkData.balance.toFixed(2) + " TON";
       modal.style.display = "none";
       break;
     }
@@ -145,34 +123,75 @@ pay.onclick = async () => {
     await new Promise(r => setTimeout(r, 3000));
   }
 
-  if (!paid) {
-    alert("Платёж не подтверждён. Попробуйте позже.");
+  if (!paid) alert("Платёж не подтверждён. Попробуйте позже.");
+};
+
+// -------------- DAILY CASE --------------
+
+const drops = [
+  { name: "0.01 TON", chance: 90 },
+  { name: "0.02 TON", chance: 5 },
+  { name: "0.03 TON", chance: 2.5 },
+  { name: "0.04 TON", chance: 1 },
+  { name: "0.05 TON", chance: 0.75 },
+  { name: "0.06 TON", chance: 0.5 },
+  { name: "0.07 TON", chance: 0.24 },
+  { name: "NFT lol pop", chance: 0.01 }
+];
+
+function randomDrop() {
+  const rand = Math.random() * 100;
+  let sum = 0;
+  for (let d of drops) {
+    sum += d.chance;
+    if (rand <= sum) return d;
   }
+  return drops[0];
+}
+
+dailyCaseBtn.onclick = () => {
+  // Сначала отправляем в канал
+  tg.openLink("https://t.me/YOUR_CHANNEL_LINK");
+
+  // Запускаем анимацию
+  startRoulette();
 };
 
-// ====== Инвентарь ======
-openInventory.onclick = () => {
-  inventoryModal.style.display = "flex";
-  loadInventory();
-};
+function startRoulette() {
+  rouletteTrack.innerHTML = "";
 
-closeInventory.onclick = () => {
-  inventoryModal.style.display = "none";
-};
+  // Создаем 50 блоков для прокрутки
+  for (let i = 0; i < 50; i++) {
+    const drop = drops[Math.floor(Math.random() * drops.length)];
+    const div = document.createElement("div");
+    div.className = "rouletteItem";
+    div.innerText = drop.name;
+    rouletteTrack.appendChild(div);
+  }
+
+  // Финальный выпад
+  const finalDrop = randomDrop();
+
+  const finalDiv = document.createElement("div");
+  finalDiv.className = "rouletteItem";
+  finalDiv.innerText = finalDrop.name;
+  rouletteTrack.appendChild(finalDiv);
+
+  const totalWidth = rouletteTrack.scrollWidth;
+  rouletteTrack.style.transition = "transform 5s cubic-bezier(.17,.67,.83,.67)";
+  rouletteTrack.style.transform = `translateX(-${totalWidth - 150}px)`;
+
+  setTimeout(() => {
+    alert("Вы выиграли: " + finalDrop.name);
+  }, 5200);
+}
+
+// -------------- INVENTORY --------------
+
+openInventory.onclick = () => inventoryModal.style.display = "flex";
+closeInventory.onclick = () => inventoryModal.style.display = "none";
 
 function loadInventory() {
   inventoryList.innerHTML = "";
-
-  const item = document.createElement("div");
-  item.className = "inventoryItem";
-
-  item.innerHTML = `
-    <img src="https://cdn-icons-png.flaticon.com/512/190/190411.png" alt="gift">
-    <div>
-      <div>Подарок lol pop (NFT)</div>
-      <div style="font-size:12px; opacity:0.7;">Тестовый предмет</div>
-    </div>
-  `;
-
-  inventoryList.appendChild(item);
 }
+loadInventory();
