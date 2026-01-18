@@ -164,3 +164,7 @@
   font-size: 16px;
   font-weight: bold;
   }
+/* Опустить аватарку и баланс ниже только на главной */
+#home .top {
+  margin-top: 60px;
+}
