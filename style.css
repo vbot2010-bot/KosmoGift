@@ -1,4 +1,4 @@
-  body {
+body {
   margin: 0;
   background: #0e1621;
   color: white;
@@ -9,20 +9,20 @@
 /* Страницы              */
 /* ===================== */
 .page {
-  display: none;   /* ВАЖНО: скрываем все страницы */
+  display: none;
 }
 
 .page.active {
-  display: block;  /* Показываем только активную */
+  display: block;
 }
 
 /* ===================== */
 /* Верхняя панель        */
 /* ===================== */
 .top {
-  padding: 30px 20px 0 20px;   /* ниже от верха */
+  padding: 30px 20px 0 20px;
   display: flex;
-  justify-content: flex-end;   /* ВПРАВО */
+  justify-content: flex-end;
 }
 
 .avatar {
@@ -32,13 +32,6 @@
   margin-right: 8px;
 }
 
-.big {
-  width: 80px;
-  height: 80px;
-  margin-bottom: 10px;
-}
-
-/* Плашка пользователя */
 .userBar {
   display: flex;
   align-items: center;
@@ -49,7 +42,6 @@
   box-shadow: 0 4px 10px rgba(0,0,0,0.4);
 }
 
-/* Баланс */
 #balance {
   font-size: 14px;
   font-weight: bold;
@@ -60,7 +52,7 @@
 /* Главная (home)        */
 /* ===================== */
 #home {
-  padding-top: 60px; /* опускаем "Кейсы" ниже */
+  padding-top: 60px;
 }
 
 /* ===================== */
@@ -83,7 +75,7 @@
 /* Общие стили модалок   */
 /* ===================== */
 .modal {
-  display: none;                 /* ВАЖНО */
+  display: none;
   position: fixed;
   top: 0;
   left: 0;
@@ -108,7 +100,7 @@
 }
 
 /* ===================== */
-/* ПОПОЛНЕНИЕ БАЛАНСА    */
+/* Пополнение            */
 /* ===================== */
 .modalContent {
   width: 90%;
@@ -116,35 +108,34 @@
   background: #7d7d7d;
   border-radius: 20px;
   padding: 20px;
-  padding-top: 50px;            /* ← место под крестик */
+  padding-top: 50px;
   box-sizing: border-box;
   position: relative;
 }
 
 /* ===================== */
-/* ИНВЕНТАРЬ             */
+/* Инвентарь             */
 /* ===================== */
 .inventoryContent {
   width: 90%;
   max-width: 600px;
-  height: 50vh;                 /* половина экрана */
+  height: 50vh;
   background: #7d7d7d;
   border-radius: 20px;
   padding: 20px;
-  padding-top: 50px;            /* место под крестик */
+  padding-top: 50px;
   box-sizing: border-box;
   position: relative;
-  overflow-y: auto;
+  overflow-y: auto; /* Листание вниз */
 }
 
-/* Список предметов */
 .inventoryList {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-/* Карточка предмета */
+/* Карточка предмета (если будут) */
 .itemCard {
   background: #000;
   border-radius: 15px;
@@ -163,8 +154,4 @@
 .itemCard .itemName {
   font-size: 16px;
   font-weight: bold;
-  }
-/* Опустить аватарку и баланс ниже только на главной */
-#home .top {
-  margin-top: 60px;
 }
