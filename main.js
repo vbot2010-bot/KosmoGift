@@ -11,7 +11,6 @@ const balance = document.getElementById("balance");
 
 const btnHome = document.getElementById("btnHome");
 const btnProfile = document.getElementById("btnProfile");
-const btnCase = document.getElementById("btnCase");
 
 const connectWallet = document.getElementById("connectWallet");
 const disconnectWallet = document.getElementById("disconnectWallet");
@@ -22,11 +21,14 @@ const amountInput = document.getElementById("amount");
 const pay = document.getElementById("pay");
 const closeModal = document.getElementById("closeModal");
 
-const openDailyModal = document.getElementById("openDailyModal");
-const dailyModal = document.getElementById("dailyModal");
-const closeDailyModal = document.getElementById("closeDailyModal");
+const openDaily = document.getElementById("openDaily");
+
+const subscribeModal = document.getElementById("subscribeModal");
+const closeSubscribe = document.getElementById("closeSubscribe");
 const subscribeBtn = document.getElementById("subscribeBtn");
 
+const caseModal = document.getElementById("caseModal");
+const closeCase = document.getElementById("closeCase");
 const startCase = document.getElementById("startCase");
 const rouletteTrack = document.getElementById("rouletteTrack");
 
@@ -50,7 +52,6 @@ loadBalance();
 
 btnHome.onclick = () => switchPage("home");
 btnProfile.onclick = () => switchPage("profile");
-btnCase.onclick = () => switchPage("casePage");
 
 function switchPage(id) {
   document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
@@ -133,18 +134,26 @@ pay.onclick = async () => {
   if (!paid) alert("Платёж не подтверждён. Попробуйте позже.");
 };
 
-// ====================== DAILY MODAL ======================
+// ========== DAILY CASE ==========
+let subscribed = false; // первый раз - подписка
 
-openDailyModal.onclick = () => dailyModal.style.display = "flex";
-closeDailyModal.onclick = () => dailyModal.style.display = "none";
+openDaily.onclick = () => {
+  if (!subscribed) {
+    subscribeModal.style.display = "flex";
+  } else {
+    caseModal.style.display = "flex";
+  }
+};
+
+closeSubscribe.onclick = () => subscribeModal.style.display = "none";
 
 subscribeBtn.onclick = () => {
   tg.openLink("https://t.me/KosmoGiftOfficial");
-  dailyModal.style.display = "none";
+  subscribed = true;
+  subscribeModal.style.display = "none";
 };
 
-// ====================== CASE ======================
-
+// ========== CASE ==========
 const drops = [
   { name: "0.01 TON", chance: 90 },
   { name: "0.02 TON", chance: 5 },
@@ -180,7 +189,6 @@ function startRoulette() {
   }
 
   const finalDrop = randomDrop();
-
   const finalDiv = document.createElement("div");
   finalDiv.className = "rouletteItem";
   finalDiv.innerText = finalDrop.name;
@@ -202,8 +210,7 @@ function startRoulette() {
   }, 5200);
 }
 
-// ====================== INVENTORY ======================
-
+// ========== INVENTORY ==========
 openInventory.onclick = () => inventoryModal.style.display = "flex";
 closeInventory.onclick = () => inventoryModal.style.display = "none";
 
@@ -212,4 +219,4 @@ function addToInventory(name) {
   item.className = "inventoryItem";
   item.innerText = name;
   inventoryList.appendChild(item);
-    }
+}
