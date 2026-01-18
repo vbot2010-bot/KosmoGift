@@ -43,10 +43,14 @@ username.innerText = user.username || "Telegram User";
 
 const API_URL = "https://kosmogift-worker.v-bot-2010.workers.dev";
 
+// ====== Баланс (теперь хранится в переменной) ======
+let currentBalance = 0;
+
 async function loadBalance() {
   const res = await fetch(API_URL + "/balance?user_id=" + userId);
   const data = await res.json();
-  balance.innerText = (data.balance || 0).toFixed(2) + " TON";
+  currentBalance = data.balance || 0;
+  balance.innerText = currentBalance.toFixed(2) + " TON";
 }
 loadBalance();
 
@@ -123,7 +127,8 @@ pay.onclick = async () => {
 
     if (!checkData.error) {
       paid = true;
-      balance.innerText = checkData.balance.toFixed(2) + " TON";
+      currentBalance = checkData.balance;
+      balance.innerText = currentBalance.toFixed(2) + " TON";
       modal.style.display = "none";
       break;
     }
@@ -135,7 +140,7 @@ pay.onclick = async () => {
 };
 
 // ========== DAILY CASE ==========
-let subscribed = false; // первый раз - подписка
+let subscribed = false;
 
 openDaily.onclick = () => {
   if (!subscribed) {
@@ -147,8 +152,14 @@ openDaily.onclick = () => {
 
 closeSubscribe.onclick = () => subscribeModal.style.display = "none";
 
+// Закрытие кликом вне окна (для подписки)
+subscribeModal.onclick = (e) => {
+  if (e.target === subscribeModal) subscribeModal.style.display = "none";
+};
+
+// Подписка (переход в канал)
 subscribeBtn.onclick = () => {
-  tg.openLink("https://t.me/KosmoGiftOfficial");
+  tg.openLink("иhttps://t.me/KosmoGiftOfficial");
   subscribed = true;
   subscribeModal.style.display = "none";
 };
@@ -201,7 +212,8 @@ function startRoulette() {
   setTimeout(() => {
     if (finalDrop.name.includes("TON")) {
       const ton = parseFloat(finalDrop.name.replace(" TON", ""));
-      balance.innerText = (parseFloat(balance.innerText) + ton).toFixed(2) + " TON";
+      currentBalance += ton; // теперь баланс не сбрасывается
+      balance.innerText = currentBalance.toFixed(2) + " TON";
       alert("Вы выиграли: " + finalDrop.name);
     } else {
       addToInventory(finalDrop.name);
@@ -219,4 +231,4 @@ function addToInventory(name) {
   item.className = "inventoryItem";
   item.innerText = name;
   inventoryList.appendChild(item);
-}
+      }
