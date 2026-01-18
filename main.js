@@ -18,7 +18,7 @@ function switchPage(id) {
 
 /* TON CONNECT */
 const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-  manifestUrl: "https://kocmogift.pages.dev//tonconnect-manifest.json"
+  manifestUrl: "https://kosmogift.pages.dev//tonconnect-manifest.json"
 });
 
 connectWallet.onclick = async () => {
