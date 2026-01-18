@@ -57,7 +57,32 @@ closeModal.onclick = () => modal.style.display = "none";
 
 pay.onclick = async () => {
   const amount = parseFloat(document.getElementById("amount").value);
+
   if (amount < 0.1) return alert("Минимум 0.1 TON");
+
+  try {
+    const res = await fetch(API_URL + "/deposit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ amount })
+    });
+
+    const text = await res.text();
+
+    // Показываем результат в alert
+    alert("STATUS: " + res.status + "\nRESPONSE:\n" + text);
+
+    const data = JSON.parse(text);
+
+    if (data.error) return alert("Ошибка API: " + data.error);
+
+    balance.innerText = data.balance.toFixed(2) + " TON";
+    modal.style.display = "none";
+
+  } catch (e) {
+    alert("Ошибка запроса: " + e.message);
+  }
+};
 
   // Отправляем запрос на API (пополнение)
   const res = await fetch(API_URL + "/deposit", {
