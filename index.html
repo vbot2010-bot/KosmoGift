@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Gift Mini App</title>
+
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="top">
+  <img id="avatar" class="avatar">
+  <span id="balance">0.00 TON</span>
+</div>
+
+<div id="home" class="page active">
+  <h2>Кейсы</h2>
+  <p>Скоро появятся</p>
+</div>
+
+<div id="profile" class="page">
+  <img id="profileAvatar" class="avatar big">
+  <div id="username"></div>
+
+  <button id="connectWallet">Подключить кошелёк</button>
+  <button id="disconnectWallet" style="display:none">Отключить кошелёк</button>
+  <button id="deposit">Пополнить баланс</button>
+</div>
+
+<div class="nav">
+  <button id="btnHome">Главная</button>
+  <button id="btnProfile">Профиль</button>
+</div>
+
+<div id="modal" class="modal">
+  <input id="amount" type="number" placeholder="Минимум 0.1 TON" step="0.1">
+  <button id="pay">Оплатить</button>
+</div>
+
+<script src="main.js"></script>
+</body>
+</html>

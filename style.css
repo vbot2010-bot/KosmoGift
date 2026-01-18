@@ -1,0 +1,58 @@
+body {
+  margin: 0;
+  background: #0e1621;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+.top {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 10px;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.big {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 10px;
+}
+
+.page {
+  display: none;
+  padding: 20px;
+}
+
+.page.active {
+  display: block;
+}
+
+.nav {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+}
+
+.nav button {
+  flex: 1;
+  padding: 15px;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 40%;
+  left: 10%;
+  right: 10%;
+  background: #1c2633;
+  padding: 20px;
+  border-radius: 10px;
+}
