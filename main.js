@@ -78,61 +78,63 @@ closeModal.onclick = () => modal.style.display = "none";
 
 // ====== Оплата ======
 pay.onclick = async () => {
+  const amount = parseFloat(amountInput.value);
+  if (amount < 0.1) return alert("Минимум 0.1 TON");
+
+  // 1) Создаём платёж
+  const createRes = await fetch(API_URL + "/create-payment", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ user_id: userId, amount })
+  });
+  const createData = await createRes.json();
+  if (createData.error) return alert(createData.error);
+
+  const paymentId = createData.paymentId;
+
+  // 2) Отправляем транзакцию
+  let tx;
   try {
-    const amount = parseFloat(amountInput.value);
-    if (amount < 0.1) return alert("Минимум 0.1 TON");
-
-    // 1) Создаём платёж
-    const createRes = await fetch(API_URL + "/create-payment", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ user_id: userId, amount })
-    });
-
-    if (!createRes.ok) {
-      const err = await createRes.text();
-      return alert("Ошибка create-payment:\n" + err);
-    }
-
-    const createData = await createRes.json();
-    if (createData.error) return alert("Ошибка create-payment:\n" + createData.error);
-
-    const paymentId = createData.paymentId;
-
-    // 2) Отправляем транзакцию
-    const tx = await tonConnectUI.sendTransaction({
+    tx = await tonConnectUI.sendTransaction({
       validUntil: Math.floor(Date.now() / 1000) + 600,
       messages: [{
         address: "UQAFXBXzBzau6ZCWzruiVrlTg3HAc8MF6gKIntqTLDifuWOi",
         amount: (amount * 1e9).toString()
       }]
     });
+  } catch (e) {
+    return alert("Оплата отменена или не прошла.");
+  }
 
-    if (!tx || !tx.id) {
-      return alert("Ошибка: tx.id не получен. \nТранзакция отправлена, но ID не вернулся.");
-    }
+  const txId = tx.id;
+  if (!txId) return alert("Не удалось получить txId");
 
-    const txId = tx.id;
+  // 3) Polling: проверяем оплату каждые 3 сек
+  let attempts = 0;
+  let paid = false;
 
-    // 3) Проверяем платёж
+  while (attempts < 20 && !paid) {
+    attempts++;
+
     const checkRes = await fetch(API_URL + "/check-payment", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ payment_id: paymentId, tx_id: txId })
     });
 
-    if (!checkRes.ok) {
-      const err = await checkRes.text();
-      return alert("Ошибка check-payment:\n" + err);
+    const checkData = await checkRes.json();
+
+    if (!checkData.error) {
+      paid = true;
+      balance.innerText = checkData.balance.toFixed(2) + " TON";
+      modal.style.display = "none";
+      break;
     }
 
-    const checkData = await checkRes.json();
-    if (checkData.error) return alert("Ошибка check-payment:\n" + checkData.error);
+    await new Promise(r => setTimeout(r, 3000));
+  }
 
-    balance.innerText = checkData.balance.toFixed(2) + " TON";
-    modal.style.display = "none";
-
-  } catch (e) {
-    alert("Ошибка в оплате:\n" + e.message);
+  if (!paid) {
+    alert("Платёж не подтверждён. Попробуйте позже.");
   }
 };
