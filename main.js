@@ -71,7 +71,7 @@ tonConnectUI.onStatusChange(wallet => {
 
 // ====== Пополнение ======
 deposit.onclick = async () => {
-  modal.style.display = "block";
+  modal.style.display = "flex";
 };
 
 closeModal.onclick = () => modal.style.display = "none";
