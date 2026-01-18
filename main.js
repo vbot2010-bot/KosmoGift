@@ -44,7 +44,6 @@ let balanceValue = 0;
 let inventory = [];
 let subscribed = localStorage.getItem("subscribed") === "true";
 
-// load balance
 function loadLocal() {
   balanceValue = parseFloat(localStorage.getItem(`balance:${userId}`)) || 0;
   inventory = JSON.parse(localStorage.getItem(`inventory:${userId}`)) || [];
@@ -53,7 +52,6 @@ function loadLocal() {
 }
 loadLocal();
 
-// navigation
 btnHome.onclick = () => switchPage("home");
 btnProfile.onclick = () => switchPage("profile");
 function switchPage(id) {
@@ -61,66 +59,6 @@ function switchPage(id) {
   document.getElementById(id).classList.add("active");
 }
 
-// TON connect (без оплаты пока)
-const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-  manifestUrl: "https://kosmogift.pages.dev//tonconnect-manifest.json"
-});
-connectWallet.onclick = async () => await tonConnectUI.connectWallet();
-disconnectWallet.onclick = async () => await tonConnectUI.disconnect();
-tonConnectUI.onStatusChange(wallet => {
-  if (wallet) {
-    connectWallet.style.display = "none";
-    disconnectWallet.style.display = "block";
-  } else {
-    connectWallet.style.display = "block";
-    disconnectWallet.style.display = "none";
-  }
-});
-
-// payment modal
-deposit.onclick = () => modal.style.display = "flex";
-closeModal.onclick = () => modal.style.display = "none";
-
-// fake payment (for test)
-pay.onclick = () => {
-  const amount = parseFloat(amountInput.value);
-  if (amount < 0.1) return alert("Минимум 0.1 TON");
-  balanceValue += amount;
-  saveAll();
-  modal.style.display = "none";
-};
-
-// save all
-function saveAll() {
-  localStorage.setItem(`balance:${userId}`, balanceValue);
-  localStorage.setItem(`inventory:${userId}`, JSON.stringify(inventory));
-  balance.innerText = balanceValue.toFixed(2) + " TON";
-  balanceProfile.innerText = balanceValue.toFixed(2) + " TON";
-}
-
-// subscription modal
-openDaily.onclick = () => {
-  if (!subscribed) {
-    subscribeModal.style.display = "flex";
-  } else {
-    caseModal.style.display = "flex";
-  }
-};
-
-subscribeBtn.onclick = () => {
-  tg.openLink("https://t.me/KosmoGiftOfficial");
-  subscribed = true;
-  localStorage.setItem("subscribed", "true");
-  subscribeModal.style.display = "none";
-  caseModal.style.display = "flex";
-};
-
-// close subscribe by click outside
-subscribeModal.onclick = (e) => {
-  if (e.target === subscribeModal) subscribeModal.style.display = "none";
-};
-
-// case modal
 const prizes = [
   { name: "0.01 TON", value: 0.01 },
   { name: "0.02 TON", value: 0.02 },
@@ -157,13 +95,33 @@ function choosePrize() {
   return prizes[7];
 }
 
+openDaily.onclick = () => {
+  if (!subscribed) {
+    subscribeModal.style.display = "flex";
+  } else {
+    caseModal.style.display = "flex";
+  }
+};
+
+subscribeBtn.onclick = () => {
+  tg.openLink("https://t.me/KosmoGiftOfficial");
+  subscribed = true;
+  localStorage.setItem("subscribed", "true");
+  subscribeModal.style.display = "none";
+  caseModal.style.display = "flex";
+};
+
+subscribeModal.onclick = (e) => {
+  if (e.target === subscribeModal) subscribeModal.style.display = "none";
+};
+
 openCaseBtn.onclick = () => {
   openCaseBtn.disabled = true;
 
   const prize = choosePrize();
   const targetIndex = prizes.findIndex(p => p.name === prize.name);
 
-  const itemWidth = 170 + 18;
+  const itemWidth = 200 + 18;
   const totalItems = prizes.length * 6;
   const targetPos = (totalItems / 2 + targetIndex) * itemWidth;
   const end = -targetPos;
@@ -194,7 +152,6 @@ caseModal.onclick = (e) => {
   if (e.target === caseModal) caseModal.style.display = "none";
 };
 
-// inventory
 openInventory.onclick = () => {
   inventoryModal.style.display = "flex";
   loadInventory();
@@ -213,4 +170,23 @@ function loadInventory() {
     div.innerHTML = `<div>${i.name}</div>`;
     inventoryList.appendChild(div);
   });
+}
+
+deposit.onclick = () => modal.style.display = "flex";
+closeModal.onclick = () => modal.style.display = "none";
+
+pay.onclick = () => {
+  const amount = parseFloat(amountInput.value);
+  if (!amount || amount < 0.1) return alert("Минимум 0.1 TON");
+
+  balanceValue += amount;
+  saveAll();
+  modal.style.display = "none";
+};
+
+function saveAll() {
+  localStorage.setItem(`balance:${userId}`, balanceValue);
+  localStorage.setItem(`inventory:${userId}`, JSON.stringify(inventory));
+  balance.innerText = balanceValue.toFixed(2) + " TON";
+  balanceProfile.innerText = balanceValue.toFixed(2) + " TON";
 }
