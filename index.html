@@ -5,11 +5,16 @@
   <title>Gift Mini App</title>
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+<!-- HOME -->
 <div id="home" class="page active">
+
+  <!-- TOP BAR -->
   <div class="top">
     <div class="userBar">
       <img id="avatar" class="avatar">
@@ -17,13 +22,18 @@
     </div>
   </div>
 
-  <div class="dailyCaseBlock">
-    <div class="caseIcon">🎁</div>
+  <!-- Daily Case block -->
+  <div class="dailyCase">
+    <div class="caseBox"></div>
     <div class="caseTitle">Daily Case</div>
     <button id="openDaily" class="caseBtn">Open Case</button>
   </div>
+
+  <h2>Кейсы</h2>
+  <p>Скоро появятся</p>
 </div>
 
+<!-- PROFILE -->
 <div id="profile" class="page">
   <div class="top">
     <div class="userBar">
@@ -37,11 +47,10 @@
   <button id="connectWallet">Подключить кошелёк</button>
   <button id="disconnectWallet" style="display:none">Отключить кошелёк</button>
   <button id="deposit">Пополнить баланс</button>
-
   <button id="openInventory">Инвентарь</button>
 </div>
 
-<!-- Модалка пополнения -->
+<!-- POPUP PAY -->
 <div id="modal" class="modal">
   <div class="modalContent">
     <button id="closeModal" class="closeBtn">✕</button>
@@ -50,39 +59,36 @@
   </div>
 </div>
 
-<!-- Модалка подписки -->
+<!-- SUBSCRIBE POPUP -->
 <div id="subscribeModal" class="modal">
   <div class="subscribeContent">
     <div class="subscribeText">Для открытия кейса нужно подписаться на канал</div>
-    <button id="subscribeBtn" class="subscribeBtn">Subscribe</button>
+    <button id="subscribeBtn" class="subscribeBtn">Подписаться</button>
   </div>
 </div>
 
-<!-- Модалка кейса -->
-<div id="caseModal" class="modal caseModal">
+<!-- CASE POPUP -->
+<div id="caseModal" class="modal">
   <div class="caseContent">
     <div class="caseTop">
-      <div class="caseTitle2">Daily Case</div>
+      <div class="caseTitleBig">Daily Case</div>
       <div class="caseArrow"></div>
     </div>
-
-    <div class="stripWrap">
-      <div id="strip" class="strip"></div>
-    </div>
-
-    <div class="resultText" id="resultText"></div>
-    <button id="openCaseBtn" class="caseOpenBtn">Open Case</button>
+    <div id="strip" class="strip"></div>
+    <div id="resultText" class="resultText"></div>
+    <button id="openCaseBtn" class="caseBtn">Open Case</button>
   </div>
 </div>
 
-<!-- Инвентарь -->
-<div id="inventoryModal" class="modal inventoryModal">
+<!-- INVENTORY -->
+<div id="inventoryModal" class="modal">
   <div class="inventoryContent">
     <button id="closeInventory" class="closeBtn">✕</button>
-    <div class="inventoryList" id="inventoryList"></div>
+    <div id="inventoryList" class="inventoryList"></div>
   </div>
 </div>
 
+<!-- NAV -->
 <div class="nav">
   <button id="btnHome">Главная</button>
   <button id="btnProfile">Профиль</button>
@@ -90,4 +96,4 @@
 
 <script src="main.js"></script>
 </body>
-            </html>
+</html>
