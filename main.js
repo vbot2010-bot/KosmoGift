@@ -175,18 +175,71 @@ function loadInventory() {
 deposit.onclick = () => modal.style.display = "flex";
 closeModal.onclick = () => modal.style.display = "none";
 
-pay.onclick = () => {
-  const amount = parseFloat(amountInput.value);
-  if (!amount || amount < 0.1) return alert("Минимум 0.1 TON");
+// ====== TON CONNECT ======
+const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+  manifestUrl: "https://kosmogift.pages.dev//tonconnect-manifest.json"
+});
 
-  balanceValue += amount;
-  saveAll();
+connectWallet.onclick = async () => {
+  await tonConnectUI.connectWallet();
+};
+
+disconnectWallet.onclick = async () => {
+  await tonConnectUI.disconnect();
+};
+
+tonConnectUI.onStatusChange(wallet => {
+  if (wallet) {
+    connectWallet.style.display = "none";
+    disconnectWallet.style.display = "block";
+  } else {
+    connectWallet.style.display = "block";
+    disconnectWallet.style.display = "none";
+  }
+});
+
+// ====== Пополнение ======
+deposit.onclick = () => {
+  modal.style.display = "flex";
+};
+
+closeModal.onclick = () => {
   modal.style.display = "none";
 };
 
-function saveAll() {
-  localStorage.setItem(`balance:${userId}`, balanceValue);
-  localStorage.setItem(`inventory:${userId}`, JSON.stringify(inventory));
-  balance.innerText = balanceValue.toFixed(2) + " TON";
-  balanceProfile.innerText = balanceValue.toFixed(2) + " TON";
-}
+// ====== Оплата ======
+pay.onclick = async () => {
+  const amount = parseFloat(amountInput.value);
+  if (!amount || amount < 0.1) return alert("Минимум 0.1 TON");
+
+  // Проверяем подключение кошелька
+  const wallet = tonConnectUI.wallet;
+  if (!wallet) {
+    return alert("Подключите кошелек TON Connect!");
+  }
+
+  // Делаем транзакцию TON
+  try {
+    const tx = await tonConnectUI.sendTransaction({
+      validUntil: Math.floor(Date.now() / 1000) + 600,
+      messages: [{
+        address: "UQAFXBXzBzau6ZCWzruiVrlTg3HAc8MF6gKIntqTLDifuWOi",
+        amount: (amount * 1e9).toString()
+      }]
+    });
+
+    if (!tx || !tx.id) {
+      return alert("Оплата не прошла. Попробуйте снова.");
+    }
+
+    // Если транзакция прошла — начисляем
+    balanceValue += amount;
+    saveAll();
+
+    modal.style.display = "none";
+    amountInput.value = "";
+    alert("Оплата прошла успешно!");
+  } catch (e) {
+    alert("Оплата отменена или не прошла.");
+  }
+};
