@@ -9,7 +9,7 @@ body {
 .page.active { display: block; }
 
 .top {
-  padding: 30px 20px 0 20px;
+  padding: 50px 20px 0 20px; /* ниже */
   display: flex;
   justify-content: flex-end;
 }
@@ -35,10 +35,22 @@ body {
 
 .homeContent {
   padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
-.caseBlock {
-  text-align: left;
+.caseSquare {
+  width: 120px;
+  height: 120px;
+  background: #1b2635;
+  border-radius: 20px;
+}
+
+.caseText {
+  margin-top: 10px;
+  font-size: 18px;
+  font-weight: bold;
 }
 
 .openCaseBtn {
@@ -79,8 +91,8 @@ body {
 }
 
 .modalContent {
-  width: 90%;
-  max-width: 350px;
+  width: 100%;
+  max-width: 600px;
   background: #7d7d7d;
   border-radius: 20px;
   padding: 20px;
@@ -89,8 +101,13 @@ body {
   position: relative;
 }
 
-.bottomContent {
+.subscribeContent {
   height: 25vh;
+  border-radius: 20px 20px 0 0;
+}
+
+.caseModalContent {
+  height: 75vh;
   border-radius: 20px 20px 0 0;
 }
 
@@ -117,12 +134,13 @@ body {
   position: relative;
   overflow-y: auto;
 }
+
 .inventoryList { display: flex; flex-direction: column; gap: 10px; }
 
 .roulette {
   margin-top: 20px;
   width: 100%;
-  height: 120px;
+  height: 140px;
   overflow: hidden;
   position: relative;
   background: #1b2635;
