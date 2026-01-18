@@ -5,20 +5,9 @@ body {
   font-family: Arial, sans-serif;
 }
 
-/* ===================== */
-/* Страницы              */
-/* ===================== */
-.page {
-  display: none;
-}
+.page { display: none; }
+.page.active { display: block; }
 
-.page.active {
-  display: block;
-}
-
-/* ===================== */
-/* Верхняя панель        */
-/* ===================== */
 .top {
   padding: 30px 20px 0 20px;
   display: flex;
@@ -42,22 +31,10 @@ body {
   box-shadow: 0 4px 10px rgba(0,0,0,0.4);
 }
 
-#balance {
-  font-size: 14px;
-  font-weight: bold;
-  color: #6cf;
-}
+#balance { font-size: 14px; font-weight: bold; color: #6cf; }
 
-/* ===================== */
-/* Главная (home)        */
-/* ===================== */
-#home {
-  padding-top: 60px;
-}
+#home { padding-top: 60px; }
 
-/* ===================== */
-/* Навигация             */
-/* ===================== */
 .nav {
   position: fixed;
   bottom: 0;
@@ -65,15 +42,8 @@ body {
   display: flex;
   z-index: 10;
 }
+.nav button { flex: 1; padding: 15px; }
 
-.nav button {
-  flex: 1;
-  padding: 15px;
-}
-
-/* ===================== */
-/* Общие стили модалок   */
-/* ===================== */
 .modal {
   display: none;
   position: fixed;
@@ -86,8 +56,6 @@ body {
   align-items: center;
   z-index: 1000;
 }
-
-/* Крестик */
 .closeBtn {
   background: transparent;
   border: none;
@@ -98,10 +66,6 @@ body {
   left: 15px;
   cursor: pointer;
 }
-
-/* ===================== */
-/* Пополнение            */
-/* ===================== */
 .modalContent {
   width: 90%;
   max-width: 350px;
@@ -112,10 +76,6 @@ body {
   box-sizing: border-box;
   position: relative;
 }
-
-/* ===================== */
-/* Инвентарь             */
-/* ===================== */
 .inventoryContent {
   width: 90%;
   max-width: 600px;
@@ -128,30 +88,48 @@ body {
   position: relative;
   overflow-y: auto;
 }
+.inventoryList { display: flex; flex-direction: column; gap: 10px; }
 
-.inventoryList {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+.caseBtn {
+  margin: 20px;
+  padding: 15px;
+  width: 90%;
+  background: #1b2635;
+  border: none;
+  border-radius: 20px;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
 }
 
-/* Карточка предмета */
-.inventoryItem {
-  background: #000;
-  border-radius: 15px;
-  padding: 10px;
+.roulette {
+  margin-top: 20px;
+  width: 100%;
+  height: 120px;
+  overflow: hidden;
+  position: relative;
+  background: #1b2635;
+  border-radius: 20px;
+}
+
+.rouletteTrack {
   display: flex;
   gap: 10px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
   align-items: center;
 }
 
-.inventoryItem img {
-  width: 50px;
-  height: 50px;
-  border-radius: 10px;
-}
-
-.inventoryItem .itemName {
+.rouletteItem {
+  width: 120px;
+  height: 100px;
+  border-radius: 20px;
+  background: #2a3a4f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 16px;
   font-weight: bold;
 }
