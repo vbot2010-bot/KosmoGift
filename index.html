@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -20,10 +20,12 @@
   </div>
 
   <h2>Кейсы</h2>
-  <p>Скоро появятся</p>
 
-  <button id="openDailyCase">Daily Case</button>
-  <div id="caseResult"></div>
+  <button id="dailyCaseBtn" class="caseBtn">Открыть Daily Case</button>
+
+  <div id="roulette" class="roulette">
+    <div class="rouletteTrack" id="rouletteTrack"></div>
+  </div>
 </div>
 
 <div id="profile" class="page">
@@ -40,7 +42,6 @@
   <button id="disconnectWallet" style="display:none">Отключить кошелёк</button>
   <button id="deposit">Пополнить баланс</button>
 
-  <!-- Модалка пополнения -->
   <div id="modal" class="modal">
     <div class="modalContent">
       <button id="closeModal" class="closeBtn">✕</button>
@@ -52,13 +53,10 @@
   <button id="openInventory">Инвентарь</button>
 </div>
 
-<!-- Модалка инвентаря -->
 <div id="inventoryModal" class="modal inventoryModal">
   <div class="inventoryContent">
     <button id="closeInventory" class="closeBtn">✕</button>
-    <div class="inventoryList">
-      <!-- Тут будут предметы -->
-    </div>
+    <div class="inventoryList" id="inventoryList"></div>
   </div>
 </div>
 
@@ -69,4 +67,4 @@
 
 <script src="main.js"></script>
 </body>
-  </html>
+</html>
