@@ -11,6 +11,7 @@ const balance = document.getElementById("balance");
 
 const btnHome = document.getElementById("btnHome");
 const btnProfile = document.getElementById("btnProfile");
+const btnCase = document.getElementById("btnCase");
 
 const connectWallet = document.getElementById("connectWallet");
 const disconnectWallet = document.getElementById("disconnectWallet");
@@ -21,7 +22,12 @@ const amountInput = document.getElementById("amount");
 const pay = document.getElementById("pay");
 const closeModal = document.getElementById("closeModal");
 
-const dailyCaseBtn = document.getElementById("dailyCaseBtn");
+const openDailyModal = document.getElementById("openDailyModal");
+const dailyModal = document.getElementById("dailyModal");
+const closeDailyModal = document.getElementById("closeDailyModal");
+const subscribeBtn = document.getElementById("subscribeBtn");
+
+const startCase = document.getElementById("startCase");
 const rouletteTrack = document.getElementById("rouletteTrack");
 
 const inventoryModal = document.getElementById("inventoryModal");
@@ -44,6 +50,7 @@ loadBalance();
 
 btnHome.onclick = () => switchPage("home");
 btnProfile.onclick = () => switchPage("profile");
+btnCase.onclick = () => switchPage("casePage");
 
 function switchPage(id) {
   document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
@@ -126,7 +133,17 @@ pay.onclick = async () => {
   if (!paid) alert("Платёж не подтверждён. Попробуйте позже.");
 };
 
-// -------------- DAILY CASE --------------
+// ====================== DAILY MODAL ======================
+
+openDailyModal.onclick = () => dailyModal.style.display = "flex";
+closeDailyModal.onclick = () => dailyModal.style.display = "none";
+
+subscribeBtn.onclick = () => {
+  tg.openLink("https://t.me/KosmoGiftOfficial");
+  dailyModal.style.display = "none";
+};
+
+// ====================== CASE ======================
 
 const drops = [
   { name: "0.01 TON", chance: 90 },
@@ -149,18 +166,11 @@ function randomDrop() {
   return drops[0];
 }
 
-dailyCaseBtn.onclick = () => {
-  // Сначала отправляем в канал
-  tg.openLink("https://t.me/KosmoGiftOfficial");
-
-  // Запускаем анимацию
-  startRoulette();
-};
+startCase.onclick = () => startRoulette();
 
 function startRoulette() {
   rouletteTrack.innerHTML = "";
 
-  // Создаем 50 блоков для прокрутки
   for (let i = 0; i < 50; i++) {
     const drop = drops[Math.floor(Math.random() * drops.length)];
     const div = document.createElement("div");
@@ -169,7 +179,6 @@ function startRoulette() {
     rouletteTrack.appendChild(div);
   }
 
-  // Финальный выпад
   const finalDrop = randomDrop();
 
   const finalDiv = document.createElement("div");
@@ -182,16 +191,25 @@ function startRoulette() {
   rouletteTrack.style.transform = `translateX(-${totalWidth - 150}px)`;
 
   setTimeout(() => {
-    alert("Вы выиграли: " + finalDrop.name);
+    if (finalDrop.name.includes("TON")) {
+      const ton = parseFloat(finalDrop.name.replace(" TON", ""));
+      balance.innerText = (parseFloat(balance.innerText) + ton).toFixed(2) + " TON";
+      alert("Вы выиграли: " + finalDrop.name);
+    } else {
+      addToInventory(finalDrop.name);
+      alert("Вы выиграли NFT: " + finalDrop.name);
+    }
   }, 5200);
 }
 
-// -------------- INVENTORY --------------
+// ====================== INVENTORY ======================
 
 openInventory.onclick = () => inventoryModal.style.display = "flex";
 closeInventory.onclick = () => inventoryModal.style.display = "none";
 
-function loadInventory() {
-  inventoryList.innerHTML = "";
-}
-loadInventory();
+function addToInventory(name) {
+  const item = document.createElement("div");
+  item.className = "inventoryItem";
+  item.innerText = name;
+  inventoryList.appendChild(item);
+    }
