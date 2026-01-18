@@ -1,6 +1,27 @@
 const tg = window.Telegram.WebApp;
 tg.expand();
 
+const API_URL = "https://kosmogift-worker.v-bot-2010.workers.dev";
+
+// Получаем элементы
+const avatar = document.getElementById("avatar");
+const profileAvatar = document.getElementById("profileAvatar");
+const username = document.getElementById("username");
+
+const btnHome = document.getElementById("btnHome");
+const btnProfile = document.getElementById("btnProfile");
+
+const balance = document.getElementById("balance");
+
+const connectWallet = document.getElementById("connectWallet");
+const disconnectWallet = document.getElementById("disconnectWallet");
+const deposit = document.getElementById("deposit");
+
+const modal = document.getElementById("modal");
+const amountInput = document.getElementById("amount");
+const pay = document.getElementById("pay");
+const closeModal = document.getElementById("closeModal");
+
 const user = tg.initDataUnsafe.user || {};
 
 avatar.src = user.photo_url || "";
@@ -16,21 +37,21 @@ function switchPage(id) {
   document.getElementById(id).classList.add("active");
 }
 
-/* API URL (вставь сюда свой) */
-const API_URL = "https://kosmogift-worker.v-bot-2010.workers.dev";
-
 /* Получаем баланс */
 async function loadBalance() {
-  const res = await fetch(API_URL + "/balance");
-  const data = await res.json();
-
-  balance.innerText = (data.balance || 0).toFixed(2) + " TON";
+  try {
+    const res = await fetch(API_URL + "/balance");
+    const data = await res.json();
+    balance.innerText = (data.balance || 0).toFixed(2) + " TON";
+  } catch (e) {
+    balance.innerText = "0.00 TON";
+  }
 }
 loadBalance();
 
 /* TON CONNECT */
 const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-  manifestUrl: "https://kosmogift.pages.dev//tonconnect-manifest.json"
+  manifestUrl: "https://kosmogift.pages.dev/tonconnect-manifest.json"
 });
 
 connectWallet.onclick = async () => {
@@ -56,7 +77,7 @@ deposit.onclick = () => modal.style.display = "block";
 closeModal.onclick = () => modal.style.display = "none";
 
 pay.onclick = async () => {
-  const amount = parseFloat(document.getElementById("amount").value);
+  const amount = parseFloat(amountInput.value);
 
   if (amount < 0.1) return alert("Минимум 0.1 TON");
 
@@ -67,12 +88,7 @@ pay.onclick = async () => {
       body: JSON.stringify({ amount })
     });
 
-    const text = await res.text();
-
-    // Показываем результат в alert
-    alert("STATUS: " + res.status + "\nRESPONSE:\n" + text);
-
-    const data = JSON.parse(text);
+    const data = await res.json();
 
     if (data.error) return alert("Ошибка API: " + data.error);
 
@@ -82,22 +98,4 @@ pay.onclick = async () => {
   } catch (e) {
     alert("Ошибка запроса: " + e.message);
   }
-};
-
-  // Отправляем запрос на API (пополнение)
-  const res = await fetch(API_URL + "/deposit", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ amount })
-  });
-
-  const data = await res.json();
-
-  if (data.error) return alert(data.error);
-
-  // Обновляем баланс
-  balance.innerText = data.balance.toFixed(2) + " TON";
-
-  // Закрываем окно
-  modal.style.display = "none";
 };
