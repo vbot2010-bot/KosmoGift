@@ -1,26 +1,15 @@
-body {
+  body {
   margin: 0;
   background: #0e1621;
   color: white;
   font-family: Arial, sans-serif;
 }
 
-/* ===================== */
-/* Страницы              */
-/* ===================== */
-.page {
-  display: none;
-}
+.page { display: none; }
+.page.active { display: block; }
 
-.page.active {
-  display: block;
-}
-
-/* ===================== */
-/* Верхняя панель        */
-/* ===================== */
 .top {
-  padding: 30px 20px 0 20px;
+  padding: 40px 20px 0 20px;
   display: flex;
   justify-content: flex-end;
 }
@@ -48,14 +37,8 @@ body {
   color: #6cf;
 }
 
-/* ===================== */
-/* Главная (home)        */
-/* ===================== */
-#home {
-  padding-top: 60px;
-}
+#home { padding-top: 60px; }
 
-/* Кейс блок */
 .caseBox {
   width: 210px;
   background: #1b2635;
@@ -89,9 +72,6 @@ body {
   cursor: pointer;
 }
 
-/* ===================== */
-/* Навигация             */
-/* ===================== */
 .nav {
   position: fixed;
   bottom: 0;
@@ -105,9 +85,7 @@ body {
   padding: 15px;
 }
 
-/* ===================== */
-/* Модалки               */
-/* ===================== */
+/* Модалки */
 .modal {
   display: none;
   position: fixed;
@@ -132,64 +110,56 @@ body {
   position: relative;
 }
 
-/* Рулетка */
-.wheelWrap {
-  position: relative;
+/* Полоса */
+.stripWrap {
   width: 100%;
+  height: 120px;
+  overflow: hidden;
+  margin-top: 20px;
+  border-radius: 20px;
+  background: #000;
+  position: relative;
+}
+
+.strip {
+  height: 120px;
   display: flex;
+  align-items: center;
+  gap: 20px;
+  padding-left: 20px;
+}
+
+/* Дропы */
+.drop {
+  width: 160px;
+  height: 90px;
+  border-radius: 18px;
+  background: #2a3748;
+  display: flex;
+  align-items: center;
   justify-content: center;
-  margin-top: 10px;
+  font-weight: bold;
+  font-size: 18px;
 }
 
-.wheel {
-  width: 260px;
-  height: 260px;
-  border-radius: 50%;
-  border: 8px solid #333;
-  background: conic-gradient(
-    #6cf 0deg 45deg,
-    #fff 45deg 90deg,
-    #6cf 90deg 135deg,
-    #fff 135deg 180deg,
-    #6cf 180deg 225deg,
-    #fff 225deg 270deg,
-    #6cf 270deg 315deg,
-    #fff 315deg 360deg
-  );
-  transition: transform 5s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-/* Указатель (палка) */
+/* Стрелка */
 .pointer {
   position: absolute;
-  top: 12px;
+  top: 10px;
   left: 50%;
   transform: translateX(-50%);
   width: 4px;
-  height: 30px;
+  height: 40px;
   background: #6cf;
   border-radius: 4px;
   z-index: 2;
 }
 
-/* Список дропов */
-.caseInfo {
-  margin-top: 15px;
-  color: #fff;
-}
-
-.dropList {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 10px;
-}
-
-.dropItem {
-  padding: 8px 10px;
-  background: #2a3748;
-  border-radius: 10px;
-  font-size: 12px;
+.resultText {
+  margin-top: 20px;
+  font-size: 18px;
+  text-align: center;
+  font-weight: bold;
 }
 
 /* Крестик */
@@ -204,7 +174,6 @@ body {
   cursor: pointer;
 }
 
-/* Пополнение */
 .modalContent {
   width: 90%;
   max-width: 350px;
@@ -216,7 +185,6 @@ body {
   position: relative;
 }
 
-/* Инвентарь */
 .inventoryContent {
   width: 90%;
   max-width: 600px;
@@ -234,24 +202,4 @@ body {
   display: flex;
   flex-direction: column;
   gap: 10px;
-}
-
-.itemCard {
-  background: #000;
-  border-radius: 15px;
-  padding: 10px;
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.itemCard img {
-  width: 50px;
-  height: 50px;
-  border-radius: 10px;
-}
-
-.itemCard .itemName {
-  font-size: 16px;
-  font-weight: bold;
 }
