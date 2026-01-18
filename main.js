@@ -159,7 +159,7 @@ subscribeModal.onclick = (e) => {
 
 // Подписка (переход в канал)
 subscribeBtn.onclick = () => {
-  tg.openLink("иhttps://t.me/KosmoGiftOfficial");
+  tg.openLink("https://t.me/KosmoGiftOfficial");
   subscribed = true;
   subscribeModal.style.display = "none";
 };
