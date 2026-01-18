@@ -32,8 +32,9 @@ const openDailyCase = document.getElementById("openDailyCase");
 const subscribeModal = document.getElementById("subscribeModal");
 const subscribeBtn = document.getElementById("subscribeBtn");
 const caseModal = document.getElementById("caseModal");
-const wheel = document.getElementById("wheel");
+const strip = document.getElementById("strip");
 const openCaseBtn = document.getElementById("openCaseBtn");
+const resultText = document.getElementById("resultText");
 
 avatar.src = user.photo_url || "";
 profileAvatar.src = user.photo_url || "";
@@ -85,8 +86,64 @@ closeModal.onclick = () => modal.style.display = "none";
 pay.onclick = async () => {
   const amount = parseFloat(amountInput.value);
   if (amount < 0.1) return alert("Минимум 0.1 TON");
-  // ЗДЕСЬ МОЖНО ДОБАВИТЬ ТВОЙ ПЛАТЕЖ
-  alert("Платёж временно отключен (для теста).");
+
+  // Тут твой API
+  const API_URL = "https://kosmogift-worker.v-bot-2010.workers.dev";
+
+  const createRes = await fetch(API_URL + "/create-payment", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ user_id: userId, amount })
+  });
+  const createData = await createRes.json();
+  if (createData.error) return alert(createData.error);
+
+  const paymentId = createData.paymentId;
+
+  let tx;
+  try {
+    tx = await tonConnectUI.sendTransaction({
+      validUntil: Math.floor(Date.now() / 1000) + 600,
+      messages: [{
+        address: "UQAFXBXzBzau6ZCWzruiVrlTg3HAc8MF6gKIntqTLDifuWOi",
+        amount: (amount * 1e9).toString()
+      }]
+    });
+  } catch (e) {
+    return alert("Оплата отменена или не прошла.");
+  }
+
+  const txId = tx.id;
+  if (!txId) return alert("Не удалось получить txId");
+
+  let attempts = 0;
+  let paid = false;
+
+  while (attempts < 20 && !paid) {
+    attempts++;
+
+    const checkRes = await fetch(API_URL + "/check-payment", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ payment_id: paymentId, tx_id: txId })
+    });
+
+    const checkData = await checkRes.json();
+
+    if (!checkData.error) {
+      paid = true;
+      localStorage.setItem("balance", checkData.balance.toFixed(2));
+      loadBalance();
+      modal.style.display = "none";
+      break;
+    }
+
+    await new Promise(r => setTimeout(r, 3000));
+  }
+
+  if (!paid) {
+    alert("Платёж не подтверждён. Попробуйте позже.");
+  }
 };
 
 openInventory.onclick = () => {
@@ -155,20 +212,39 @@ function choosePrize() {
   return prizes[0];
 }
 
+function buildStrip() {
+  strip.innerHTML = "";
+  for (let i = 0; i < 20; i++) {
+    for (let p of prizes) {
+      const div = document.createElement("div");
+      div.className = "drop";
+      div.innerText = p.name;
+      strip.appendChild(div);
+    }
+  }
+}
+buildStrip();
+
 openCaseBtn.onclick = () => {
   openCaseBtn.disabled = true;
 
   const prize = choosePrize();
-  const index = prizes.indexOf(prize);
-  const sectorAngle = 360 / prizes.length;
-  const spins = 6;
-  const finalAngle = 360 * spins + (index * sectorAngle + sectorAngle / 2);
+  const targetIndex = prizes.findIndex(p => p.name === prize.name);
 
-  wheel.style.transition = "transform 6s cubic-bezier(0.2, 0.8, 0.2, 1)";
-  wheel.style.transform = `rotate(-${finalAngle}deg)`;
+  // вычитаем как далеко до середины полосы
+  const itemWidth = 160 + 20;
+  const targetOffset = targetIndex * itemWidth;
+
+  // стартовая позиция
+  const start = 0;
+  const spins = 5;
+  const end = -(spins * strip.scrollWidth + targetOffset);
+
+  strip.style.transition = "transform 6s cubic-bezier(0.2, 0.8, 0.2, 1)";
+  strip.style.transform = `translateX(${end}px)`;
 
   setTimeout(() => {
-    alert("Выпало: " + prize.name);
+    resultText.innerText = "Выпало: " + prize.name;
 
     if (prize.nft) {
       addToInventory(prize.name);
@@ -184,12 +260,11 @@ function addBalance(value) {
   let current = parseFloat(localStorage.getItem("balance") || "0");
   current += value;
   localStorage.setItem("balance", current.toFixed(2));
-  balance.innerText = current.toFixed(2) + " TON";
-  balanceProfile.innerText = current.toFixed(2) + " TON";
+  loadBalance();
 }
 
 function addToInventory(itemName) {
   let inv = JSON.parse(localStorage.getItem("inventory") || "[]");
   inv.push({ name: itemName, date: Date.now() });
   localStorage.setItem("inventory", JSON.stringify(inv));
-  }
+    }
