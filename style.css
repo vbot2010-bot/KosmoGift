@@ -1,29 +1,37 @@
-  body {
+body {
   margin: 0;
   background: #0e1621;
   color: white;
   font-family: Arial, sans-serif;
 }
 
+/* ===================== */
+/* Страницы              */
+/* ===================== */
 .page {
   display: none;
 }
+
 .page.active {
   display: block;
 }
 
-/* Верх */
+/* ===================== */
+/* Верхняя панель        */
+/* ===================== */
 .top {
-  padding: 60px 20px 0 20px;
+  padding: 30px 20px 0 20px;
   display: flex;
   justify-content: flex-end;
 }
+
 .avatar {
   width: 32px;
   height: 32px;
   border-radius: 50%;
   margin-right: 8px;
 }
+
 .userBar {
   display: flex;
   align-items: center;
@@ -33,35 +41,57 @@
   border-radius: 20px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.4);
 }
-#balance { font-size: 14px; font-weight: bold; color: #6cf; }
 
-/* CASE BOX */
+#balance {
+  font-size: 14px;
+  font-weight: bold;
+  color: #6cf;
+}
+
+/* ===================== */
+/* Главная (home)        */
+/* ===================== */
+#home {
+  padding-top: 60px;
+}
+
+/* Кейс блок */
 .caseBox {
-  width: 170px;
-  height: 170px;
-  margin: 60px 0 0 20px;
-  padding: 15px;
+  width: 210px;
   background: #1b2635;
   border-radius: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
+  padding: 14px;
+  margin: 40px 0 0 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
 }
-.caseIcon { font-size: 28px; }
-.caseTitle { font-size: 18px; }
-.caseBtn {
-  padding: 10px 15px;
-  border: none;
-  border-radius: 15px;
+
+.caseIcon {
+  width: 40px;
+  height: 40px;
   background: #6cf;
-  color: #000;
+  border-radius: 12px;
+  margin-bottom: 8px;
+}
+
+.caseTitle {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.btn {
+  width: 100%;
+  padding: 10px;
+  background: #6cf;
+  border: none;
+  border-radius: 12px;
   font-weight: bold;
   cursor: pointer;
 }
 
-/* Навигация */
+/* ===================== */
+/* Навигация             */
+/* ===================== */
 .nav {
   position: fixed;
   bottom: 0;
@@ -69,12 +99,15 @@
   display: flex;
   z-index: 10;
 }
+
 .nav button {
   flex: 1;
   padding: 15px;
 }
 
-  /* Модалки */
+/* ===================== */
+/* Модалки               */
+/* ===================== */
 .modal {
   display: none;
   position: fixed;
@@ -97,25 +130,6 @@
   padding: 20px;
   box-sizing: border-box;
   position: relative;
-}
-
-/* Кнопки */
-.btn {
-  width: 100%;
-  padding: 14px;
-  background: #6cf;
-  border: none;
-  border-radius: 12px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-/* Подписка */
-.subscribeText {
-  color: #fff;
-  font-size: 16px;
-  text-align: center;
-  margin: 40px 0;
 }
 
 /* Рулетка */
@@ -176,4 +190,68 @@
   background: #2a3748;
   border-radius: 10px;
   font-size: 12px;
+}
+
+/* Крестик */
+.closeBtn {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  color: #000;
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  cursor: pointer;
+}
+
+/* Пополнение */
+.modalContent {
+  width: 90%;
+  max-width: 350px;
+  background: #7d7d7d;
+  border-radius: 20px;
+  padding: 20px;
+  padding-top: 50px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+/* Инвентарь */
+.inventoryContent {
+  width: 90%;
+  max-width: 600px;
+  height: 50vh;
+  background: #7d7d7d;
+  border-radius: 20px;
+  padding: 20px;
+  padding-top: 50px;
+  box-sizing: border-box;
+  position: relative;
+  overflow-y: auto;
+}
+
+.inventoryList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.itemCard {
+  background: #000;
+  border-radius: 15px;
+  padding: 10px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.itemCard img {
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+}
+
+.itemCard .itemName {
+  font-size: 16px;
+  font-weight: bold;
 }
