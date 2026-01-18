@@ -4,11 +4,13 @@ tg.expand();
 const user = tg.initDataUnsafe.user || {};
 const userId = user.id;
 
-// ====== ВАЖНО: получаем элементы ======
+// ====== Элементы ======
 const avatar = document.getElementById("avatar");
 const profileAvatar = document.getElementById("profileAvatar");
 const username = document.getElementById("username");
+
 const balance = document.getElementById("balance");
+const balanceProfile = document.getElementById("balanceProfile");
 
 const btnHome = document.getElementById("btnHome");
 const btnProfile = document.getElementById("btnProfile");
@@ -22,7 +24,13 @@ const amountInput = document.getElementById("amount");
 const pay = document.getElementById("pay");
 const closeModal = document.getElementById("closeModal");
 
-// ====== Заполняем данные пользователя ======
+// ====== Инвентарь ======
+const openInventory = document.getElementById("openInventory");
+const inventoryModal = document.getElementById("inventoryModal");
+const closeInventory = document.getElementById("closeInventory");
+const inventoryList = document.getElementById("inventoryList");
+
+// ====== Данные пользователя ======
 avatar.src = user.photo_url || "";
 profileAvatar.src = user.photo_url || "";
 username.innerText = user.username || "Telegram User";
@@ -33,7 +41,9 @@ const API_URL = "https://kosmogift-worker.v-bot-2010.workers.dev";
 async function loadBalance() {
   const res = await fetch(API_URL + "/balance?user_id=" + userId);
   const data = await res.json();
-  balance.innerText = (data.balance || 0).toFixed(2) + " TON";
+  const bal = (data.balance || 0).toFixed(2) + " TON";
+  balance.innerText = bal;
+  balanceProfile.innerText = bal;
 }
 loadBalance();
 
@@ -127,6 +137,7 @@ pay.onclick = async () => {
     if (!checkData.error) {
       paid = true;
       balance.innerText = checkData.balance.toFixed(2) + " TON";
+      balanceProfile.innerText = checkData.balance.toFixed(2) + " TON";
       modal.style.display = "none";
       break;
     }
@@ -138,7 +149,8 @@ pay.onclick = async () => {
     alert("Платёж не подтверждён. Попробуйте позже.");
   }
 };
-// Открытие инвентаря
+
+// ====== Инвентарь ======
 openInventory.onclick = () => {
   inventoryModal.style.display = "flex";
   loadInventory();
@@ -148,7 +160,6 @@ closeInventory.onclick = () => {
   inventoryModal.style.display = "none";
 };
 
-// Загрузка инвентаря (пока тестовый предмет)
 function loadInventory() {
   inventoryList.innerHTML = "";
 
@@ -164,4 +175,4 @@ function loadInventory() {
   `;
 
   inventoryList.appendChild(item);
-      }
+}
