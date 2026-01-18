@@ -3,6 +3,23 @@ tg.expand();
 
 const user = tg.initDataUnsafe.user || {};
 
+// подключаем элементы
+const avatar = document.getElementById("avatar");
+const profileAvatar = document.getElementById("profileAvatar");
+const username = document.getElementById("username");
+
+const btnHome = document.getElementById("btn-home");
+const btnProfile = document.getElementById("btn-profile");
+
+const connectWallet = document.getElementById("connectWallet");
+const disconnectWallet = document.getElementById("disconnectWallet");
+
+const deposit = document.getElementById("deposit");
+const modal = document.getElementById("modal");
+const closeModal = document.getElementById("closeModal");
+const pay = document.getElementById("pay");
+const amountInput = document.getElementById("amount");
+
 avatar.src = user.photo_url || "";
 profileAvatar.src = user.photo_url || "";
 username.innerText = user.username || "Telegram User";
@@ -18,7 +35,7 @@ function switchPage(id) {
 
 /* TON CONNECT */
 const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-  manifestUrl: "https://kosmogift.pages.dev//tonconnect-manifest.json"
+  manifestUrl: "https://kosmogift.pages.dev/tonconnect-manifest.json"
 });
 
 connectWallet.onclick = async () => {
@@ -40,11 +57,25 @@ tonConnectUI.onStatusChange(wallet => {
 });
 
 /* Пополнение */
-deposit.onclick = () => modal.style.display = "block";
+deposit.onclick = () => {
+  modal.style.display = "block";
+};
+
+closeModal.onclick = () => {
+  modal.style.display = "none";
+};
+
+window.onclick = (event) => {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+};
 
 pay.onclick = async () => {
-  const amount = parseFloat(amountInput.value || amount.value);
-  if (amount < 0.1) return alert("Минимум 0.1 TON");
+  const amount = parseFloat(amountInput.value);
+  if (!amount || amount < 0.1) {
+    return alert("Минимум 0.1 TON");
+  }
 
   await tonConnectUI.sendTransaction({
     validUntil: Math.floor(Date.now() / 1000) + 600,
