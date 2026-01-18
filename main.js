@@ -1,34 +1,22 @@
 const tg = window.Telegram.WebApp;
 tg.expand();
 
-const API_URL = "https://kosmogift-worker.v-bot-2010.workers.dev";
-
-// Получаем элементы
-const avatar = document.getElementById("avatar");
-const profileAvatar = document.getElementById("profileAvatar");
-const username = document.getElementById("username");
-
-const btnHome = document.getElementById("btnHome");
-const btnProfile = document.getElementById("btnProfile");
-
-const balance = document.getElementById("balance");
-
-const connectWallet = document.getElementById("connectWallet");
-const disconnectWallet = document.getElementById("disconnectWallet");
-const deposit = document.getElementById("deposit");
-
-const modal = document.getElementById("modal");
-const amountInput = document.getElementById("amount");
-const pay = document.getElementById("pay");
-const closeModal = document.getElementById("closeModal");
-
 const user = tg.initDataUnsafe.user || {};
+const userId = user.id;
 
 avatar.src = user.photo_url || "";
 profileAvatar.src = user.photo_url || "";
 username.innerText = user.username || "Telegram User";
 
-/* Навигация */
+const API_URL = "https://kosmogift-worker.v-bot-2010.workers.dev";
+
+async function loadBalance() {
+  const res = await fetch(API_URL + "/balance?user_id=" + userId);
+  const data = await res.json();
+  balance.innerText = (data.balance || 0).toFixed(2) + " TON";
+}
+loadBalance();
+
 btnHome.onclick = () => switchPage("home");
 btnProfile.onclick = () => switchPage("profile");
 
@@ -37,21 +25,8 @@ function switchPage(id) {
   document.getElementById(id).classList.add("active");
 }
 
-/* Получаем баланс */
-async function loadBalance() {
-  try {
-    const res = await fetch(API_URL + "/balance");
-    const data = await res.json();
-    balance.innerText = (data.balance || 0).toFixed(2) + " TON";
-  } catch (e) {
-    balance.innerText = "0.00 TON";
-  }
-}
-loadBalance();
-
-/* TON CONNECT */
 const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-  manifestUrl: "https://kosmogift.pages.dev/tonconnect-manifest.json"
+  manifestUrl: "https://kosmogift.pages.dev//tonconnect-manifest.json"
 });
 
 connectWallet.onclick = async () => {
@@ -72,30 +47,50 @@ tonConnectUI.onStatusChange(wallet => {
   }
 });
 
-/* Пополнение */
-deposit.onclick = () => modal.style.display = "block";
+deposit.onclick = async () => {
+  modal.style.display = "block";
+};
+
 closeModal.onclick = () => modal.style.display = "none";
 
 pay.onclick = async () => {
   const amount = parseFloat(amountInput.value);
-
   if (amount < 0.1) return alert("Минимум 0.1 TON");
 
-  try {
-    const res = await fetch(API_URL + "/deposit", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ amount })
-    });
+  // Создаём платёж в Worker
+  const createRes = await fetch(API_URL + "/create-payment", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ user_id: userId, amount })
+  });
+  const createData = await createRes.json();
 
-    const data = await res.json();
+  if (createData.error) return alert(createData.error);
 
-    if (data.error) return alert("Ошибка API: " + data.error);
+  const paymentId = createData.paymentId;
 
-    balance.innerText = data.balance.toFixed(2) + " TON";
-    modal.style.display = "none";
+  // Отправляем TON транзакцию (TonConnect)
+  const tx = await tonConnectUI.sendTransaction({
+    validUntil: Math.floor(Date.now() / 1000) + 600,
+    messages: [{
+      address: "UQAFXBXzBzau6ZCWzruiVrlTg3HAc8MF6gKIntqTLDifuWOi",
+      amount: (amount * 1e9).toString()
+    }]
+  });
 
-  } catch (e) {
-    alert("Ошибка запроса: " + e.message);
-  }
+  // tx.id — это ID транзакции
+  const txId = tx.id;
+
+  // Проверяем платёж
+  const checkRes = await fetch(API_URL + "/check-payment", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ payment_id: paymentId, tx_id: txId })
+  });
+
+  const checkData = await checkRes.json();
+  if (checkData.error) return alert(checkData.error);
+
+  balance.innerText = checkData.balance.toFixed(2) + " TON";
+  modal.style.display = "none";
 };
