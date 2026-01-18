@@ -35,9 +35,13 @@
   <button id="btnProfile">Профиль</button>
 </div>
 
+<!-- МОДАЛЬНОЕ ОКНО -->
 <div id="modal" class="modal">
-  <input id="amount" type="number" placeholder="Минимум 0.1 TON" step="0.1">
-  <button id="pay">Оплатить</button>
+  <div class="modal-content">
+    <span id="closeModal" class="close">&times;</span>
+    <input id="amount" type="number" placeholder="Минимум 0.1 TON" step="0.1">
+    <button id="pay">Оплатить</button>
+  </div>
 </div>
 
 <script src="main.js"></script>
