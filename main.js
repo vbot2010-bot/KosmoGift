@@ -1,7 +1,3 @@
-function log(text) {
-  document.getElementById("log").innerText = text;
-}
-log("main.js loaded");
 const tg = window.Telegram.WebApp;
 tg.expand();
 
