@@ -56,7 +56,7 @@ deposit.onclick = () => modal.style.display = "block";
 closeModal.onclick = () => modal.style.display = "none";
 
 pay.onclick = async () => {
-  const amount = parseFloat(amountInput.value || amount.value);
+  const amount = parseFloat(document.getElementById("amount").value);
   if (amount < 0.1) return alert("Минимум 0.1 TON");
 
   // Отправляем запрос на API (пополнение)
