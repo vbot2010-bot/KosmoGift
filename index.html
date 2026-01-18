@@ -11,6 +11,7 @@
 </head>
 <body>
 
+<!-- ===================== HOME ===================== -->
 <div id="home" class="page active">
   <div class="top">
     <div class="userBar">
@@ -19,15 +20,16 @@
     </div>
   </div>
 
-  <h2>Кейсы</h2>
-
-  <button id="dailyCaseBtn" class="caseBtn">Открыть Daily Case</button>
-
-  <div id="roulette" class="roulette">
-    <div class="rouletteTrack" id="rouletteTrack"></div>
+  <div class="homeContent">
+    <div class="caseBlock">
+      <h2>Daily Case</h2>
+      <p>Открой ежедневный кейс и получи TON или NFT</p>
+      <button id="openDailyModal" class="openCaseBtn">Открыть кейс</button>
+    </div>
   </div>
 </div>
 
+<!-- ===================== PROFILE ===================== -->
 <div id="profile" class="page">
   <div class="top">
     <div class="userBar">
@@ -53,6 +55,35 @@
   <button id="openInventory">Инвентарь</button>
 </div>
 
+<!-- ===================== CASE PAGE ===================== -->
+<div id="casePage" class="page">
+  <div class="top">
+    <div class="userBar">
+      <img id="caseAvatar" class="avatar">
+      <span id="balanceCase">0.00 TON</span>
+    </div>
+  </div>
+
+  <div class="casePageContent">
+    <h2>Daily Case</h2>
+    <button id="startCase" class="openCaseBtn">Открыть кейс</button>
+
+    <div class="roulette">
+      <div class="rouletteTrack" id="rouletteTrack"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== MODAL FOR SUBSCRIBE ===================== -->
+<div id="dailyModal" class="modal bottomModal">
+  <div class="modalContent bottomContent">
+    <button id="closeDailyModal" class="closeBtn">✕</button>
+    <h3>Для открытия кейса необходимо подписаться на канал</h3>
+    <button id="subscribeBtn" class="openCaseBtn">Подписаться</button>
+  </div>
+</div>
+
+<!-- ===================== INVENTORY ===================== -->
 <div id="inventoryModal" class="modal inventoryModal">
   <div class="inventoryContent">
     <button id="closeInventory" class="closeBtn">✕</button>
@@ -63,6 +94,7 @@
 <div class="nav">
   <button id="btnHome">Главная</button>
   <button id="btnProfile">Профиль</button>
+  <button id="btnCase">Кейс</button>
 </div>
 
 <script src="main.js"></script>
