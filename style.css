@@ -14,7 +14,7 @@ body {
 
 /* Top */
 .top {
-  padding: 40px 20px 0 20px;
+  padding: 70px 20px 0 20px; /* <-- СДЕЛАЛ НИЖЕ */
   display: flex;
   justify-content: flex-end;
 }
@@ -194,8 +194,8 @@ body {
   transform: translateX(0);
 }
 .drop {
-  width: 170px;
-  height: 110px;
+  width: 200px; /* <-- больше */
+  height: 120px; /* <-- больше */
   border-radius: 18px;
   background: #2a3748;
   display: flex;
@@ -236,4 +236,4 @@ body {
   display: flex;
   flex-direction: column;
   gap: 10px;
-}
+  }
