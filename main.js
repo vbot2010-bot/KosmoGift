@@ -138,3 +138,30 @@ pay.onclick = async () => {
     alert("Платёж не подтверждён. Попробуйте позже.");
   }
 };
+// Открытие инвентаря
+openInventory.onclick = () => {
+  inventoryModal.style.display = "flex";
+  loadInventory();
+};
+
+closeInventory.onclick = () => {
+  inventoryModal.style.display = "none";
+};
+
+// Загрузка инвентаря (пока тестовый предмет)
+function loadInventory() {
+  inventoryList.innerHTML = "";
+
+  const item = document.createElement("div");
+  item.className = "inventoryItem";
+
+  item.innerHTML = `
+    <img src="https://cdn-icons-png.flaticon.com/512/190/190411.png" alt="gift">
+    <div>
+      <div>Подарок lol pop (NFT)</div>
+      <div style="font-size:12px; opacity:0.7;">Тестовый предмет</div>
+    </div>
+  `;
+
+  inventoryList.appendChild(item);
+      }
