@@ -4,7 +4,6 @@ tg.expand();
 const user = tg.initDataUnsafe.user || {};
 const userId = user.id;
 
-// Elements
 const avatar = document.getElementById("avatar");
 const profileAvatar = document.getElementById("profileAvatar");
 const username = document.getElementById("username");
@@ -41,8 +40,6 @@ avatar.src = user.photo_url || "";
 profileAvatar.src = user.photo_url || "";
 username.innerText = user.username || "Telegram User";
 
-const API_URL = "https://kosmogift-worker.v-bot-2010.workers.dev";
-
 let balanceValue = 0;
 let inventory = [];
 let subscribed = localStorage.getItem("subscribed") === "true";
@@ -57,6 +54,7 @@ loadLocal();
 
 btnHome.onclick = () => switchPage("home");
 btnProfile.onclick = () => switchPage("profile");
+
 function switchPage(id) {
   document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
   document.getElementById(id).classList.add("active");
@@ -134,6 +132,7 @@ openCaseBtn.onclick = () => {
 
   strip.addEventListener("transitionend", () => {
     strip.style.transition = "none";
+    strip.style.transform = `translateX(${end}px)`;
   }, { once: true });
 
   setTimeout(() => {
@@ -178,6 +177,13 @@ function loadInventory() {
 deposit.onclick = () => modal.style.display = "flex";
 closeModal.onclick = () => modal.style.display = "none";
 
+function saveAll() {
+  localStorage.setItem(`balance:${userId}`, balanceValue);
+  localStorage.setItem(`inventory:${userId}`, JSON.stringify(inventory));
+  balance.innerText = balanceValue.toFixed(2) + " TON";
+  balanceProfile.innerText = balanceValue.toFixed(2) + " TON";
+}
+
 // TON CONNECT
 const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
   manifestUrl: "https://kosmogift.pages.dev//tonconnect-manifest.json"
@@ -200,74 +206,3 @@ tonConnectUI.onStatusChange(wallet => {
     disconnectWallet.style.display = "none";
   }
 });
-
-// PAYMENT
-pay.onclick = async () => {
-  const amount = parseFloat(amountInput.value);
-
-  if (!amount || amount < 0.1) {
-    return alert("Минимум 0.1 TON");
-  }
-
-  const createRes = await fetch(API_URL + "/create-payment", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ user_id: userId, amount })
-  });
-
-  const createData = await createRes.json();
-  if (createData.error) return alert(createData.error);
-
-  const paymentId = createData.paymentId;
-
-  let tx;
-  try {
-    tx = await tonConnectUI.sendTransaction({
-      validUntil: Math.floor(Date.now() / 1000) + 600,
-      messages: [{
-        address: "UQAFXBXzBzau6ZCWzruiVrlTg3HAc8MF6gKIntqTLDifuWOi",
-        amount: (amount * 1e9).toString()
-      }]
-    });
-  } catch (e) {
-    return alert("Оплата отменена или не прошла.");
-  }
-
-  const txId = tx.id;
-  if (!txId) return alert("Не удалось получить txId");
-
-  let attempts = 0;
-  let paid = false;
-
-  while (attempts < 20 && !paid) {
-    attempts++;
-    const checkRes = await fetch(API_URL + "/check-payment", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ payment_id: paymentId, tx_id: txId })
-    });
-    const checkData = await checkRes.json();
-
-    if (!checkData.error) {
-      paid = true;
-      balanceValue = checkData.balance;
-      saveAll();
-      modal.style.display = "none";
-      amountInput.value = "";
-      break;
-    }
-
-    await new Promise(r => setTimeout(r, 3000));
-  }
-
-  if (!paid) {
-    alert("Платёж не подтверждён. Попробуйте позже.");
-  }
-};
-
-function saveAll() {
-  localStorage.setItem(`balance:${userId}`, balanceValue);
-  localStorage.setItem(`inventory:${userId}`, JSON.stringify(inventory));
-  balance.innerText = balanceValue.toFixed(2) + " TON";
-  balanceProfile.innerText = balanceValue.toFixed(2) + " TON";
-}
