@@ -29,12 +29,14 @@
   <button id="disconnectWallet" style="display:none">Отключить кошелёк</button>
   <button id="deposit">Пополнить баланс</button>
 
-  <!-- Модалка пополнения -->
-<div class="modalContent">
-  <button id="closeModal" class="closeBtn">✕</button>
+<!-- Модалка пополнения -->
+<div id="modal" class="modal">
+  <div class="modalContent">
+    <button id="closeModal" class="closeBtn">✕</button>
 
-  <input id="amount" type="number" placeholder="Минимум 0.1 TON" step="0.1">
-  <button id="pay">Оплатить</button>
+    <input id="amount" type="number" placeholder="Минимум 0.1 TON" step="0.1">
+    <button id="pay">Оплатить</button>
+  </div>
 </div>
 
   <button id="openInventory">Инвентарь</button>
