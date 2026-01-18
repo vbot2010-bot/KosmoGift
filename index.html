@@ -28,6 +28,7 @@
   <button id="connectWallet">Подключить кошелёк</button>
   <button id="disconnectWallet" style="display:none">Отключить кошелёк</button>
   <button id="deposit">Пополнить баланс</button>
+<button id="openInventory">Инвентарь</button>
 </div>
 
 <div class="nav">
@@ -41,7 +42,18 @@
   <button id="pay">Оплатить</button>
   <button id="closeModal">Закрыть</button>
 </div>
+<!-- МОДАЛЬНОЕ ОКНО ИНВЕНТАРЯ -->
+<div id="inventoryModal" class="modal">
+  <div class="inventoryHeader">
+    <span>Инвентарь</span>
+    <button id="closeInventory">✖</button>
+  </div>
 
+  <div id="inventoryList" class="inventoryList">
+    <!-- Тут будут предметы -->
+  </div>
+</div>
+  
 <script src="main.js"></script>
 </body>
 </html>
