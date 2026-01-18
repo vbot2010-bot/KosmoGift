@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -13,6 +13,7 @@
 
 <!-- ===================== HOME ===================== -->
 <div id="home" class="page active">
+
   <div class="top">
     <div class="userBar">
       <img id="avatar" class="avatar">
@@ -20,13 +21,16 @@
     </div>
   </div>
 
+  <!-- Блок кейса -->
   <div class="homeContent">
-    <div class="caseBlock">
-      <h2>Daily Case</h2>
-      <p>Открой ежедневный кейс и получи TON или NFT</p>
-      <button id="openDailyModal" class="openCaseBtn">Открыть кейс</button>
+    <div class="caseSquare">
+      <!-- здесь будет иконка позже -->
     </div>
+
+    <div class="caseText">Daily Case</div>
+    <button id="openDaily" class="openCaseBtn">Open Case</button>
   </div>
+
 </div>
 
 <!-- ===================== PROFILE ===================== -->
@@ -55,31 +59,25 @@
   <button id="openInventory">Инвентарь</button>
 </div>
 
-<!-- ===================== CASE PAGE ===================== -->
-<div id="casePage" class="page">
-  <div class="top">
-    <div class="userBar">
-      <img id="caseAvatar" class="avatar">
-      <span id="balanceCase">0.00 TON</span>
-    </div>
+<!-- ===================== MODAL SUBSCRIBE ===================== -->
+<div id="subscribeModal" class="modal">
+  <div class="modalContent subscribeContent">
+    <button id="closeSubscribe" class="closeBtn">✕</button>
+    <h3>To open the case you must subscribe to the channel</h3>
+    <button id="subscribeBtn" class="openCaseBtn">Subscribe</button>
   </div>
+</div>
 
-  <div class="casePageContent">
-    <h2>Daily Case</h2>
-    <button id="startCase" class="openCaseBtn">Открыть кейс</button>
+<!-- ===================== MODAL CASE OPEN ===================== -->
+<div id="caseModal" class="modal bottomModal">
+  <div class="modalContent caseModalContent">
+    <button id="closeCase" class="closeBtn">✕</button>
 
     <div class="roulette">
       <div class="rouletteTrack" id="rouletteTrack"></div>
     </div>
-  </div>
-</div>
 
-<!-- ===================== MODAL FOR SUBSCRIBE ===================== -->
-<div id="dailyModal" class="modal bottomModal">
-  <div class="modalContent bottomContent">
-    <button id="closeDailyModal" class="closeBtn">✕</button>
-    <h3>Для открытия кейса необходимо подписаться на канал</h3>
-    <button id="subscribeBtn" class="openCaseBtn">Подписаться</button>
+    <button id="startCase" class="openCaseBtn">Open Case</button>
   </div>
 </div>
 
@@ -94,7 +92,6 @@
 <div class="nav">
   <button id="btnHome">Главная</button>
   <button id="btnProfile">Профиль</button>
-  <button id="btnCase">Кейс</button>
 </div>
 
 <script src="main.js"></script>
