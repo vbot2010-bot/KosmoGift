@@ -1,4 +1,4 @@
-body {
+  body {
   margin: 0;
   background: #0e1621;
   color: white;
@@ -19,7 +19,7 @@ body {
 /* Верхняя панель        */
 /* ===================== */
 .top {
-  padding: 40px 20px 0 20px; /* ниже */
+  padding: 60px 20px 0 20px; /* СДВИГ ВНИЗ */
   display: flex;
   justify-content: flex-end;
 }
@@ -51,8 +51,8 @@ body {
 /* CASE BOX (маленький)  */
 /* ===================== */
 .caseBox {
-  width: 200px;             /* маленький */
-  height: 200px;            /* квадрат */
+  width: 170px;             /* ещё меньше */
+  height: 170px;            /* квадрат */
   margin: 60px 0 0 20px;    /* слева и ниже */
   padding: 15px;
   background: #1b2635;
@@ -65,7 +65,7 @@ body {
 }
 
 .caseIcon {
-  font-size: 40px;
+  font-size: 28px;          /* иконка ещё меньше */
 }
 
 .caseTitle {
