@@ -199,7 +199,7 @@ tonConnectUI.onStatusChange(wallet => {
 });
 
 // ====== Пополнение ======
-deposit.onclick = () => {
+deposit.onclick = async () => {
   modal.style.display = "flex";
 };
 
@@ -210,36 +210,73 @@ closeModal.onclick = () => {
 // ====== Оплата ======
 pay.onclick = async () => {
   const amount = parseFloat(amountInput.value);
-  if (!amount || amount < 0.1) return alert("Минимум 0.1 TON");
 
-  // Проверяем подключение кошелька
-  const wallet = tonConnectUI.wallet;
-  if (!wallet) {
-    return alert("Подключите кошелек TON Connect!");
+  if (!amount || amount < 0.1) {
+    return alert("Минимум 0.1 TON");
   }
 
-  // Делаем транзакцию TON
+  // 1) Создаём платёж на сервере
+  const createRes = await fetch(API_URL + "/create-payment", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ user_id: userId, amount })
+  });
+
+  const createData = await createRes.json();
+
+  if (createData.error) {
+    return alert(createData.error);
+  }
+
+  const paymentId = createData.paymentId;
+
+  // 2) Оплата через TON Connect
+  let tx;
   try {
-    const tx = await tonConnectUI.sendTransaction({
+    tx = await tonConnectUI.sendTransaction({
       validUntil: Math.floor(Date.now() / 1000) + 600,
       messages: [{
         address: "UQAFXBXzBzau6ZCWzruiVrlTg3HAc8MF6gKIntqTLDifuWOi",
         amount: (amount * 1e9).toString()
       }]
     });
+  } catch (e) {
+    return alert("Оплата отменена или не прошла.");
+  }
 
-    if (!tx || !tx.id) {
-      return alert("Оплата не прошла. Попробуйте снова.");
+  const txId = tx.id;
+  if (!txId) return alert("Не удалось получить txId");
+
+  // 3) Проверяем оплату каждые 3 сек
+  let attempts = 0;
+  let paid = false;
+
+  while (attempts < 20 && !paid) {
+    attempts++;
+
+    const checkRes = await fetch(API_URL + "/check-payment", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ payment_id: paymentId, tx_id: txId })
+    });
+
+    const checkData = await checkRes.json();
+
+    if (!checkData.error) {
+      paid = true;
+
+      // Обновляем баланс на экране
+      balance.innerText = checkData.balance.toFixed(2) + " TON";
+
+      modal.style.display = "none";
+      amountInput.value = "";
+      break;
     }
 
-    // Если транзакция прошла — начисляем
-    balanceValue += amount;
-    saveAll();
+    await new Promise(r => setTimeout(r, 3000));
+  }
 
-    modal.style.display = "none";
-    amountInput.value = "";
-    alert("Оплата прошла успешно!");
-  } catch (e) {
-    alert("Оплата отменена или не прошла.");
+  if (!paid) {
+    alert("Платёж не подтверждён. Попробуйте позже.");
   }
 };
