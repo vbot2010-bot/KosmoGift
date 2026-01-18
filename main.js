@@ -1,13 +1,16 @@
-const tg = window.Telegram.WebApp;
+  const tg = window.Telegram.WebApp;
 tg.expand();
 
 const user = tg.initDataUnsafe.user || {};
 const userId = user.id;
 
+// ====== Элементы ======
 const avatar = document.getElementById("avatar");
 const profileAvatar = document.getElementById("profileAvatar");
 const username = document.getElementById("username");
+
 const balance = document.getElementById("balance");
+const balanceProfile = document.getElementById("balanceProfile");
 
 const btnHome = document.getElementById("btnHome");
 const btnProfile = document.getElementById("btnProfile");
@@ -21,8 +24,12 @@ const amountInput = document.getElementById("amount");
 const pay = document.getElementById("pay");
 const closeModal = document.getElementById("closeModal");
 
-const openDaily = document.getElementById("openDaily");
+const openInventory = document.getElementById("openInventory");
+const inventoryModal = document.getElementById("inventoryModal");
+const inventoryList = document.querySelector(".inventoryList");
+const closeInventory = document.getElementById("closeInventory");
 
+const openDaily = document.getElementById("openDaily");
 const subscribeModal = document.getElementById("subscribeModal");
 const closeSubscribe = document.getElementById("closeSubscribe");
 const subscribeBtn = document.getElementById("subscribeBtn");
@@ -30,30 +37,26 @@ const subscribeBtn = document.getElementById("subscribeBtn");
 const caseModal = document.getElementById("caseModal");
 const closeCase = document.getElementById("closeCase");
 const startCase = document.getElementById("startCase");
-const rouletteTrack = document.getElementById("rouletteTrack");
+const roulette = document.getElementById("roulette");
 
-const inventoryModal = document.getElementById("inventoryModal");
-const openInventory = document.getElementById("openInventory");
-const closeInventory = document.getElementById("closeInventory");
-const inventoryList = document.getElementById("inventoryList");
-
+// ====== Данные пользователя ======
 avatar.src = user.photo_url || "";
 profileAvatar.src = user.photo_url || "";
 username.innerText = user.username || "Telegram User";
 
-const API_URL = "https://kosmogift-worker.v-bot-2010.workers.dev";
+// ====== Баланс и инвентарь сохраняем в localStorage ======
+let balanceValue = parseFloat(localStorage.getItem("balance") || "0");
+let inventory = JSON.parse(localStorage.getItem("inventory") || "[]");
+let subscribed = localStorage.getItem("subscribed") === "true";
 
-// ====== Баланс (теперь хранится в переменной) ======
-let currentBalance = 0;
-
-async function loadBalance() {
-  const res = await fetch(API_URL + "/balance?user_id=" + userId);
-  const data = await res.json();
-  currentBalance = data.balance || 0;
-  balance.innerText = currentBalance.toFixed(2) + " TON";
+function updateUI() {
+  balance.innerText = balanceValue.toFixed(2) + " TON";
+  balanceProfile.innerText = balanceValue.toFixed(2) + " TON";
 }
-loadBalance();
 
+updateUI();
+
+// ====== Навигация ======
 btnHome.onclick = () => switchPage("home");
 btnProfile.onclick = () => switchPage("profile");
 
@@ -62,12 +65,18 @@ function switchPage(id) {
   document.getElementById(id).classList.add("active");
 }
 
+// ====== TON CONNECT (без изменений) ======
 const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
   manifestUrl: "https://kosmogift.pages.dev//tonconnect-manifest.json"
 });
 
-connectWallet.onclick = async () => await tonConnectUI.connectWallet();
-disconnectWallet.onclick = async () => await tonConnectUI.disconnect();
+connectWallet.onclick = async () => {
+  await tonConnectUI.connectWallet();
+};
+
+disconnectWallet.onclick = async () => {
+  await tonConnectUI.disconnect();
+};
 
 tonConnectUI.onStatusChange(wallet => {
   if (wallet) {
@@ -79,69 +88,52 @@ tonConnectUI.onStatusChange(wallet => {
   }
 });
 
+// ====== Пополнение ======
 deposit.onclick = () => modal.style.display = "flex";
 closeModal.onclick = () => modal.style.display = "none";
+modal.addEventListener("click", (e) => {
+  if (e.target === modal) modal.style.display = "none";
+});
 
-pay.onclick = async () => {
+pay.onclick = () => {
   const amount = parseFloat(amountInput.value);
   if (amount < 0.1) return alert("Минимум 0.1 TON");
 
-  const createRes = await fetch(API_URL + "/create-payment", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ user_id: userId, amount })
-  });
-
-  const createData = await createRes.json();
-  if (createData.error) return alert(createData.error);
-
-  const paymentId = createData.paymentId;
-
-  let tx;
-  try {
-    tx = await tonConnectUI.sendTransaction({
-      validUntil: Math.floor(Date.now() / 1000) + 600,
-      messages: [{
-        address: "UQAFXBXzBzau6ZCWzruiVrlTg3HAc8MF6gKIntqTLDifuWOi",
-        amount: (amount * 1e9).toString()
-      }]
-    });
-  } catch {
-    return alert("Оплата отменена или не прошла.");
-  }
-
-  const txId = tx.id;
-  if (!txId) return alert("Не удалось получить txId");
-
-  let attempts = 0;
-  let paid = false;
-
-  while (attempts < 20 && !paid) {
-    attempts++;
-    const checkRes = await fetch(API_URL + "/check-payment", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ payment_id: paymentId, tx_id: txId })
-    });
-    const checkData = await checkRes.json();
-
-    if (!checkData.error) {
-      paid = true;
-      currentBalance = checkData.balance;
-      balance.innerText = currentBalance.toFixed(2) + " TON";
-      modal.style.display = "none";
-      break;
-    }
-
-    await new Promise(r => setTimeout(r, 3000));
-  }
-
-  if (!paid) alert("Платёж не подтверждён. Попробуйте позже.");
+  balanceValue += amount;
+  localStorage.setItem("balance", balanceValue.toString());
+  updateUI();
+  modal.style.display = "none";
+  amountInput.value = "";
 };
 
-// ========== DAILY CASE ==========
-let subscribed = false;
+// ====== Инвентарь ======
+openInventory.onclick = () => {
+  inventoryModal.style.display = "flex";
+  renderInventory();
+};
 
+closeInventory.onclick = () => inventoryModal.style.display = "none";
+inventoryModal.addEventListener("click", (e) => {
+  if (e.target === inventoryModal) inventoryModal.style.display = "none";
+});
+
+function renderInventory() {
+  inventoryList.innerHTML = "";
+  inventory.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "inventoryItem";
+    div.innerHTML = `
+      <img src="${item.img}" alt="${item.name}">
+      <div>
+        <div>${item.name}</div>
+        <div style="font-size:12px; opacity:0.7;">${item.desc}</div>
+      </div>
+    `;
+    inventoryList.appendChild(div);
+  });
+}
+
+// ====== Daily Case: подписка ======
 openDaily.onclick = () => {
   if (!subscribed) {
     subscribeModal.style.display = "flex";
@@ -151,32 +143,37 @@ openDaily.onclick = () => {
 };
 
 closeSubscribe.onclick = () => subscribeModal.style.display = "none";
-
-// Закрытие кликом вне окна (для подписки)
-subscribeModal.onclick = (e) => {
+subscribeModal.addEventListener("click", (e) => {
   if (e.target === subscribeModal) subscribeModal.style.display = "none";
-};
+});
 
-// Подписка (переход в канал)
 subscribeBtn.onclick = () => {
-  tg.openLink("https://t.me/KosmoGiftOfficial");
+  window.open("https://t.me/KosmoGiftOfficial", "_blank");
   subscribed = true;
+  localStorage.setItem("subscribed", "true");
   subscribeModal.style.display = "none";
+  caseModal.style.display = "flex";
 };
 
-// ========== CASE ==========
+// ====== Case Modal ======
+closeCase.onclick = () => caseModal.style.display = "none";
+caseModal.addEventListener("click", (e) => {
+  if (e.target === caseModal) caseModal.style.display = "none";
+});
+
+// ====== Рулетка ======
 const drops = [
-  { name: "0.01 TON", chance: 90 },
-  { name: "0.02 TON", chance: 5 },
-  { name: "0.03 TON", chance: 2.5 },
-  { name: "0.04 TON", chance: 1 },
-  { name: "0.05 TON", chance: 0.75 },
-  { name: "0.06 TON", chance: 0.5 },
-  { name: "0.07 TON", chance: 0.24 },
-  { name: "NFT lol pop", chance: 0.01 }
+  {name:"0.01 TON", chance:90, value:0.01},
+  {name:"0.02 TON", chance:5, value:0.02},
+  {name:"0.03 TON", chance:2.5, value:0.03},
+  {name:"0.04 TON", chance:1, value:0.04},
+  {name:"0.05 TON", chance:0.75, value:0.05},
+  {name:"0.06 TON", chance:0.5, value:0.06},
+  {name:"0.07 TON", chance:0.24, value:0.07},
+  {name:"NFT lol pop", chance:0.01, value:0}
 ];
 
-function randomDrop() {
+function getDrop() {
   const rand = Math.random() * 100;
   let sum = 0;
   for (let d of drops) {
@@ -186,49 +183,57 @@ function randomDrop() {
   return drops[0];
 }
 
-startCase.onclick = () => startRoulette();
-
-function startRoulette() {
-  rouletteTrack.innerHTML = "";
-
-  for (let i = 0; i < 50; i++) {
-    const drop = drops[Math.floor(Math.random() * drops.length)];
+// генерируем рулетку
+function generateRoulette() {
+  roulette.innerHTML = "";
+  for (let i = 0; i < 30; i++) {
+    const d = drops[Math.floor(Math.random() * drops.length)];
     const div = document.createElement("div");
     div.className = "rouletteItem";
-    div.innerText = drop.name;
-    rouletteTrack.appendChild(div);
+    div.innerText = d.name;
+    roulette.appendChild(div);
   }
+}
+generateRoulette();
 
-  const finalDrop = randomDrop();
-  const finalDiv = document.createElement("div");
-  finalDiv.className = "rouletteItem";
-  finalDiv.innerText = finalDrop.name;
-  rouletteTrack.appendChild(finalDiv);
+let isRunning = false;
 
-  const totalWidth = rouletteTrack.scrollWidth;
-  rouletteTrack.style.transition = "transform 5s cubic-bezier(.17,.67,.83,.67)";
-  rouletteTrack.style.transform = `translateX(-${totalWidth - 150}px)`;
+startCase.onclick = async () => {
+  if (isRunning) return;
+  isRunning = true;
+
+  const drop = getDrop();
+
+  // добавляем 30 элементов + итоговый
+  generateRoulette();
+
+  const final = document.createElement("div");
+  final.className = "rouletteItem";
+  final.innerText = drop.name;
+  roulette.appendChild(final);
+
+  const totalHeight = roulette.scrollHeight;
+  const visibleHeight = roulette.clientHeight;
+  const move = totalHeight - visibleHeight / 2 - 30;
+
+  roulette.style.transition = "transform 4s cubic-bezier(.17,.67,.83,.67)";
+  roulette.style.transform = `translateY(-${move}px)`;
 
   setTimeout(() => {
-    if (finalDrop.name.includes("TON")) {
-      const ton = parseFloat(finalDrop.name.replace(" TON", ""));
-      currentBalance += ton; // теперь баланс не сбрасывается
-      balance.innerText = currentBalance.toFixed(2) + " TON";
-      alert("Вы выиграли: " + finalDrop.name);
+    // после остановки
+    if (drop.value > 0) {
+      balanceValue += drop.value;
+      localStorage.setItem("balance", balanceValue.toString());
+      updateUI();
     } else {
-      addToInventory(finalDrop.name);
-      alert("Вы выиграли NFT: " + finalDrop.name);
+      inventory.push({
+        name: "NFT lol pop",
+        desc: "NFT",
+        img: "https://cdn-icons-png.flaticon.com/512/190/190411.png"
+      });
+      localStorage.setItem("inventory", JSON.stringify(inventory));
     }
-  }, 5200);
-}
 
-// ========== INVENTORY ==========
-openInventory.onclick = () => inventoryModal.style.display = "flex";
-closeInventory.onclick = () => inventoryModal.style.display = "none";
-
-function addToInventory(name) {
-  const item = document.createElement("div");
-  item.className = "inventoryItem";
-  item.innerText = name;
-  inventoryList.appendChild(item);
-      }
+    isRunning = false;
+  }, 4200);
+};
