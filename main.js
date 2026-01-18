@@ -22,51 +22,51 @@ const amountInput = document.getElementById("amount");
 const pay = document.getElementById("pay");
 const closeModal = document.getElementById("closeModal");
 
-const openInventory = document.getElementById("openInventory");
-const inventoryModal = document.getElementById("inventoryModal");
-const closeInventory = document.getElementById("closeInventory");
-const inventoryList = document.querySelector(".inventoryList");
-
-// Daily Case
-const openDailyCase = document.getElementById("openDailyCase");
 const subscribeModal = document.getElementById("subscribeModal");
 const subscribeBtn = document.getElementById("subscribeBtn");
+
 const caseModal = document.getElementById("caseModal");
-const strip = document.getElementById("strip");
+const openDaily = document.getElementById("openDaily");
 const openCaseBtn = document.getElementById("openCaseBtn");
+const strip = document.getElementById("strip");
 const resultText = document.getElementById("resultText");
+
+const inventoryModal = document.getElementById("inventoryModal");
+const openInventory = document.getElementById("openInventory");
+const closeInventory = document.getElementById("closeInventory");
+const inventoryList = document.getElementById("inventoryList");
 
 avatar.src = user.photo_url || "";
 profileAvatar.src = user.photo_url || "";
 username.innerText = user.username || "Telegram User";
 
-function loadBalance() {
-  const saved = parseFloat(localStorage.getItem("balance") || "0");
-  balance.innerText = saved.toFixed(2) + " TON";
-  balanceProfile.innerText = saved.toFixed(2) + " TON";
-}
-loadBalance();
+let balanceValue = 0;
+let inventory = [];
+let subscribed = localStorage.getItem("subscribed") === "true";
 
+// load balance
+function loadLocal() {
+  balanceValue = parseFloat(localStorage.getItem(`balance:${userId}`)) || 0;
+  inventory = JSON.parse(localStorage.getItem(`inventory:${userId}`)) || [];
+  balance.innerText = balanceValue.toFixed(2) + " TON";
+  balanceProfile.innerText = balanceValue.toFixed(2) + " TON";
+}
+loadLocal();
+
+// navigation
 btnHome.onclick = () => switchPage("home");
 btnProfile.onclick = () => switchPage("profile");
-
 function switchPage(id) {
   document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
   document.getElementById(id).classList.add("active");
 }
 
+// TON connect (без оплаты пока)
 const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
   manifestUrl: "https://kosmogift.pages.dev//tonconnect-manifest.json"
 });
-
-connectWallet.onclick = async () => {
-  await tonConnectUI.connectWallet();
-};
-
-disconnectWallet.onclick = async () => {
-  await tonConnectUI.disconnect();
-};
-
+connectWallet.onclick = async () => await tonConnectUI.connectWallet();
+disconnectWallet.onclick = async () => await tonConnectUI.disconnect();
 tonConnectUI.onStatusChange(wallet => {
   if (wallet) {
     connectWallet.style.display = "none";
@@ -77,144 +77,64 @@ tonConnectUI.onStatusChange(wallet => {
   }
 });
 
-deposit.onclick = async () => {
-  modal.style.display = "flex";
-};
-
+// payment modal
+deposit.onclick = () => modal.style.display = "flex";
 closeModal.onclick = () => modal.style.display = "none";
 
-pay.onclick = async () => {
+// fake payment (for test)
+pay.onclick = () => {
   const amount = parseFloat(amountInput.value);
   if (amount < 0.1) return alert("Минимум 0.1 TON");
-
-  // Тут твой API
-  const API_URL = "https://kosmogift-worker.v-bot-2010.workers.dev";
-
-  const createRes = await fetch(API_URL + "/create-payment", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ user_id: userId, amount })
-  });
-  const createData = await createRes.json();
-  if (createData.error) return alert(createData.error);
-
-  const paymentId = createData.paymentId;
-
-  let tx;
-  try {
-    tx = await tonConnectUI.sendTransaction({
-      validUntil: Math.floor(Date.now() / 1000) + 600,
-      messages: [{
-        address: "UQAFXBXzBzau6ZCWzruiVrlTg3HAc8MF6gKIntqTLDifuWOi",
-        amount: (amount * 1e9).toString()
-      }]
-    });
-  } catch (e) {
-    return alert("Оплата отменена или не прошла.");
-  }
-
-  const txId = tx.id;
-  if (!txId) return alert("Не удалось получить txId");
-
-  let attempts = 0;
-  let paid = false;
-
-  while (attempts < 20 && !paid) {
-    attempts++;
-
-    const checkRes = await fetch(API_URL + "/check-payment", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ payment_id: paymentId, tx_id: txId })
-    });
-
-    const checkData = await checkRes.json();
-
-    if (!checkData.error) {
-      paid = true;
-      localStorage.setItem("balance", checkData.balance.toFixed(2));
-      loadBalance();
-      modal.style.display = "none";
-      break;
-    }
-
-    await new Promise(r => setTimeout(r, 3000));
-  }
-
-  if (!paid) {
-    alert("Платёж не подтверждён. Попробуйте позже.");
-  }
+  balanceValue += amount;
+  saveAll();
+  modal.style.display = "none";
 };
 
-openInventory.onclick = () => {
-  inventoryModal.style.display = "flex";
-  loadInventory();
-};
-
-closeInventory.onclick = () => inventoryModal.style.display = "none";
-
-function loadInventory() {
-  inventoryList.innerHTML = "";
-  const inv = JSON.parse(localStorage.getItem("inventory") || "[]");
-  inv.forEach(item => {
-    const card = document.createElement("div");
-    card.className = "itemCard";
-    card.innerHTML = `<div class="itemName">${item.name}</div>`;
-    inventoryList.appendChild(card);
-  });
+// save all
+function saveAll() {
+  localStorage.setItem(`balance:${userId}`, balanceValue);
+  localStorage.setItem(`inventory:${userId}`, JSON.stringify(inventory));
+  balance.innerText = balanceValue.toFixed(2) + " TON";
+  balanceProfile.innerText = balanceValue.toFixed(2) + " TON";
 }
 
-// =====================
-// DAILY CASE
-// =====================
-
-openDailyCase.onclick = () => {
-  if (!localStorage.getItem("subscribed")) {
+// subscription modal
+openDaily.onclick = () => {
+  if (!subscribed) {
     subscribeModal.style.display = "flex";
-    return;
+  } else {
+    caseModal.style.display = "flex";
   }
-  caseModal.style.display = "flex";
-};
-
-subscribeModal.onclick = (e) => {
-  if (e.target === subscribeModal) subscribeModal.style.display = "none";
-};
-
-caseModal.onclick = (e) => {
-  if (e.target === caseModal) caseModal.style.display = "none";
 };
 
 subscribeBtn.onclick = () => {
-  window.open("https://t.me/KosmoGiftOfficial", "_blank");
+  tg.openLink("https://t.me/KosmoGiftOfficial");
+  subscribed = true;
   localStorage.setItem("subscribed", "true");
   subscribeModal.style.display = "none";
   caseModal.style.display = "flex";
 };
 
-const prizes = [
-  { name: "0.01 TON", chance: 90, value: 0.01 },
-  { name: "0.02 TON", chance: 5, value: 0.02 },
-  { name: "0.03 TON", chance: 2.5, value: 0.03 },
-  { name: "0.04 TON", chance: 1, value: 0.04 },
-  { name: "0.05 TON", chance: 0.75, value: 0.05 },
-  { name: "0.06 TON", chance: 0.5, value: 0.06 },
-  { name: "0.07 TON", chance: 0.24, value: 0.07 },
-  { name: "NFT lol pop", chance: 0.01, value: 0, nft: true }
-];
+// close subscribe by click outside
+subscribeModal.onclick = (e) => {
+  if (e.target === subscribeModal) subscribeModal.style.display = "none";
+};
 
-function choosePrize() {
-  const rnd = Math.random() * 100;
-  let sum = 0;
-  for (let p of prizes) {
-    sum += p.chance;
-    if (rnd <= sum) return p;
-  }
-  return prizes[0];
-}
+// case modal
+const prizes = [
+  { name: "0.01 TON", value: 0.01 },
+  { name: "0.02 TON", value: 0.02 },
+  { name: "0.03 TON", value: 0.03 },
+  { name: "0.04 TON", value: 0.04 },
+  { name: "0.05 TON", value: 0.05 },
+  { name: "0.06 TON", value: 0.06 },
+  { name: "0.07 TON", value: 0.07 },
+  { name: "NFT lol pop", nft: true }
+];
 
 function buildStrip() {
   strip.innerHTML = "";
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 6; i++) {
     for (let p of prizes) {
       const div = document.createElement("div");
       div.className = "drop";
@@ -225,46 +145,72 @@ function buildStrip() {
 }
 buildStrip();
 
+function choosePrize() {
+  const rnd = Math.random() * 100;
+  if (rnd < 90) return prizes[0];
+  if (rnd < 95) return prizes[1];
+  if (rnd < 97.5) return prizes[2];
+  if (rnd < 98.5) return prizes[3];
+  if (rnd < 99.25) return prizes[4];
+  if (rnd < 99.75) return prizes[5];
+  if (rnd < 99.99) return prizes[6];
+  return prizes[7];
+}
+
 openCaseBtn.onclick = () => {
   openCaseBtn.disabled = true;
 
   const prize = choosePrize();
   const targetIndex = prizes.findIndex(p => p.name === prize.name);
 
-  // вычитаем как далеко до середины полосы
-  const itemWidth = 160 + 20;
-  const targetOffset = targetIndex * itemWidth;
+  const itemWidth = 170 + 18;
+  const totalItems = prizes.length * 6;
+  const targetPos = (totalItems / 2 + targetIndex) * itemWidth;
+  const end = -targetPos;
 
-  // стартовая позиция
-  const start = 0;
-  const spins = 5;
-  const end = -(spins * strip.scrollWidth + targetOffset);
-
-  strip.style.transition = "transform 6s cubic-bezier(0.2, 0.8, 0.2, 1)";
+  strip.style.transition = "transform 5s cubic-bezier(0.2, 0.8, 0.2, 1)";
   strip.style.transform = `translateX(${end}px)`;
+
+  strip.addEventListener("transitionend", () => {
+    strip.style.transition = "none";
+  }, { once: true });
 
   setTimeout(() => {
     resultText.innerText = "Выпало: " + prize.name;
 
     if (prize.nft) {
-      addToInventory(prize.name);
+      inventory.push({ name: prize.name });
+      saveAll();
     } else {
-      addBalance(prize.value);
+      balanceValue += prize.value;
+      saveAll();
     }
 
     openCaseBtn.disabled = false;
-  }, 6000);
+  }, 5000);
 };
 
-function addBalance(value) {
-  let current = parseFloat(localStorage.getItem("balance") || "0");
-  current += value;
-  localStorage.setItem("balance", current.toFixed(2));
-  loadBalance();
-}
+caseModal.onclick = (e) => {
+  if (e.target === caseModal) caseModal.style.display = "none";
+};
 
-function addToInventory(itemName) {
-  let inv = JSON.parse(localStorage.getItem("inventory") || "[]");
-  inv.push({ name: itemName, date: Date.now() });
-  localStorage.setItem("inventory", JSON.stringify(inv));
-    }
+// inventory
+openInventory.onclick = () => {
+  inventoryModal.style.display = "flex";
+  loadInventory();
+};
+closeInventory.onclick = () => inventoryModal.style.display = "none";
+
+function loadInventory() {
+  inventoryList.innerHTML = "";
+  if (inventory.length === 0) {
+    inventoryList.innerHTML = "<div>Инвентарь пуст</div>";
+    return;
+  }
+  inventory.forEach(i => {
+    const div = document.createElement("div");
+    div.className = "itemCard";
+    div.innerHTML = `<div>${i.name}</div>`;
+    inventoryList.appendChild(div);
+  });
+}
