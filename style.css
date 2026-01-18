@@ -5,9 +5,6 @@
   font-family: Arial, sans-serif;
 }
 
-/* ===================== */
-/* Страницы              */
-/* ===================== */
 .page {
   display: none;
 }
@@ -15,22 +12,18 @@
   display: block;
 }
 
-/* ===================== */
-/* Верхняя панель        */
-/* ===================== */
+/* Верх */
 .top {
-  padding: 60px 20px 0 20px; /* СДВИГ ВНИЗ */
+  padding: 60px 20px 0 20px;
   display: flex;
   justify-content: flex-end;
 }
-
 .avatar {
   width: 32px;
   height: 32px;
   border-radius: 50%;
   margin-right: 8px;
 }
-
 .userBar {
   display: flex;
   align-items: center;
@@ -40,20 +33,13 @@
   border-radius: 20px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.4);
 }
+#balance { font-size: 14px; font-weight: bold; color: #6cf; }
 
-#balance {
-  font-size: 14px;
-  font-weight: bold;
-  color: #6cf;
-}
-
-/* ===================== */
-/* CASE BOX (маленький)  */
-/* ===================== */
+/* CASE BOX */
 .caseBox {
-  width: 170px;             /* ещё меньше */
-  height: 170px;            /* квадрат */
-  margin: 60px 0 0 20px;    /* слева и ниже */
+  width: 170px;
+  height: 170px;
+  margin: 60px 0 0 20px;
   padding: 15px;
   background: #1b2635;
   border-radius: 20px;
@@ -63,15 +49,8 @@
   justify-content: center;
   gap: 10px;
 }
-
-.caseIcon {
-  font-size: 28px;          /* иконка ещё меньше */
-}
-
-.caseTitle {
-  font-size: 18px;
-}
-
+.caseIcon { font-size: 28px; }
+.caseTitle { font-size: 18px; }
 .caseBtn {
   padding: 10px 15px;
   border: none;
@@ -82,9 +61,7 @@
   cursor: pointer;
 }
 
-/* ===================== */
-/* Навигация             */
-/* ===================== */
+/* Навигация */
 .nav {
   position: fixed;
   bottom: 0;
@@ -92,15 +69,12 @@
   display: flex;
   z-index: 10;
 }
-
 .nav button {
   flex: 1;
   padding: 15px;
 }
 
-/* ===================== */
-/* Модалки               */
-/* ===================== */
+/* Модалки */
 .modal {
   display: none;
   position: fixed;
@@ -113,8 +87,6 @@
   align-items: flex-end;
   z-index: 1000;
 }
-
-/* крестик */
 .closeBtn {
   background: transparent;
   border: none;
@@ -125,8 +97,6 @@
   left: 15px;
   cursor: pointer;
 }
-
-/* pop-up */
 .modalContent {
   width: 100%;
   max-width: 400px;
@@ -137,7 +107,20 @@
   position: relative;
 }
 
-/* CASE MODAL */
+/* Большая кнопка подписаться */
+.bigBtn {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 15px;
+  background: #6cf;
+  color: #000;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* Case Modal */
 .caseModalContent {
   width: 100%;
   height: 75vh;
@@ -155,20 +138,13 @@
   gap: 10px;
 }
 
-.arrow {
-  width: 0;
-  height: 0;
-  border-left: 12px solid transparent;
-  border-right: 12px solid transparent;
-  border-bottom: 18px solid #000;
+.caseArrow {
+  width: 4px;
+  height: 60px;
+  background: #000;
 }
 
-.caseTitleSmall {
-  font-size: 18px;
-  font-weight: bold;
-}
-
-/* roulette */
+/* Рулетка справа-налево */
 .roulette {
   margin-top: 20px;
   height: 120px;
@@ -176,24 +152,41 @@
   border-radius: 20px;
   overflow: hidden;
   position: relative;
+  display: flex;
+  flex-direction: row; /* horizontal */
+  align-items: center;
+}
+
+.rouletteTrack {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
 .rouletteItem {
-  height: 60px;
+  width: 150px;
+  height: 120px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 6px;
   font-weight: bold;
   font-size: 16px;
 }
 
-/* drop info */
+.rouletteItem img {
+  width: 40px;
+  height: 40px;
+}
+
+/* Drop info */
 .dropInfo {
   margin-top: 20px;
   font-size: 14px;
 }
 
-/* inventory */
+/* Inventory */
 .inventoryContent {
   width: 90%;
   max-width: 600px;
@@ -205,13 +198,11 @@
   position: relative;
   overflow-y: auto;
 }
-
 .inventoryList {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
-
 .inventoryItem {
   background: #000;
   border-radius: 15px;
@@ -220,9 +211,8 @@
   gap: 10px;
   align-items: center;
 }
-
 .inventoryItem img {
   width: 50px;
   height: 50px;
   border-radius: 10px;
-}
+  }
