@@ -135,3 +135,26 @@ body {
   font-size: 16px;
   font-weight: bold;
 }
+/* Блок пользователя сверху */
+.top {
+  padding: 20px 20px 0 20px; /* ниже от верхнего края */
+  justify-content: flex-start;
+}
+
+/* Плашка с аватаром и балансом */
+.userBar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #1b2635;       /* другой цвет */
+  padding: 10px 14px;
+  border-radius: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+}
+
+/* Баланс */
+#balance {
+  font-size: 14px;
+  font-weight: bold;
+  color: #6cf;
+}
