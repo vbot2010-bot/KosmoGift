@@ -7,6 +7,7 @@ const userId = user.id;
 const avatar = document.getElementById("avatar");
 const profileAvatar = document.getElementById("profileAvatar");
 const username = document.getElementById("username");
+
 const balance = document.getElementById("balance");
 const balanceProfile = document.getElementById("balanceProfile");
 
@@ -40,25 +41,69 @@ avatar.src = user.photo_url || "";
 profileAvatar.src = user.photo_url || "";
 username.innerText = user.username || "Telegram User";
 
-let balanceValue = 0;
-let inventory = [];
-let subscribed = localStorage.getItem("subscribed") === "true";
+const API_URL = "https://kosmogift-worker.v-bot-2010.workers.dev";
 
-function loadLocal() {
-  balanceValue = parseFloat(localStorage.getItem(`balance:${userId}`)) || 0;
-  inventory = JSON.parse(localStorage.getItem(`inventory:${userId}`)) || [];
-  balance.innerText = balanceValue.toFixed(2) + " TON";
-  balanceProfile.innerText = balanceValue.toFixed(2) + " TON";
+// ===================
+// BALANCE (API)
+// ===================
+async function loadBalance() {
+  const res = await fetch(API_URL + "/balance?user_id=" + userId);
+  const data = await res.json();
+  const b = data.balance || 0;
+
+  balance.innerText = b.toFixed(2) + " TON";
+  balanceProfile.innerText = b.toFixed(2) + " TON";
 }
-loadLocal();
+loadBalance();
 
+// ===================
+// NAV
+// ===================
 btnHome.onclick = () => switchPage("home");
 btnProfile.onclick = () => switchPage("profile");
+
 function switchPage(id) {
   document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
   document.getElementById(id).classList.add("active");
 }
 
+// ===================
+// TON CONNECT
+// ===================
+const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+  manifestUrl: "https://kosmogift.pages.dev//tonconnect-manifest.json"
+});
+
+connectWallet.onclick = async () => {
+  await tonConnectUI.connectWallet();
+};
+
+disconnectWallet.onclick = async () => {
+  await tonConnectUI.disconnect();
+};
+
+tonConnectUI.onStatusChange(wallet => {
+  if (wallet) {
+    connectWallet.style.display = "none";
+    disconnectWallet.style.display = "block";
+  } else {
+    connectWallet.style.display = "block";
+    disconnectWallet.style.display = "none";
+  }
+});
+
+// ===================
+// INVENTORY (localStorage)
+// ===================
+let inventory = JSON.parse(localStorage.getItem(`inventory:${userId}`)) || [];
+
+function saveInventory() {
+  localStorage.setItem(`inventory:${userId}`, JSON.stringify(inventory));
+}
+
+// ===================
+// CASES
+// ===================
 const prizes = [
   { name: "0.01 TON", value: 0.01 },
   { name: "0.02 TON", value: 0.02 },
@@ -95,6 +140,11 @@ function choosePrize() {
   return prizes[7];
 }
 
+// ===================
+// SUBSCRIBE + CASE MODAL
+// ===================
+let subscribed = localStorage.getItem("subscribed") === "true";
+
 openDaily.onclick = () => {
   if (!subscribed) {
     subscribeModal.style.display = "flex";
@@ -115,7 +165,11 @@ subscribeModal.onclick = (e) => {
   if (e.target === subscribeModal) subscribeModal.style.display = "none";
 };
 
-openCaseBtn.onclick = () => {
+caseModal.onclick = (e) => {
+  if (e.target === caseModal) caseModal.style.display = "none";
+};
+
+openCaseBtn.onclick = async () => {
   openCaseBtn.disabled = true;
 
   const prize = choosePrize();
@@ -129,33 +183,36 @@ openCaseBtn.onclick = () => {
   strip.style.transition = "transform 5s cubic-bezier(0.2, 0.8, 0.2, 1)";
   strip.style.transform = `translateX(${end}px)`;
 
-  strip.addEventListener("transitionend", () => {
+  strip.addEventListener("transitionend", async () => {
     strip.style.transition = "none";
-  }, { once: true });
 
-  setTimeout(() => {
     resultText.innerText = "Выпало: " + prize.name;
 
     if (prize.nft) {
-      inventory.push({ name: prize.name });
-      saveAll();
+      inventory.push(prize.name);
+      saveInventory();
     } else {
-      balanceValue += prize.value;
-      saveAll();
+      await fetch(API_URL + "/add-balance", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: userId, amount: prize.value })
+      });
+
+      await loadBalance();
     }
 
     openCaseBtn.disabled = false;
-  }, 5000);
+  }, { once: true });
 };
 
-caseModal.onclick = (e) => {
-  if (e.target === caseModal) caseModal.style.display = "none";
-};
-
+// ===================
+// INVENTORY MODAL
+// ===================
 openInventory.onclick = () => {
   inventoryModal.style.display = "flex";
   loadInventory();
 };
+
 closeInventory.onclick = () => inventoryModal.style.display = "none";
 
 function loadInventory() {
@@ -167,47 +224,17 @@ function loadInventory() {
   inventory.forEach(i => {
     const div = document.createElement("div");
     div.className = "itemCard";
-    div.innerHTML = `<div>${i.name}</div>`;
+    div.innerHTML = `<div>${i}</div>`;
     inventoryList.appendChild(div);
   });
 }
 
+// ===================
+// DEPOSIT
+// ===================
 deposit.onclick = () => modal.style.display = "flex";
 closeModal.onclick = () => modal.style.display = "none";
 
-// ====== TON CONNECT ======
-const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-  manifestUrl: "https://kosmogift.pages.dev//tonconnect-manifest.json"
-});
-
-connectWallet.onclick = async () => {
-  await tonConnectUI.connectWallet();
-};
-
-disconnectWallet.onclick = async () => {
-  await tonConnectUI.disconnect();
-};
-
-tonConnectUI.onStatusChange(wallet => {
-  if (wallet) {
-    connectWallet.style.display = "none";
-    disconnectWallet.style.display = "block";
-  } else {
-    connectWallet.style.display = "block";
-    disconnectWallet.style.display = "none";
-  }
-});
-
-// ====== Пополнение ======
-deposit.onclick = async () => {
-  modal.style.display = "flex";
-};
-
-closeModal.onclick = () => {
-  modal.style.display = "none";
-};
-
-// ====== Оплата ======
 pay.onclick = async () => {
   const amount = parseFloat(amountInput.value);
 
@@ -215,7 +242,7 @@ pay.onclick = async () => {
     return alert("Минимум 0.1 TON");
   }
 
-  // 1) Создаём платёж на сервере
+  // create payment
   const createRes = await fetch(API_URL + "/create-payment", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -223,14 +250,11 @@ pay.onclick = async () => {
   });
 
   const createData = await createRes.json();
-
-  if (createData.error) {
-    return alert(createData.error);
-  }
+  if (createData.error) return alert(createData.error);
 
   const paymentId = createData.paymentId;
 
-  // 2) Оплата через TON Connect
+  // TON Connect pay
   let tx;
   try {
     tx = await tonConnectUI.sendTransaction({
@@ -247,7 +271,7 @@ pay.onclick = async () => {
   const txId = tx.id;
   if (!txId) return alert("Не удалось получить txId");
 
-  // 3) Проверяем оплату каждые 3 сек
+  // polling
   let attempts = 0;
   let paid = false;
 
@@ -264,10 +288,7 @@ pay.onclick = async () => {
 
     if (!checkData.error) {
       paid = true;
-
-      // Обновляем баланс на экране
-      balance.innerText = checkData.balance.toFixed(2) + " TON";
-
+      await loadBalance();
       modal.style.display = "none";
       amountInput.value = "";
       break;
