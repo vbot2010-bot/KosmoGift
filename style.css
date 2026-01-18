@@ -27,9 +27,8 @@ body {
 }
 
 /* Страницы */
-.page {
-  display: none;
-  padding: 20px;
+#home {
+  padding-top: 60px; /* опускаем "Кейсы" ниже */
 }
 
 .page.active {
@@ -135,18 +134,19 @@ body {
   font-size: 16px;
   font-weight: bold;
 }
-/* Блок пользователя сверху */
+/* Верхняя зона */
 .top {
-  padding: 20px 20px 0 20px; /* ниже от верхнего края */
-  justify-content: flex-start;
+  padding: 30px 20px 0 20px;   /* ниже от верха */
+  display: flex;
+  justify-content: flex-end; /* ВПРАВО */
 }
 
-/* Плашка с аватаром и балансом */
+/* Плашка пользователя */
 .userBar {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #1b2635;       /* другой цвет */
+  background: #1b2635;
   padding: 10px 14px;
   border-radius: 20px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.4);
