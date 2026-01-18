@@ -151,7 +151,7 @@ function randomDrop() {
 
 dailyCaseBtn.onclick = () => {
   // Сначала отправляем в канал
-  tg.openLink("https://t.me/YOUR_CHANNEL_LINK");
+  tg.openLink("https://t.me/KosmoGiftOfficial");
 
   // Запускаем анимацию
   startRoulette();
