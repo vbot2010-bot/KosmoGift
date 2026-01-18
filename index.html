@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+    <!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -11,9 +11,8 @@
 </head>
 <body>
 
-<!-- ===================== HOME ===================== -->
+<!-- HOME -->
 <div id="home" class="page active">
-
   <div class="top">
     <div class="userBar">
       <img id="avatar" class="avatar">
@@ -21,19 +20,15 @@
     </div>
   </div>
 
-  <!-- Блок кейса -->
-  <div class="homeContent">
-    <div class="caseSquare">
-      <!-- здесь будет иконка позже -->
-    </div>
-
-    <div class="caseText">Daily Case</div>
-    <button id="openDaily" class="openCaseBtn">Open Case</button>
+  <!-- CASE BOX -->
+  <div class="caseBox">
+    <div class="caseIcon">🎁</div>
+    <div class="caseTitle">Daily Case</div>
+    <button id="openDaily" class="caseBtn">Open Case</button>
   </div>
-
 </div>
 
-<!-- ===================== PROFILE ===================== -->
+<!-- PROFILE -->
 <div id="profile" class="page">
   <div class="top">
     <div class="userBar">
@@ -48,6 +43,7 @@
   <button id="disconnectWallet" style="display:none">Отключить кошелёк</button>
   <button id="deposit">Пополнить баланс</button>
 
+  <!-- Модалка пополнения -->
   <div id="modal" class="modal">
     <div class="modalContent">
       <button id="closeModal" class="closeBtn">✕</button>
@@ -59,36 +55,47 @@
   <button id="openInventory">Инвентарь</button>
 </div>
 
-<!-- ===================== MODAL SUBSCRIBE ===================== -->
+<!-- SUBSCRIBE MODAL -->
 <div id="subscribeModal" class="modal">
-  <div class="modalContent subscribeContent">
+  <div class="modalContent">
     <button id="closeSubscribe" class="closeBtn">✕</button>
-    <h3>To open the case you must subscribe to the channel</h3>
-    <button id="subscribeBtn" class="openCaseBtn">Subscribe</button>
+    <h3>Чтобы открыть кейс — подпишись на канал</h3>
+    <button id="subscribeBtn">Подписаться</button>
   </div>
 </div>
 
-<!-- ===================== MODAL CASE OPEN ===================== -->
-<div id="caseModal" class="modal bottomModal">
-  <div class="modalContent caseModalContent">
+<!-- CASE OPEN MODAL -->
+<div id="caseModal" class="modal">
+  <div class="caseModalContent">
     <button id="closeCase" class="closeBtn">✕</button>
 
-    <div class="roulette">
-      <div class="rouletteTrack" id="rouletteTrack"></div>
+    <div class="caseHeader">
+      <div class="arrow"></div>
+      <div class="caseTitleSmall">Daily Case</div>
     </div>
 
-    <button id="startCase" class="openCaseBtn">Open Case</button>
+    <div class="roulette" id="roulette">
+      <!-- элементы рулетки будут генерироваться JS -->
+    </div>
+
+    <button id="startCase" class="caseBtn">Открыть кейс</button>
+
+    <div class="dropInfo">
+      <div>Дропы:</div>
+      <div>0.01 TON / 0.02 TON / 0.03 TON / 0.04 TON / 0.05 TON / 0.06 TON / 0.07 TON / NFT lol pop</div>
+    </div>
   </div>
 </div>
 
-<!-- ===================== INVENTORY ===================== -->
+<!-- INVENTORY MODAL -->
 <div id="inventoryModal" class="modal inventoryModal">
   <div class="inventoryContent">
     <button id="closeInventory" class="closeBtn">✕</button>
-    <div class="inventoryList" id="inventoryList"></div>
+    <div class="inventoryList"></div>
   </div>
 </div>
 
+<!-- NAV -->
 <div class="nav">
   <button id="btnHome">Главная</button>
   <button id="btnProfile">Профиль</button>
@@ -96,4 +103,4 @@
 
 <script src="main.js"></script>
 </body>
-</html>
+      </html>
