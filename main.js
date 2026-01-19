@@ -205,9 +205,45 @@ document.addEventListener("DOMContentLoaded", () => {
         : `Вы выиграли NFT "${prize.value}"`;
 
       // TON -> только кнопка забрать
-      rewardBtnTon.style.display = prize.type === "ton" ? "block" : "none";
-      rewardBtnSell.style.display = "none";
-      rewardBtnInv.style.display = "none";
+      rewardBtnTon.onclick = async () => {
+  try {
+    rewardBtnTon.disabled = true;
+    rewardBtnTon.innerText = "Зачисление...";
+
+    const res = await fetch(`${API}/add-balance`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        user: userId,
+        amount: Number(prize.value) // важно: именно Number
+      })
+    });
+
+    const data = await res.json();
+
+    if (!data.ok) {
+      alert("Ошибка сервера: " + (data.error || "unknown"));
+      rewardBtnTon.disabled = false;
+      rewardBtnTon.innerText = "Получить TON";
+      return;
+    }
+
+    // обновляем баланс на экране
+    updateBalance();
+
+    rewardModal.style.display = "none";
+    caseModal.style.display = "none";
+
+    rewardBtnTon.disabled = false;
+    rewardBtnTon.innerText = "Получить TON";
+
+    alert("TON зачислены успешно!");
+  } catch (e) {
+    alert("Ошибка запроса: " + e.message);
+    rewardBtnTon.disabled = false;
+    rewardBtnTon.innerText = "Получить TON";
+  }
+};
 
       // NFT -> кнопки продать/в инвентарь
       if (prize.type === "nft") {
