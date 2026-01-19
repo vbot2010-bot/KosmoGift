@@ -154,20 +154,22 @@ document.addEventListener("DOMContentLoaded", () => {
     caseModal.style.display = "flex";
     resultText.innerText = "Нажми «Открыть кейс»";
 
-    buildStrip(prizes);
+    buildStrip();
   };
 
   closeCase.onclick = () => caseModal.style.display = "none";
 
-  function buildStrip(prizes) {
+  function buildStrip() {
     strip.innerHTML = "";
     const list = [...prizes, ...prizes, ...prizes];
     list.forEach(p => {
       const div = document.createElement("div");
       div.className = "drop";
-      div.innerText = `${p.name}`;
+      div.innerText = p.name;
       strip.appendChild(div);
     });
+    strip.style.transform = "translateX(0)";
+    strip.style.transition = "none";
   }
 
   openCaseBtn.onclick = async () => {
@@ -187,7 +189,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const dropWidth = drops[0].offsetWidth + 18;
     const visibleCenter = strip.parentElement.offsetWidth / 2;
 
-    const targetX = -((total + winIndex) * dropWidth) + visibleCenter - dropWidth / 2;
+    const targetX = -((total * 2 + winIndex) * dropWidth) + visibleCenter - dropWidth / 2;
 
     strip.style.transition = "transform 4s cubic-bezier(.25,.8,.25,1)";
     strip.style.transform = `translateX(${targetX}px)`;
