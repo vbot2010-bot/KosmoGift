@@ -3,18 +3,31 @@ document.addEventListener("DOMContentLoaded", async () => {
   tg.expand();
 
   const user = tg.initDataUnsafe.user;
-  if (!user) {
-    alert("Открой через Telegram");
-    return;
-  }
+  if (!user) return alert("Открой через Telegram");
 
   const userId = String(user.id);
   const API = "https://kosmogift-worker.v-bot-2010.workers.dev";
 
-  /* ========= ELEMENTS ========= */
+  // Elements
   const balanceEl = document.getElementById("balance");
   const balanceProfile = document.getElementById("balanceProfile");
+
+  const btnHome = document.getElementById("btnHome");
+  const btnProfile = document.getElementById("btnProfile");
+
+  const connectWallet = document.getElementById("connectWallet");
+  const disconnectWallet = document.getElementById("disconnectWallet");
+  const deposit = document.getElementById("deposit");
+
+  const openInventory = document.getElementById("openInventory");
+  const inventoryModal = document.getElementById("inventoryModal");
+  const inventoryList = document.getElementById("inventoryList");
+  const closeInventory = document.getElementById("closeInventory");
+
   const openDaily = document.getElementById("openDaily");
+  const subscribeModal = document.getElementById("subscribeModal");
+  const subscribeBtn = document.getElementById("subscribeBtn");
+
   const caseModal = document.getElementById("caseModal");
   const closeCase = document.getElementById("closeCase");
   const openCaseBtn = document.getElementById("openCaseBtn");
@@ -23,29 +36,99 @@ document.addEventListener("DOMContentLoaded", async () => {
   const rewardModal = document.getElementById("rewardModal");
   const rewardText = document.getElementById("rewardText");
   const rewardBtnTon = document.getElementById("rewardBtnTon");
-  const rewardBtnInv = document.getElementById("rewardBtnInv");
   const rewardBtnSell = document.getElementById("rewardBtnSell");
+  const rewardBtnInv = document.getElementById("rewardBtnInv");
 
-  const openInventory = document.getElementById("openInventory");
-  const inventoryModal = document.getElementById("inventoryModal");
-  const inventoryList = document.getElementById("inventoryList");
-  const closeInventory = document.getElementById("closeInventory");
-
-  /* ========= AVATAR ========= */
+  // Avatar
   document.getElementById("avatar").src = user.photo_url || "";
   document.getElementById("profileAvatar").src = user.photo_url || "";
   document.getElementById("username").innerText = user.username || "User";
 
-  /* ========= BALANCE ========= */
+  // Navigation
+  btnHome.onclick = () => switchPage("home");
+  btnProfile.onclick = () => switchPage("profile");
+
+  function switchPage(id) {
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+  }
+
+  // TON CONNECT
+  const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+    manifestUrl: "https://kosmogift.pages.dev/tonconnect-manifest.json"
+  });
+
+  connectWallet.onclick = async () => {
+    await tonConnectUI.connectWallet();
+  };
+
+  disconnectWallet.onclick = async () => {
+    await tonConnectUI.disconnect();
+  };
+
+  tonConnectUI.onStatusChange(wallet => {
+    connectWallet.style.display = wallet ? "none" : "block";
+    disconnectWallet.style.display = wallet ? "block" : "none";
+  });
+
+  // Balance update
   async function updateBalance() {
-    const r = await fetch(`${API}/balance?user=${userId}`);
-    const d = await r.json();
-    balanceEl.innerText = d.balance.toFixed(2) + " TON";
-    balanceProfile.innerText = d.balance.toFixed(2) + " TON";
+    const res = await fetch(`${API}/balance?user=${userId}`);
+    const data = await res.json();
+    balanceEl.innerText = data.balance.toFixed(2) + " TON";
+    balanceProfile.innerText = data.balance.toFixed(2) + " TON";
   }
   await updateBalance();
 
-  /* ========= CASE LOGIC ========= */
+  // Inventory
+  openInventory.onclick = async () => {
+    const r = await fetch(`${API}/inventory?user=${userId}`);
+    const inv = await r.json();
+
+    inventoryList.innerHTML = "";
+    inv.forEach((item, idx) => {
+      const card = document.createElement("div");
+      card.className = "itemCard";
+      card.innerHTML = `
+        <div>${item.name}</div>
+        <div>Цена: ${item.price} TON</div>
+        <button data-index="${idx}" class="sellBtn">Продать</button>
+      `;
+      inventoryList.appendChild(card);
+    });
+
+    document.querySelectorAll(".sellBtn").forEach(btn => {
+      btn.onclick = async () => {
+        const idx = btn.dataset.index;
+        await fetch(`${API}/sell-nft`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user: userId, index: idx })
+        });
+        await updateBalance();
+        openInventory.click();
+      };
+    });
+
+    inventoryModal.style.display = "flex";
+  };
+
+  closeInventory.onclick = () => inventoryModal.style.display = "none";
+
+  // Subscribe modal (required)
+  openDaily.onclick = () => {
+    subscribeModal.style.display = "flex";
+  };
+
+  subscribeBtn.onclick = () => {
+    window.open("https://t.me/KosmoGiftOfficial", "_blank");
+  };
+
+  subscribeModal.onclick = (e) => {
+    if (e.target === subscribeModal) subscribeModal.style.display = "none";
+  };
+
+  // Case
   const prizes = [
     { type: "ton", value: 0.01, chance: 85 },
     { type: "ton", value: 0.02, chance: 10 },
@@ -63,30 +146,27 @@ document.addEventListener("DOMContentLoaded", async () => {
     return prizes[0];
   }
 
-  /* ========= OPEN CASE ========= */
-  openDaily.onclick = () => {
+  // after user clicked subscribe
+  subscribeBtn.addEventListener("click", () => {
+    subscribeModal.style.display = "none";
     caseModal.style.display = "flex";
-  };
+  });
 
-  closeCase.onclick = () => {
-    caseModal.style.display = "none";
-  };
+  closeCase.onclick = () => caseModal.style.display = "none";
 
   openCaseBtn.onclick = () => {
     const prize = rollPrize();
     strip.innerHTML = "";
 
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 35; i++) {
       const d = document.createElement("div");
       d.className = "drop";
-      d.innerText = prize.type === "ton"
-        ? `${prize.value} TON`
-        : prize.value;
+      d.innerText = prize.type === "ton" ? `${prize.value} TON` : prize.value;
       strip.appendChild(d);
     }
 
-    strip.style.transition = "transform 5s cubic-bezier(.17,.67,.3,1)";
-    strip.style.transform = "translateX(-1800px)";
+    strip.style.transition = "transform 6s cubic-bezier(.17,.67,.3,1)";
+    strip.style.transform = "translateX(-2200px)";
 
     setTimeout(() => {
       rewardModal.style.display = "flex";
@@ -130,27 +210,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         caseModal.style.display = "none";
         updateBalance();
       };
-
-    }, 5200);
-  };
-
-  /* ========= INVENTORY ========= */
-  openInventory.onclick = async () => {
-    const r = await fetch(`${API}/inventory?user=${userId}`);
-    const inv = await r.json();
-
-    inventoryList.innerHTML = "";
-    inv.forEach(item => {
-      const div = document.createElement("div");
-      div.className = "itemCard";
-      div.innerText = item.name;
-      inventoryList.appendChild(div);
-    });
-
-    inventoryModal.style.display = "flex";
-  };
-
-  closeInventory.onclick = () => {
-    inventoryModal.style.display = "none";
+    }, 6200);
   };
 });
