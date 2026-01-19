@@ -47,6 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const subscribeBtn = document.getElementById("subscribeBtn");
 
   let subscribeShown = false;
+  let isSpinning = false;
 
   avatar.src = user.photo_url || "";
   profileAvatar.src = user.photo_url || "";
@@ -167,25 +168,46 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   openCaseBtn.onclick = async () => {
+    if (isSpinning) return;
+    isSpinning = true;
+
     const prize = randomPrize();
 
     // рулетка
     strip.innerHTML = "";
-    for (let i = 0; i < 40; i++) {
-      const item = prizes[i % prizes.length];
+
+    const itemsCount = 60;
+    const stripItems = [];
+
+    // создаём случайный список из призов
+    for (let i = 0; i < itemsCount; i++) {
+      const item = prizes[Math.floor(Math.random() * prizes.length)];
+      stripItems.push(item);
+    }
+
+    // добавляем финальный приз в конце, чтобы точно выпало
+    stripItems.push(prize);
+
+    stripItems.forEach(item => {
       const div = document.createElement("div");
       div.className = "drop";
       div.innerText = item.type === "ton" ? `${item.value} TON` : item.value;
       strip.appendChild(div);
-    }
+    });
 
-    const index = prizes.findIndex(p => p.type === prize.type && p.value === prize.value);
-    const offset = (index + 10) * 218;
+    // вычисляем позицию финального элемента
+    const itemWidth = 218; // 200 + gap 18
+    const targetIndex = stripItems.length - 1; // последний элемент = приз
+    const stripWrapWidth = document.querySelector(".stripWrap").clientWidth;
+
+    const targetX = targetIndex * itemWidth - (stripWrapWidth / 2 - itemWidth / 2);
 
     strip.style.transition = "transform 5s cubic-bezier(.17,.67,.3,1)";
-    strip.style.transform = `translateX(-${offset}px)`;
+    strip.style.transform = `translateX(-${targetX}px)`;
 
     setTimeout(async () => {
+      isSpinning = false;
+
       rewardModal.style.display = "flex";
       rewardText.innerText = prize.type === "ton"
         ? `Вы выиграли ${prize.value} TON`
