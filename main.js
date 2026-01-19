@@ -212,71 +212,25 @@ document.addEventListener("DOMContentLoaded", () => {
         toInvBtn.style.display = "none";
         sellBtn.style.display = "none";
 
-        getTonBtn.onclick = async () => {
-          await fetch(`${API}/add-ton`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ user_id: userId, amount: prize.amount })
-          });
-          loadBalance();
-          winModal.style.display = "none";
-        };
-      } else {
-        getTonBtn.style.display = "none";
-        toInvBtn.style.display = "block";
-        sellBtn.style.display = "block";
-
-        toInvBtn.onclick = async () => {
-          await fetch(`${API}/add-nft`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ user_id: userId, nft: { name: prize.name } })
-          });
-          winModal.style.display = "none";
-        };
-
-        sellBtn.onclick = async () => {
-          await fetch(`${API}/sell-nft`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ user_id: userId, nft_name: prize.name, price: 3.27 })
-          });
-          loadBalance();
-          winModal.style.display = "none";
-        };
-      }
-    }, 3000);
-  };
-
-  /* ================= INVENTORY ================= */
-  openInventory.onclick = async () => {
-    inventoryModal.style.display = "flex";
-    inventoryList.innerHTML = "";
-
-    const r = await fetch(`${API}/inventory?user_id=${userId}`);
-    const d = await r.json();
-
-    d.inventory.forEach((item, i) => {
-      const div = document.createElement("div");
-      div.className = "itemCard";
-      div.innerHTML = `
-        <div>${item.name}</div>
-        <button>Продать за 3.27 TON</button>
-      `;
-
-      div.querySelector("button").onclick = async () => {
-        await fetch(`${API}/sell-nft`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user_id: userId, nft_name: item.name, price: 3.27 })
-        });
-        loadBalance();
-        openInventory.click();
-      };
-
-      inventoryList.appendChild(div);
+                getTonBtn.onclick = async () => {
+  try {
+    const res = await fetch(`${API}/add-ton`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_id: userId, amount: prize.amount })
     });
-  };
 
-  closeInventory.onclick = () => inventoryModal.style.display = "none";
-});
+    const data = await res.json();
+    console.log("ADD TON RESPONSE:", data);
+
+    if (!res.ok) {
+      alert("Ошибка сервера при начислении TON: " + (data.error || res.status));
+      return;
+    }
+
+    loadBalance();
+    winModal.style.display = "none";
+  } catch (e) {
+    alert("Ошибка при запросе: " + e.message);
+  }
+};
