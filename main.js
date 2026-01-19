@@ -37,8 +37,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const rewardModal = document.getElementById("rewardModal");
   const rewardText = document.getElementById("rewardText");
   const rewardBtnTon = document.getElementById("rewardBtnTon");
-  const rewardBtnSell = document.getElementById("rewardBtnSell");
-  const rewardBtnInv = document.getElementById("rewardBtnInv");
 
   const inventoryModal = document.getElementById("inventoryModal");
   const inventoryList = document.getElementById("inventoryList");
@@ -204,49 +202,18 @@ document.addEventListener("DOMContentLoaded", () => {
         ? `Вы выиграли ${prize.value} TON`
         : `Вы выиграли NFT "${prize.value}"`;
 
-      if (prize.type === "ton") {
-        rewardBtnTon.style.display = "block";
-        rewardBtnSell.style.display = "none";
-        rewardBtnInv.style.display = "none";
+      rewardBtnTon.style.display = prize.type === "ton" ? "block" : "none";
 
-        rewardBtnTon.onclick = async () => {
-          await fetch(`${API}/add-balance`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ user: userId, amount: prize.value })
-          });
-          rewardModal.style.display = "none";
-          caseModal.style.display = "none";
-          updateBalance();
-        };
-      } else {
-        rewardBtnTon.style.display = "none";
-        rewardBtnSell.style.display = "block";
-        rewardBtnInv.style.display = "block";
-
-        const nft = { name: prize.value, price: 3.27 };
-
-        rewardBtnInv.onclick = async () => {
-          await fetch(`${API}/add-nft`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ user: userId, nft })
-          });
-          rewardModal.style.display = "none";
-          caseModal.style.display = "none";
-        };
-
-        rewardBtnSell.onclick = async () => {
-          await fetch(`${API}/add-balance`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ user: userId, amount: 3.27 })
-          });
-          rewardModal.style.display = "none";
-          caseModal.style.display = "none";
-          updateBalance();
-        };
-      }
+      rewardBtnTon.onclick = async () => {
+        await fetch(`${API}/add-balance`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user: userId, amount: prize.value })
+        });
+        rewardModal.style.display = "none";
+        caseModal.style.display = "none";
+        updateBalance();
+      };
     }, 3500);
   };
 
