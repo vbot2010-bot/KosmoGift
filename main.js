@@ -125,7 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   subscribeBtn.onclick = () => {
-    tg.openUrl("https://t.me/KosmoGiftOfficial");
+    tg.openTelegramLink("https://t.me/KosmoGiftOfficial");
     localStorage.setItem("subscribed", "1");
     subscribeModal.style.display = "none";
   };
