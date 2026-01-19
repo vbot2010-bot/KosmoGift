@@ -111,7 +111,7 @@ body {
 
 .stripWrap {
   position: relative;
-  height: 75%;
+  height: 70%;
   overflow: hidden;
   margin-top: 20px;
   background: #000;
@@ -173,6 +173,7 @@ body {
   z-index: 1000;
 }
 
+.modalContent,
 .rewardContent,
 .inventoryContent {
   width: 90%;
