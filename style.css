@@ -92,6 +92,15 @@ body {
   z-index: 1000;
 }
 
+.subscribeContent {
+  width: 90%;
+  max-width: 320px;
+  background: #7d7d7d;
+  border-radius: 20px;
+  padding: 20px;
+  text-align: center;
+}
+
 .caseModalContent {
   width: 90%;
   max-width: 420px;
@@ -143,11 +152,6 @@ body {
   left: 50%;
   top: 0;
   transform: translateX(-50%);
-}
-
-.resultBlock {
-  margin-top: 20px;
-  text-align: center;
 }
 
 .resultText {
