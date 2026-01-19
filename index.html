@@ -24,10 +24,12 @@
     <div class="caseIcon"></div>
     <div class="caseTitle">Daily Case</div>
 
-    <button id="openDaily" class="caseBtn">Открыть кейс</button>
-
-    <div id="timerBlock" class="timerBlock" style="display:none;">
-      <div id="timerText" class="timerText">23:59:58</div>
+    <!-- БЛОК С КНОПКОЙ И ТАЙМЕРОМ -->
+    <div id="caseAction">
+      <button id="openDaily" class="caseBtn">Открыть кейс</button>
+      <div id="timerBlock" class="timerBlock" style="display:none;">
+        <div id="timerText" class="timerText">23:59:58</div>
+      </div>
     </div>
   </div>
 </div>
@@ -63,8 +65,7 @@
 </div>
 
 <!-- SUBSCRIBE MODAL -->
-<!-- SUBSCRIBE MODAL -->
-<div id="subscribeModal">
+<div id="subscribeModal" class="modal subscribeModal">
   <div class="subscribeContent">
     <div class="subscribeText">Для открытия кейса нужно подписаться на канал</div>
     <button id="subscribeBtn" class="caseBtn">Подписаться</button>
@@ -120,4 +121,4 @@
 
 <script src="main.js"></script>
 </body>
-  </html>
+</html>
