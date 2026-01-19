@@ -31,17 +31,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const caseModal = document.getElementById("caseModal");
   const closeCase = document.getElementById("closeCase");
-
-  const subscribeBlock = document.getElementById("subscribeBlock");
-  const subscribeBtn = document.getElementById("subscribeBtn");
-  const continueBtn = document.getElementById("continueBtn");
-
   const openCaseBtn = document.getElementById("openCaseBtn");
   const strip = document.getElementById("strip");
 
   const rewardModal = document.getElementById("rewardModal");
   const rewardText = document.getElementById("rewardText");
   const rewardBtnTon = document.getElementById("rewardBtnTon");
+  const rewardBtnSell = document.getElementById("rewardBtnSell");
+  const rewardBtnInv = document.getElementById("rewardBtnInv");
 
   const inventoryModal = document.getElementById("inventoryModal");
   const inventoryList = document.getElementById("inventoryList");
@@ -182,24 +179,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const data = await res.json();
     if (data.error) return alert("Кейс доступен раз в 24 часа");
 
-    // показываем подписку
-    subscribeBlock.style.display = "block";
-    openCaseBtn.style.display = "none";
     caseModal.style.display = "flex";
   };
 
   closeCase.onclick = () => caseModal.style.display = "none";
-
-  // Кнопка подписаться
-  subscribeBtn.onclick = () => {
-    window.Telegram.WebApp.openLink("https://t.me/KosmoGiftOfficial");
-  };
-
-  // Кнопка продолжить после подписки
-  continueBtn.onclick = () => {
-    subscribeBlock.style.display = "none";
-    openCaseBtn.style.display = "block";
-  };
 
   openCaseBtn.onclick = async () => {
     const prize = randomPrize();
@@ -212,8 +195,8 @@ document.addEventListener("DOMContentLoaded", () => {
       strip.appendChild(div);
     }
 
-    strip.style.transition = "transform 3.5s cubic-bezier(.17,.67,.3,1)";
-    strip.style.transform = "translateX(-1200px)";
+    strip.style.transition = "transform 4.5s cubic-bezier(.17,.67,.3,1)";
+    strip.style.transform = "translateX(-1400px)";
 
     setTimeout(() => {
       rewardModal.style.display = "flex";
@@ -222,6 +205,8 @@ document.addEventListener("DOMContentLoaded", () => {
         : `Вы выиграли NFT "${prize.value}"`;
 
       rewardBtnTon.style.display = prize.type === "ton" ? "block" : "none";
+      rewardBtnSell.style.display = prize.type === "nft" ? "block" : "none";
+      rewardBtnInv.style.display = prize.type === "nft" ? "block" : "none";
 
       rewardBtnTon.onclick = async () => {
         await fetch(`${API}/add-balance`, {
@@ -229,12 +214,34 @@ document.addEventListener("DOMContentLoaded", () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ user: userId, amount: prize.value })
         });
-
         rewardModal.style.display = "none";
         caseModal.style.display = "none";
         updateBalance();
       };
-    }, 3500);
+
+      rewardBtnInv.onclick = async () => {
+        const nft = { name: prize.value, price: 3.27 };
+        await fetch(`${API}/add-nft`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user: userId, nft })
+        });
+        rewardModal.style.display = "none";
+        caseModal.style.display = "none";
+      };
+
+      rewardBtnSell.onclick = async () => {
+        await fetch(`${API}/add-balance`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user: userId, amount: 3.27 })
+        });
+        rewardModal.style.display = "none";
+        caseModal.style.display = "none";
+        updateBalance();
+      };
+
+    }, 4500);
   };
 
   // ================= INVENTORY =================
