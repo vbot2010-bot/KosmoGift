@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>KosmoGift</title>
+  <title>Gift Mini App</title>
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
@@ -11,94 +11,82 @@
 </head>
 <body>
 
-<!-- HEADER -->
-<div class="topBar">
-  <div class="userInfo">
-    <img id="avatar" class="avatar">
-    <div>
-      <div id="username" class="username"></div>
-      <div id="balance" class="balance">0 TON</div>
+<div id="home" class="page active">
+  <div class="top">
+    <div class="userBar">
+      <img id="avatar" class="avatar">
+      <span id="balance">0.00 TON</span>
+    </div>
+  </div>
+
+  <div class="caseBlock">
+    <div class="caseIcon"></div>
+    <div class="caseTitle">Daily Case</div>
+
+    <button id="openDaily" class="caseBtn">Открыть кейс</button>
+
+    <div id="timerBlock" class="timerBlock" style="display:none;">
+      <div id="timerText" class="timerText">23:59:59</div>
     </div>
   </div>
 </div>
 
-<!-- PAGES -->
-<div id="home" class="page active">
-
-  <div class="dailyCard">
-    <div class="dailyIcon">🎁</div>
-    <div class="dailyTitle">Daily Case</div>
-    <button id="openDaily" class="mainBtn">Открыть кейс</button>
-  </div>
-
-</div>
-
 <div id="profile" class="page">
-  <div class="profileBox">
-    <img id="profileAvatar" class="avatar big">
-    <div id="balanceProfile" class="balance big">0 TON</div>
-
-    <button id="connectWallet" class="profileBtn">🔌 Подключить кошелёк</button>
-    <button id="disconnectWallet" class="profileBtn" style="display:none">❌ Отключить</button>
-    <button id="deposit" class="profileBtn">💰 Пополнить баланс</button>
-    <button id="openInventory" class="profileBtn">🎒 Инвентарь</button>
+  <div class="top">
+    <div class="userBar">
+      <img id="profileAvatar" class="avatar big">
+      <span id="balanceProfile">0.00 TON</span>
+    </div>
   </div>
-</div>
 
-<!-- NAV -->
-<div class="nav">
-  <button id="btnHome">Главная</button>
-  <button id="btnProfile">Профиль</button>
-</div>
+  <div id="username"></div>
 
-<!-- SUBSCRIBE MODAL -->
-<div id="subModal" class="bottomModal">
-  <div class="bottomContent">
-    <h3>Подпишитесь на канал</h3>
-    <button id="subBtn" class="mainBtn gray">Подписаться</button>
-    <button id="subContinue" class="mainBtn">Продолжить</button>
-  </div>
+  <button id="connectWallet">Подключить кошелёк</button>
+  <button id="disconnectWallet" style="display:none">Отключить кошелёк</button>
+  <button id="deposit">Пополнить баланс</button>
+  <button id="openInventory">Инвентарь</button>
 </div>
 
 <!-- CASE MODAL -->
 <div id="caseModal" class="modal">
-  <div class="caseBox">
+  <div class="caseModalContent">
+    <div class="caseHeader">
+      <div class="caseTitle">Daily Case</div>
+      <button id="closeCase" class="closeBtn">✕</button>
+    </div>
+
     <div class="stripWrap">
       <div id="strip" class="strip"></div>
       <div class="pointer"></div>
     </div>
-    <div class="chances">
-      0.01 TON – 90% | 0.02–0.05 TON – 9.99% | NFT – 0.01%
-    </div>
+
+    <button id="openCaseBtn" class="caseBtn">Открыть кейс</button>
   </div>
 </div>
 
 <!-- REWARD -->
 <div id="rewardModal" class="modal">
-  <div class="rewardBox">
+  <div class="rewardContent">
     <div id="rewardText"></div>
-    <button id="rewardTon" class="mainBtn">Забрать TON</button>
-    <button id="rewardInv" class="mainBtn">В инвентарь</button>
+    <button id="rewardBtnTon" class="caseBtn">Забрать TON</button>
+    <button id="rewardBtnInv" class="caseBtn">В инвентарь</button>
+    <button id="rewardBtnSell" class="caseBtn">Продать NFT</button>
   </div>
 </div>
 
 <!-- INVENTORY -->
 <div id="inventoryModal" class="modal">
-  <div class="inventoryBox">
-    <h3>Инвентарь</h3>
+  <div class="inventoryContent">
+    <button id="closeInventory" class="closeBtn">✕</button>
     <div id="inventoryList"></div>
-    <button id="closeInventory" class="mainBtn">Закрыть</button>
   </div>
 </div>
 
-<!-- DEPOSIT -->
-<div id="depositModal" class="modal">
-  <div class="rewardBox">
-    <input id="amount" placeholder="Минимум 0.1 TON">
-    <button id="pay" class="mainBtn">Оплатить</button>
-  </div>
+<div class="nav">
+  <button id="btnHome">Главная</button>
+  <button id="btnProfile">Профиль</button>
 </div>
 
 <script src="main.js"></script>
 </body>
-</html>
+  </html>
