@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
   <title>Gift Mini App</title>
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
 
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -16,12 +15,12 @@
 <div id="home" class="page active">
   <div class="top">
     <div class="userBar">
-      <img id="avatar" class="avatar" />
+      <img id="avatar" class="avatar">
       <span id="balance">0.00 TON</span>
     </div>
   </div>
 
-  <!-- CASES ROW -->
+  <!-- ДВА КЕЙСА В ОДНОМ РЯДУ -->
   <div class="caseRow" style="display:flex; justify-content:space-between; margin: 120px 20px 0 20px;">
 
     <!-- DAILY CASE -->
@@ -29,7 +28,8 @@
       <div class="caseIcon"></div>
       <div class="caseTitle">Daily Case</div>
 
-      <div id="caseAction">
+      <!-- БЛОК С КНОПКОЙ И ТАЙМЕРОМ -->
+      <div id="caseActionDaily">
         <button id="openDaily" class="caseBtn">Открыть кейс</button>
         <div id="timerBlock" class="timerBlock" style="display:none;">
           <div id="timerText" class="timerText">23:59:58</div>
@@ -37,11 +37,14 @@
       </div>
     </div>
 
-    <!-- UNLUCKY CASE (СПРАВА ОТ DAILY) -->
+    <!-- UNLUCKY CASE -->
     <div class="caseBlock">
       <div class="caseIcon"></div>
       <div class="caseTitle">Unlucky Case (0.25 TON)</div>
-      <button id="openUnlucky" class="caseBtn">Открыть</button>
+
+      <div id="caseActionUnlucky">
+        <button id="openUnlucky" class="caseBtn">Открыть кейс</button>
+      </div>
     </div>
 
   </div>
@@ -58,11 +61,11 @@
 
   <div id="username"></div>
 
-  <button id="connectWallet" class="caseBtn">Подключить кошелёк</button>
-  <button id="disconnectWallet" class="caseBtn" style="display:none">Отключить кошелёк</button>
+  <button id="connectWallet">Подключить кошелёк</button>
+  <button id="disconnectWallet" style="display:none">Отключить кошелёк</button>
 
-  <button id="deposit" class="caseBtn">Пополнить баланс</button>
-  <button id="openInventory" class="caseBtn">Инвентарь</button>
+  <button id="deposit">Пополнить баланс</button>
+  <button id="openInventory">Инвентарь</button>
 </div>
 
 <!-- MODAL POPOLNENIE -->
@@ -127,13 +130,11 @@
   </div>
 </div>
 
-<!-- NAV -->
 <div class="nav">
   <button id="btnHome">Главная</button>
   <button id="btnProfile">Профиль</button>
 </div>
 
 <script src="main.js"></script>
-<script src="case_unlucky.js"></script>
 </body>
-  </html>
+</html>
