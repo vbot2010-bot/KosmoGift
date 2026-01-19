@@ -1,84 +1,69 @@
 body {
   margin: 0;
-  background: #0e1621;
-  color: white;
   font-family: Arial, sans-serif;
+  background: #0b0b0f;
+  color: #fff;
 }
 
 .page {
   display: none;
 }
+
 .page.active {
   display: block;
 }
 
 .top {
-  padding: 70px 20px 0 20px;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-}
-
-.big {
-  width: 60px;
-  height: 60px;
+  padding: 20px;
 }
 
 .userBar {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #1b2635;
-  padding: 10px 14px;
-  border-radius: 20px;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.avatar.big {
+  width: 80px;
+  height: 80px;
 }
 
 .caseBlock {
-  margin: 120px 20px 0 20px;
-  width: 170px;
-  text-align: left;
+  padding: 20px;
+  text-align: center;
 }
 
 .caseIcon {
   width: 70px;
   height: 70px;
-  background: #7d7d7d;
-  border-radius: 15px;
-  margin-bottom: 8px;
+  background: gray;
+  border-radius: 20px;
+  margin: 0 auto 10px;
 }
 
 .caseTitle {
-  font-size: 16px;
-  margin-bottom: 8px;
+  font-size: 18px;
+  margin-bottom: 10px;
 }
 
 .caseBtn {
-  width: 100%;
-  padding: 10px;
+  width: 80%;
+  padding: 12px;
+  margin: 10px auto;
+  display: block;
+  background: #1f1f2a;
   border: none;
   border-radius: 12px;
-  background: #3a86ff;
-  color: white;
-  font-weight: bold;
+  color: #fff;
+  font-size: 16px;
 }
 
-.nav {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  display: flex;
-}
-.nav button {
-  flex: 1;
-  padding: 15px;
-}
-
-/* MODALS */
 .modal {
   display: none;
   position: fixed;
@@ -88,123 +73,100 @@ body {
   height: 100%;
   background: rgba(0,0,0,0.6);
   justify-content: center;
-  align-items: center;
+  align-items: flex-end;
   z-index: 1000;
 }
 
-.subscribeContent {
-  width: 90%;
-  max-width: 320px;
-  background: #7d7d7d;
-  border-radius: 20px;
+.modalContent {
+  width: 100%;
+  background: #1b1b25;
+  border-radius: 20px 20px 0 0;
   padding: 20px;
-  text-align: center;
+}
+
+.closeBtn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  float: right;
 }
 
 .caseModalContent {
-  width: 90%;
-  max-width: 420px;
+  width: 100%;
   height: 75vh;
-  background: #7d7d7d;
-  border-radius: 20px;
+  background: #1b1b25;
+  border-radius: 20px 20px 0 0;
   padding: 20px;
-  position: relative;
-}
-
-.caseHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  box-sizing: border-box;
 }
 
 .stripWrap {
   position: relative;
   height: 140px;
   overflow: hidden;
-  margin-top: 20px;
-  background: #000;
-  border-radius: 15px;
+  margin: 20px 0;
 }
 
 .strip {
   display: flex;
-  gap: 18px;
-  padding: 20px 0;
+  gap: 10px;
   transform: translateX(0);
 }
 
 .drop {
-  min-width: 200px;
-  height: 100px;
-  background: #222;
-  border-radius: 12px;
+  width: 200px;
+  height: 120px;
+  background: #2a2a37;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
+  font-size: 18px;
 }
 
 .pointer {
   position: absolute;
-  width: 4px;
-  height: 140px;
-  background: #ff0;
-  left: 50%;
   top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  background: #fff;
   transform: translateX(-50%);
 }
 
-.resultText {
-  margin-top: 20px;
-  text-align: center;
-}
-
-.closeBtn {
-  background: transparent;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: #000;
-}
-
-.rewardContent {
-  width: 90%;
-  max-width: 320px;
-  background: #7d7d7d;
-  border-radius: 20px;
+.rewardContent, .inventoryContent, .subscribeContent {
+  width: 100%;
+  background: #1b1b25;
+  border-radius: 20px 20px 0 0;
   padding: 20px;
-  text-align: center;
+  box-sizing: border-box;
 }
 
-.rewardImg {
-  width: 120px;
-  height: 120px;
-  object-fit: cover;
-  margin-bottom: 10px;
+.inventoryList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.inventoryContent {
-  width: 90%;
-  max-width: 420px;
-  height: 60vh;
-  background: #7d7d7d;
-  border-radius: 20px;
-  padding: 20px;
-  overflow-y: auto;
-}
-
-.inventoryList .itemCard {
-  background: #000;
+.itemCard {
+  background: #2a2a37;
   padding: 10px;
   border-radius: 12px;
-  margin-bottom: 10px;
 }
 
-.timerBlock {
-  margin-top: 20px;
+.nav {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  display: flex;
 }
 
-.timerText {
-  font-size: 22px;
-  font-weight: bold;
+.nav button {
+  width: 50%;
+  padding: 15px;
+  border: none;
+  background: #1f1f2a;
+  color: #fff;
+  font-size: 16px;
 }
