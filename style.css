@@ -15,35 +15,36 @@ body{
 
 .top{
   display:flex;
-  justify-content:center;
+  justify-content:flex-end; /* аватар справа */
   margin-top:20px;
 }
 
 .userBar{
   display:flex;
   align-items:center;
-  gap:15px;
+  gap:10px;
 }
 
 .avatar{
-  width:55px;
-  height:55px;
+  width:40px;
+  height:40px;
   border-radius:50%;
   border:2px solid #fff;
 }
 
 .big{
-  width:80px;
-  height:80px;
+  width:70px;
+  height:70px;
 }
 
 .balanceBlock{
   display:flex;
   flex-direction:column;
+  align-items:flex-end;
 }
 
 .balance{
-  font-size:20px;
+  font-size:16px;
   font-weight:bold;
 }
 
@@ -53,29 +54,29 @@ body{
 }
 
 .caseBlock{
-  margin-top:40px;
+  margin-top:20px;
   display:flex;
   flex-direction:column;
-  align-items:center;
-  gap:10px;
+  align-items:flex-start; /* кейс слева */
+  gap:8px;
 }
 
 .caseIcon{
-  width:80px;
-  height:80px;
-  border-radius:20px;
+  width:60px;
+  height:60px;
+  border-radius:18px;
   background:rgba(255,255,255,0.1);
   border:1px solid rgba(255,255,255,0.2);
 }
 
 .caseTitle{
-  font-size:18px;
+  font-size:16px;
   font-weight:bold;
 }
 
 .caseBtn{
-  width:200px;
-  padding:12px;
+  width:190px;
+  padding:10px;
   border:none;
   border-radius:12px;
   background:#4a4aef;
@@ -200,7 +201,7 @@ body{
 
 .caseModalContent{
   width:90%;
-  height:75%;
+  height:70%;
   background:#1a1a2f;
   border-radius:18px;
   padding:15px;
@@ -211,20 +212,20 @@ body{
 
 .stripWrap{
   width:100%;
-  height:75%;
+  height:55%;
   background:rgba(255,255,255,0.06);
   border-radius:18px;
   position:relative;
   overflow:hidden;
   display:flex;
-  justify-content:center;
+  justify-content:flex-start;
   align-items:center;
 }
 
 .strip{
   display:flex;
   gap:15px;
-  padding:20px;
+  padding:10px;
   transform:translateX(0);
 }
 
@@ -247,7 +248,24 @@ body{
   border-right:18px solid transparent;
   border-top:25px solid #fff;
   position:absolute;
-  top:10px;
+  left:50%;
+  transform:translateX(-50%);
+  top:5px;
+}
+
+.dropInfo{
+  width:100%;
+  margin-top:8px;
+  text-align:center;
+}
+
+.dropInfoTitle{
+  font-weight:bold;
+}
+
+.dropInfoText{
+  opacity:0.8;
+  font-size:12px;
 }
 
 .rewardContent{
@@ -296,4 +314,4 @@ body{
   border-radius:12px;
   color:#fff;
   cursor:pointer;
-  }
+}
