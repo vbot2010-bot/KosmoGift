@@ -35,6 +35,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const rewardModal = document.getElementById("rewardModal");
   const rewardText = document.getElementById("rewardText");
   const rewardBtnTon = document.getElementById("rewardBtnTon");
+  const rewardBtnSell = document.getElementById("rewardBtnSell");
+  const rewardBtnInv = document.getElementById("rewardBtnInv");
 
   const inventoryModal = document.getElementById("inventoryModal");
   const inventoryList = document.getElementById("inventoryList");
@@ -152,13 +154,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   openDaily.onclick = async () => {
-    // показываем окно подписаться 1 раз
     if (!subscribeShown) {
       subscribeModal.style.display = "flex";
       subscribeShown = true;
       return;
     }
-
     caseModal.style.display = "flex";
   };
 
@@ -173,16 +173,22 @@ document.addEventListener("DOMContentLoaded", () => {
   openCaseBtn.onclick = async () => {
     const prize = randomPrize();
 
+    // Создаем рулетку из всего списка
     strip.innerHTML = "";
-    for (let i = 0; i < 25; i++) {
+    for (let i = 0; i < 60; i++) {
+      const item = prizes[i % prizes.length];
       const div = document.createElement("div");
       div.className = "drop";
-      div.innerText = prize.type === "ton" ? `${prize.value} TON` : prize.value;
+      div.innerText = item.type === "ton" ? `${item.value} TON` : item.value;
       strip.appendChild(div);
     }
 
+    // Вычисляем позицию, чтобы остановиться на нужном призе
+    const index = prizes.findIndex(p => p.type === prize.type && p.value === prize.value);
+    const offset = (index + 20) * 220; // 220 — ширина блока + gap
+
     strip.style.transition = "transform 5s cubic-bezier(.17,.67,.3,1)";
-    strip.style.transform = "translateX(-1200px)";
+    strip.style.transform = `translateX(-${offset}px)`;
 
     setTimeout(async () => {
       rewardModal.style.display = "flex";
@@ -191,6 +197,8 @@ document.addEventListener("DOMContentLoaded", () => {
         : `Вы выиграли NFT "${prize.value}"`;
 
       rewardBtnTon.style.display = prize.type === "ton" ? "block" : "none";
+      rewardBtnSell.style.display = prize.type === "nft" ? "block" : "none";
+      rewardBtnInv.style.display = prize.type === "nft" ? "block" : "none";
 
       rewardBtnTon.onclick = async () => {
         await fetch(`${API}/add-balance`, {
@@ -202,6 +210,28 @@ document.addEventListener("DOMContentLoaded", () => {
         caseModal.style.display = "none";
         updateBalance();
       };
+
+      rewardBtnInv.onclick = async () => {
+        await fetch(`${API}/add-nft`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user: userId, nft: { name: prize.value, price: 3.27 } })
+        });
+        rewardModal.style.display = "none";
+        caseModal.style.display = "none";
+      };
+
+      rewardBtnSell.onclick = async () => {
+        await fetch(`${API}/add-balance`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user: userId, amount: 3.27 })
+        });
+        rewardModal.style.display = "none";
+        caseModal.style.display = "none";
+        updateBalance();
+      };
+
     }, 5200);
   };
 
