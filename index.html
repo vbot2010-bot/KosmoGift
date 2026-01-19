@@ -20,20 +20,34 @@
     </div>
   </div>
 
-  <div class="caseBlock">
-    <div class="caseIcon"></div>
-    <div class="caseTitle">Daily Case</div>
+  <!-- CASES -->
+  <div class="casesRow">
 
-    <!-- БЛОК С КНОПКОЙ И ТАЙМЕРОМ -->
-    <div id="caseAction">
-      <button id="openDaily" class="caseBtn">Открыть кейс</button>
-      <div id="timerBlock" class="timerBlock" style="display:none;">
-        <div id="timerText" class="timerText">23:59:58</div>
+    <!-- DAILY CASE -->
+    <div class="caseBlock">
+      <div class="caseIcon"></div>
+      <div class="caseTitle">Daily Case</div>
+
+      <div id="caseAction">
+        <button id="openDaily" class="caseBtn">Открыть кейс</button>
+
+        <div id="timerBlock" class="timerBlock" style="display:none;">
+          <div id="timerText" class="timerText">23:59:59</div>
+        </div>
       </div>
     </div>
 
-    <!-- КНОПКА UNLUCKY CASE -->
-    <button id="openUnlucky" class="caseBtn">Unlucky Case (0.25 TON)</button>
+    <!-- UNLUCKY CASE -->
+    <div class="caseBlock unlucky">
+      <div class="caseIcon unluckyIcon"></div>
+      <div class="caseTitle">Unlucky Case</div>
+      <div class="casePrice">Цена: 0.25 TON</div>
+
+      <button id="openUnlucky" class="caseBtn">
+        Открыть кейс
+      </button>
+    </div>
+
   </div>
 </div>
 
@@ -70,7 +84,9 @@
 <!-- SUBSCRIBE MODAL -->
 <div id="subscribeModal" class="modal subscribeModal">
   <div class="subscribeContent">
-    <div class="subscribeText">Для открытия кейса нужно подписаться на канал</div>
+    <div class="subscribeText">
+      Для открытия кейса нужно подписаться на канал
+    </div>
     <button id="subscribeBtn" class="caseBtn">Подписаться</button>
   </div>
 </div>
@@ -79,7 +95,7 @@
 <div id="caseModal" class="modal">
   <div class="caseModalContent">
     <div class="caseHeader">
-      <div class="caseTitle">Daily Case</div>
+      <div class="caseTitle">Case</div>
       <button id="closeCase" class="closeBtn">✕</button>
     </div>
 
@@ -88,13 +104,13 @@
       <div class="pointer"></div>
     </div>
 
-    <div class="dropInfo">
-      <div class="dropInfoTitle">Дроп</div>
-      <div class="dropInfoText">Шанс выпадения: по честным шансам</div>
+    <div id="resultText" class="resultText">
+      Нажми "Открыть кейс"
     </div>
 
-    <div id="resultText" class="resultText">Нажми "Открыть кейс"</div>
-    <button id="openCaseBtn" class="caseBtn">Открыть кейс</button>
+    <button id="openCaseBtn" class="caseBtn">
+      Открыть кейс
+    </button>
   </div>
 </div>
 
@@ -109,7 +125,7 @@
   </div>
 </div>
 
-<!-- INVENTORY MODAL -->
+<!-- INVENTORY -->
 <div id="inventoryModal" class="modal">
   <div class="inventoryContent">
     <button id="closeInventory" class="closeBtn">✕</button>
@@ -117,6 +133,7 @@
   </div>
 </div>
 
+<!-- NAV -->
 <div class="nav">
   <button id="btnHome">Главная</button>
   <button id="btnProfile">Профиль</button>
