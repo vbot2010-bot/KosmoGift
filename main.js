@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const subscribeModal = document.getElementById("subscribeModal");
   const subscribeBtn = document.getElementById("subscribeBtn");
 
-  const timerBlock = document.getElementById("timerBlock");
+  const timerBlock = document.getElementById("timerBlock"); // <- тут таймер
   const timerText = document.getElementById("timerText");
 
   let subscribeShown = false;
@@ -164,6 +164,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function updateTimer() {
+    // Если таймера нет - показываем кнопку
+    if (!timerBlock || !timerText) return;
+
     const endTime = localStorage.getItem(TIMER_KEY);
     if (!endTime) {
       timerBlock.style.display = "none";
@@ -195,7 +198,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   setInterval(updateTimer, 1000);
   updateTimer();
-  // ================================
 
   openDaily.onclick = async () => {
     if (!subscribeShown) {
@@ -322,15 +324,6 @@ document.addEventListener("DOMContentLoaded", () => {
           body: JSON.stringify({ user: userId, index: idx })
         });
         updateBalance();
-        document.getElementById("openInventory").click();
-      };
-    });
-
-    inventoryModal.style.display = "flex";
-  };
-
-  closeInventory.onclick = () => inventoryModal.style.display = "none";
-});      updateBalance();
         document.getElementById("openInventory").click();
       };
     });
