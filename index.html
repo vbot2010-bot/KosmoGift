@@ -1,99 +1,68 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>Gift Mini App</title>
-
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
-
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Case</title>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <div id="app">
 
-<!-- HOME -->
-<div id="home" class="page active">
-
-  <!-- TOP BAR -->
-  <div class="top">
-    <div class="userBar">
-      <img id="avatar" class="avatar">
-      <span id="balance">0.00 TON</span>
+    <!-- HEADER -->
+    <div class="header">
+      <div class="user">
+        <img id="avatar" class="avatar" src="" alt="Avatar">
+        <div class="userInfo">
+          <div id="username" class="username">Telegram User</div>
+          <div id="balance" class="balance">0 TON</div>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <!-- Daily Case block -->
-  <div class="dailyCase">
-    <div class="caseBox"></div>
-    <div class="caseTitle">Daily Case</div>
-    <button id="openDaily" class="caseBtn">Open Case</button>
-  </div>
-
-  <h2>Кейсы</h2>
-  <p>Скоро появятся</p>
-</div>
-
-<!-- PROFILE -->
-<div id="profile" class="page">
-  <div class="top">
-    <div class="userBar">
-      <img id="profileAvatar" class="avatar big">
-      <span id="balanceProfile">0.00 TON</span>
+    <!-- MAIN -->
+    <div class="main">
+      <div class="dailyCase">
+        <div class="caseIcon"></div>
+        <div class="caseText">Daily Case</div>
+        <button id="openDaily" class="openBtn">Открыть кейс</button>
+      </div>
     </div>
-  </div>
 
-  <div id="username"></div>
-
-  <button id="connectWallet">Подключить кошелёк</button>
-  <button id="disconnectWallet" style="display:none">Отключить кошелёк</button>
-  <button id="deposit">Пополнить баланс</button>
-  <button id="openInventory">Инвентарь</button>
-</div>
-
-<!-- POPUP PAY -->
-<div id="modal" class="modal">
-  <div class="modalContent">
-    <button id="closeModal" class="closeBtn">✕</button>
-    <input id="amount" type="number" placeholder="Минимум 0.1 TON" step="0.1">
-    <button id="pay">Оплатить</button>
-  </div>
-</div>
-
-<!-- SUBSCRIBE POPUP -->
-<div id="subscribeModal" class="modal">
-  <div class="subscribeContent">
-    <div class="subscribeText">Для открытия кейса нужно подписаться на канал</div>
-    <button id="subscribeBtn" class="subscribeBtn">Подписаться</button>
-  </div>
-</div>
-
-<!-- CASE POPUP -->
-<div id="caseModal" class="modal">
-  <div class="caseContent">
-    <div class="caseTop">
-      <div class="caseTitleBig">Daily Case</div>
-      <div class="caseArrow"></div>
+    <!-- MODAL SUBSCRIBE -->
+    <div id="subscribeModal" class="modal">
+      <div class="modalContent">
+        <div class="modalTitle">Подписка на канал</div>
+        <div class="modalText">Чтобы открыть кейс, подпишитесь на канал</div>
+        <button id="subscribeBtn" class="openBtn">Подписаться</button>
+      </div>
     </div>
-    <div id="strip" class="strip"></div>
-    <div id="resultText" class="resultText"></div>
-    <button id="openCaseBtn" class="caseBtn">Open Case</button>
+
+    <!-- MODAL CASE OPEN -->
+    <div id="caseModal" class="modal">
+      <div class="caseWindow">
+        <div class="caseHeader">
+          <div class="caseTitle">Открытие кейса</div>
+        </div>
+
+        <div class="stripWrap">
+          <div id="strip" class="strip"></div>
+          <div class="arrow"></div>
+        </div>
+
+        <button id="openCaseBtn" class="openBtn">Открыть</button>
+
+        <div id="resultBlock" class="resultBlock hidden">
+          <div id="resultIcon" class="resultIcon"></div>
+          <div id="resultText" class="resultText"></div>
+          <button id="sellBtn" class="openBtn">Продать</button>
+          <button id="toInvBtn" class="openBtn hidden">В инвентарь</button>
+        </div>
+      </div>
+    </div>
+
   </div>
-</div>
 
-<!-- INVENTORY -->
-<div id="inventoryModal" class="modal">
-  <div class="inventoryContent">
-    <button id="closeInventory" class="closeBtn">✕</button>
-    <div id="inventoryList" class="inventoryList"></div>
-  </div>
-</div>
-
-<!-- NAV -->
-<div class="nav">
-  <button id="btnHome">Главная</button>
-  <button id="btnProfile">Профиль</button>
-</div>
-
-<script src="main.js"></script>
+  <script src="main.js"></script>
 </body>
 </html>
