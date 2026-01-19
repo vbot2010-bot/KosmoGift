@@ -1,4 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // Проверка на Telegram
+  if (!window.Telegram || !window.Telegram.WebApp) {
+    alert("Mini App должен запускаться через Telegram!");
+    return;
+  }
+
   const tg = window.Telegram.WebApp;
   tg.expand();
 
@@ -40,10 +46,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const paymentId = "pay_" + Date.now();
 
-    // Открываем Tonkeeper
-    const tonLink = `ton://transfer/UQAFXBXzBzau6ZCWzruiVrlTg3HAc8MF6gKIntqTLDifuWOi?amount=${amount}&text=${paymentId}`;
+    // Переводим TON в nanotons (тонкрипт)
+    const nanotons = Math.floor(amount * 1e9);
 
-    // В Телеграме лучше открывать через openUrl
+    // Открываем Tonkeeper (правильный формат)
+    const tonLink = `ton://transfer/UQAFXBXzBzau6ZCWzruiVrlTg3HAc8MF6gKIntqTLDifuWOi?amount=${nanotons}&text=${paymentId}`;
+
     tg.openUrl(tonLink);
 
     alert("Оплатите в Tonkeeper, затем дождитесь подтверждения.");
