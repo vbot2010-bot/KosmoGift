@@ -201,13 +201,6 @@ body {
   text-align: center;
 }
 
-.rewardImg {
-  width: 120px;
-  height: 120px;
-  object-fit: cover;
-  margin-bottom: 10px;
-}
-
 .inventoryContent {
   width: 90%;
   max-width: 420px;
@@ -237,4 +230,4 @@ body {
 /* УБИРАЕМ ДРОП И ШАНСЫ */
 .dropInfo {
   display: none !important;
-}
+  }
