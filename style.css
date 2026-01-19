@@ -5,11 +5,15 @@ body {
   font-family: Arial, sans-serif;
 }
 
-.page { display: none; }
-.page.active { display: block; }
+.page {
+  display: none;
+}
+.page.active {
+  display: block;
+}
 
 .top {
-  padding: 70px 20px 0;
+  padding: 70px 20px 0 20px;
   display: flex;
   justify-content: flex-end;
 }
@@ -20,7 +24,10 @@ body {
   border-radius: 50%;
 }
 
-.big { width: 60px; height: 60px; }
+.big {
+  width: 60px;
+  height: 60px;
+}
 
 .userBar {
   display: flex;
@@ -32,8 +39,9 @@ body {
 }
 
 .caseBlock {
-  margin: 120px 20px;
+  margin: 120px 20px 0 20px;
   width: 170px;
+  text-align: left;
 }
 
 .caseIcon {
@@ -44,14 +52,20 @@ body {
   margin-bottom: 8px;
 }
 
+.caseTitle {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
 .caseBtn {
   width: 100%;
   padding: 10px;
-  border-radius: 12px;
   border: none;
+  border-radius: 12px;
   background: #3a86ff;
   color: white;
   font-weight: bold;
+  margin-bottom: 12px;
 }
 
 .nav {
@@ -61,41 +75,54 @@ body {
   display: flex;
 }
 
-.nav button {
+.navBtn {
   flex: 1;
   padding: 15px;
 }
 
-.modal {
+/* MODALS */
+.modalBottom {
   display: none;
   position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.6);
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 25%;
+  background: rgba(0,0,0,0.6);
   justify-content: center;
-  align-items: center;
+  align-items: flex-end;
+  z-index: 1000;
 }
 
-.caseModalContent,
-.rewardContent,
-.inventoryContent {
+.modalBottom .subscribeContent,
+.modalBottom .caseModalContent {
+  width: 100%;
+  height: 100%;
   background: #7d7d7d;
+  border-radius: 20px 20px 0 0;
   padding: 20px;
-  border-radius: 20px;
-  width: 90%;
-  max-width: 420px;
+  box-sizing: border-box;
+}
+
+/* CASE */
+.caseModalContent {
+  height: 75%;
 }
 
 .stripWrap {
-  height: 140px;
+  position: relative;
+  height: 75%;
   overflow: hidden;
+  margin-top: 20px;
   background: #000;
   border-radius: 15px;
-  margin: 20px 0;
 }
 
 .strip {
   display: flex;
   gap: 18px;
+  padding: 20px 0;
+  transform: translateX(0);
 }
 
 .drop {
@@ -106,12 +133,52 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  font-weight: bold;
 }
 
 .pointer {
   position: absolute;
   width: 4px;
-  height: 140px;
-  background: yellow;
+  height: 100%;
+  background: #ff0;
   left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+}
+
+.resultText {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.closeBtn {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #000;
+}
+
+/* CENTER MODAL */
+.modalCenter {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.rewardContent,
+.inventoryContent {
+  width: 90%;
+  max-width: 420px;
+  background: #7d7d7d;
+  border-radius: 20px;
+  padding: 20px;
+  text-align: center;
 }
