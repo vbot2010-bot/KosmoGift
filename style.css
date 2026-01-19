@@ -1,69 +1,84 @@
 body {
   margin: 0;
+  background: #0e1621;
+  color: white;
   font-family: Arial, sans-serif;
-  background: #0b0b0f;
-  color: #fff;
 }
 
 .page {
   display: none;
 }
-
 .page.active {
   display: block;
 }
 
 .top {
-  padding: 20px;
+  padding: 70px 20px 0 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.big {
+  width: 60px;
+  height: 60px;
 }
 
 .userBar {
   display: flex;
   align-items: center;
   gap: 10px;
-}
-
-.avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-}
-
-.avatar.big {
-  width: 80px;
-  height: 80px;
+  background: #1b2635;
+  padding: 10px 14px;
+  border-radius: 20px;
 }
 
 .caseBlock {
-  padding: 20px;
-  text-align: center;
+  margin: 120px 20px 0 20px;
+  width: 170px;
+  text-align: left;
 }
 
 .caseIcon {
   width: 70px;
   height: 70px;
-  background: gray;
-  border-radius: 20px;
-  margin: 0 auto 10px;
+  background: #7d7d7d;
+  border-radius: 15px;
+  margin-bottom: 8px;
 }
 
 .caseTitle {
-  font-size: 18px;
-  margin-bottom: 10px;
+  font-size: 16px;
+  margin-bottom: 8px;
 }
 
 .caseBtn {
-  width: 80%;
-  padding: 12px;
-  margin: 10px auto;
-  display: block;
-  background: #1f1f2a;
+  width: 100%;
+  padding: 10px;
   border: none;
   border-radius: 12px;
-  color: #fff;
-  font-size: 16px;
+  background: #3a86ff;
+  color: white;
+  font-weight: bold;
 }
 
+.nav {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+}
+.nav button {
+  flex: 1;
+  padding: 15px;
+}
+
+/* MODALS */
 .modal {
   display: none;
   position: fixed;
@@ -73,100 +88,128 @@ body {
   height: 100%;
   background: rgba(0,0,0,0.6);
   justify-content: center;
-  align-items: flex-end;
+  align-items: center;
   z-index: 1000;
 }
 
-.modalContent {
-  width: 100%;
-  background: #1b1b25;
-  border-radius: 20px 20px 0 0;
+.subscribeContent {
+  width: 90%;
+  max-width: 320px;
+  background: #7d7d7d;
+  border-radius: 20px;
   padding: 20px;
-}
-
-.closeBtn {
-  background: transparent;
-  border: none;
-  color: #fff;
-  font-size: 18px;
-  float: right;
+  text-align: center;
 }
 
 .caseModalContent {
   width: 100%;
-  height: 75vh;
-  background: #1b1b25;
+  height: 75vh;               /* 75% экрана */
+  background: #7d7d7d;
   border-radius: 20px 20px 0 0;
   padding: 20px;
+  position: relative;
   box-sizing: border-box;
+}
+
+.caseHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .stripWrap {
   position: relative;
   height: 140px;
   overflow: hidden;
-  margin: 20px 0;
+  margin-top: 20px;
+  background: #000;
+  border-radius: 15px;
 }
 
 .strip {
   display: flex;
-  gap: 10px;
+  gap: 18px;
+  padding: 20px 0;
   transform: translateX(0);
 }
 
 .drop {
-  width: 200px;
-  height: 120px;
-  background: #2a2a37;
-  border-radius: 16px;
+  min-width: 200px;
+  height: 100px;
+  background: #222;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-weight: bold;
 }
 
 .pointer {
   position: absolute;
-  top: 0;
-  bottom: 0;
+  width: 4px;
+  height: 140px;
+  background: #ff0;
   left: 50%;
-  width: 2px;
-  background: #fff;
+  top: 0;
   transform: translateX(-50%);
 }
 
-.rewardContent, .inventoryContent, .subscribeContent {
-  width: 100%;
-  background: #1b1b25;
-  border-radius: 20px 20px 0 0;
+.resultText {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.closeBtn {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #000;
+}
+
+.rewardContent {
+  width: 90%;
+  max-width: 320px;
+  background: #7d7d7d;
+  border-radius: 20px;
   padding: 20px;
-  box-sizing: border-box;
+  text-align: center;
 }
 
-.inventoryList {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+.rewardImg {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  margin-bottom: 10px;
 }
 
-.itemCard {
-  background: #2a2a37;
+.inventoryContent {
+  width: 90%;
+  max-width: 420px;
+  height: 60vh;
+  background: #7d7d7d;
+  border-radius: 20px;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.inventoryList .itemCard {
+  background: #000;
   padding: 10px;
   border-radius: 12px;
+  margin-bottom: 10px;
 }
 
-.nav {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  display: flex;
+.timerBlock {
+  margin-top: 20px;
 }
 
-.nav button {
-  width: 50%;
-  padding: 15px;
-  border: none;
-  background: #1f1f2a;
-  color: #fff;
-  font-size: 16px;
+.timerText {
+  font-size: 22px;
+  font-weight: bold;
 }
+
+/* ====== Окно подписки снизу вверх ====== */
+.modal.subscribeModal {
+  align-items: flex-end;
+  }
