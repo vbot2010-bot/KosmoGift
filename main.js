@@ -1,4 +1,3 @@
-
 const tg = window.Telegram.WebApp;
 tg.expand();
 
@@ -14,10 +13,6 @@ const balanceProfile = document.getElementById("balanceProfile");
 const btnHome = document.getElementById("btnHome");
 const btnProfile = document.getElementById("btnProfile");
 
-const connectWallet = document.getElementById("connectWallet");
-const disconnectWallet = document.getElementById("disconnectWallet");
-const deposit = document.getElementById("deposit");
-
 const modal = document.getElementById("modal");
 const amountInput = document.getElementById("amount");
 const pay = document.getElementById("pay");
@@ -32,11 +27,17 @@ const openCaseBtn = document.getElementById("openCaseBtn");
 const strip = document.getElementById("strip");
 const resultText = document.getElementById("resultText");
 const closeCase = document.getElementById("closeCase");
+const pointer = document.getElementById("pointer");
 
 const inventoryModal = document.getElementById("inventoryModal");
 const openInventory = document.getElementById("openInventory");
 const closeInventory = document.getElementById("closeInventory");
 const inventoryList = document.getElementById("inventoryList");
+
+const prizeModal = document.getElementById("prizeModal");
+const prizeText = document.getElementById("prizeText");
+const prizeBtn = document.getElementById("prizeBtn");
+const prizeBtn2 = document.getElementById("prizeBtn2");
 
 const API_URL = "https://kosmogift-worker.v-bot-2010.workers.dev";
 
@@ -62,7 +63,6 @@ async function loadInventory() {
   const data = await res.json();
   inventory = data.inventory || [];
 }
-
 loadInventory();
 
 btnHome.onclick = () => switchPage("home");
@@ -106,19 +106,18 @@ caseModal.onclick = (e) => {
 closeCase.onclick = () => caseModal.style.display = "none";
 
 const prizes = [
-  { name: "0.01 TON", value: 0.01 },
-  { name: "0.02 TON", value: 0.02 },
-  { name: "0.03 TON", value: 0.03 },
-  { name: "0.04 TON", value: 0.04 },
-  { name: "0.05 TON", value: 0.05 },
-  { name: "0.06 TON", value: 0.06 },
-  { name: "0.07 TON", value: 0.07 },
-  { name: "NFT lol pop", nft: true, price: 3.26 }
+  { name: "0.01 TON", type: "ton", value: 0.01 },
+  { name: "0.02 TON", type: "ton", value: 0.02 },
+  { name: "0.03 TON", type: "ton", value: 0.03 },
+  { name: "0.04 TON", type: "ton", value: 0.04 },
+  { name: "0.05 TON", type: "ton", value: 0.05 },
+  { name: "0.06 TON", type: "ton", value: 0.06 },
+  { name: "NFT lol pop", type: "nft", price: 3.26 },
 ];
 
 function buildStrip() {
   strip.innerHTML = "";
-  for (let i = 0; i < 8; i++) {
+  for (let i = 0; i < 10; i++) {
     for (let p of prizes) {
       const div = document.createElement("div");
       div.className = "drop";
@@ -137,7 +136,7 @@ function choosePrize() {
   if (rnd < 99.25) return prizes[4];
   if (rnd < 99.75) return prizes[5];
   if (rnd < 99.99) return prizes[6];
-  return prizes[7];
+  return prizes[6];
 }
 
 openCaseBtn.onclick = async () => {
@@ -148,7 +147,7 @@ openCaseBtn.onclick = async () => {
   // Полоса
   const targetIndex = prizes.findIndex(p => p.name === prize.name);
   const itemWidth = 200 + 18;
-  const totalItems = prizes.length * 8;
+  const totalItems = prizes.length * 10;
   const targetPos = (totalItems / 2 + targetIndex) * itemWidth;
   const end = -targetPos;
 
@@ -158,25 +157,50 @@ openCaseBtn.onclick = async () => {
   strip.addEventListener("transitionend", async () => {
     strip.style.transition = "none";
 
-    resultText.innerText = "Выпало: " + prize.name;
+    // Открываем окно призов
+    prizeModal.style.display = "flex";
+    prizeText.innerText = prize.name;
 
-    if (prize.nft) {
-      await fetch(API_URL + "/add-nft", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_id: userId, nft: prize })
-      });
-    } else {
-      await fetch(API_URL + "/add-ton", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_id: userId, amount: prize.value })
-      });
-      await loadBalance();
+    // Если TON → кнопка продать
+    if (prize.type === "ton") {
+      prizeBtn.style.display = "block";
+      prizeBtn2.style.display = "none";
+
+      prizeBtn.onclick = async () => {
+        await fetch(API_URL + "/sell-ton", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user_id: userId, amount: prize.value })
+        });
+
+        await loadBalance();
+        prizeModal.style.display = "none";
+      };
+    }
+
+    // Если NFT → кнопки "в инвентарь"
+    if (prize.type === "nft") {
+      prizeBtn.style.display = "none";
+      prizeBtn2.style.display = "block";
+
+      prizeBtn2.onclick = async () => {
+        await fetch(API_URL + "/add-nft", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user_id: userId, nft: prize })
+        });
+
+        await loadInventory();
+        prizeModal.style.display = "none";
+      };
     }
 
     openCaseBtn.disabled = false;
   }, { once: true });
+};
+
+prizeModal.onclick = (e) => {
+  if (e.target === prizeModal) prizeModal.style.display = "none";
 };
 
 openInventory.onclick = async () => {
@@ -218,4 +242,4 @@ function renderInventory() {
       }
     };
   });
-  }
+}
