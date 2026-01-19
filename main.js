@@ -19,7 +19,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   const openCaseBtn = document.getElementById("openCaseBtn")
   const closeCase = document.getElementById("closeCase")
   const strip = document.getElementById("strip")
-  const resultText = document.getElementById("resultText")
 
   const rewardModal = document.getElementById("rewardModal")
   const rewardText = document.getElementById("rewardText")
@@ -31,19 +30,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   const inventoryList = document.getElementById("inventoryList")
   const closeInventory = document.getElementById("closeInventory")
 
-  const connectWallet = document.getElementById("connectWallet")
-  const disconnectWallet = document.getElementById("disconnectWallet")
   const deposit = document.getElementById("deposit")
   const openInventory = document.getElementById("openInventory")
 
   const balanceEl = document.getElementById("balance")
   const balanceProfile = document.getElementById("balanceProfile")
-  const username = document.getElementById("username")
-
-  const avatar = document.getElementById("avatar")
-  const profileAvatar = document.getElementById("profileAvatar")
-
-  const TON_ADDRESS = "UQAFXBXzBzau6ZCWzruiVrlTg3HAc8MF6gKIntqTLDifuWOi"
 
   const prizes = [
     { type: "ton", value: 0.01, chance: 90 },
@@ -113,9 +104,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     caseModal.style.display = "flex"
   }
 
-  closeCase.onclick = () => {
-    caseModal.style.display = "none"
-  }
+  closeCase.onclick = () => caseModal.style.display = "none"
 
   openCaseBtn.onclick = async () => {
     const prize = randomPrize()
@@ -131,7 +120,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     strip.style.transition = "transform 3.5s cubic-bezier(.17,.67,.3,1)"
     strip.style.transform = "translateX(-1200px)"
 
-    setTimeout(() => {
+    setTimeout(async () => {
       rewardModal.style.display = "flex"
       rewardText.innerText =
         prize.type === "ton"
@@ -152,7 +141,6 @@ document.addEventListener("DOMContentLoaded", async () => {
           rewardModal.style.display = "none"
           caseModal.style.display = "none"
           updateBalance()
-          updateDailyTimer()
         }
       } else {
         rewardBtnTon.style.display = "none"
@@ -217,30 +205,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     inventoryModal.style.display = "flex"
   }
 
-  closeInventory.onclick = () => inventoryModal.style.display = "none"
-
-  connectWallet.onclick = async () => {
-    const ui = new TON_CONNECT_UI.TonConnectUI({
-      manifestUrl: "https://kocmogift-v22.vercel.app/tonconnect-manifest.json"
-    })
-
-    const session = await ui.connect()
-    const wallet = session.account.address
-
-    localStorage.setItem("wallet", wallet)
-    alert("Кошелёк подключён: " + wallet)
-    disconnectWallet.style.display = "block"
-  }
-
-  disconnectWallet.onclick = () => {
-    localStorage.removeItem("wallet")
-    disconnectWallet.style.display = "none"
-    alert("Кошелёк отключён")
-  }
+  closeInventory.onclick = () => inventoryModal.style.display = "none")
 
   deposit.onclick = async () => {
-    const amount = prompt("Введите сумму TON для пополнения (например 0.05):")
+    const amount = prompt("Введите сумму для пополнения (минимум 0.1 TON):")
     if (!amount) return
+    if (Number(amount) < 0.1) return alert("Минимальная сумма 0.1 TON")
 
     await fetch(`${API}/deposit-request`, {
       method: "POST",
@@ -248,38 +218,22 @@ document.addEventListener("DOMContentLoaded", async () => {
       body: JSON.stringify({ user: userId, amount })
     })
 
-    const url = `https://tonkeeper.com/transfer/${TON_ADDRESS}?amount=${amount}`
+    const url = `https://tonkeeper.com/transfer/UQAFXBXzBzau6ZCWzruiVrlTg3HAc8MF6gKIntqTLDifuWOi?amount=${amount}`
     window.open(url, "_blank")
 
-    alert("Платёж отправлен. Нажмите ПРОВЕРИТЬ платеж")
+    alert("Платёж отправлен. Баланс обновится автоматически.")
   }
 
-  // Кнопка "Проверить платеж"
-  const checkBtn = document.createElement("button")
-  checkBtn.innerText = "Проверить платеж"
-  checkBtn.className = "caseBtn"
-  document.body.appendChild(checkBtn)
-  checkBtn.style.position = "fixed"
-  checkBtn.style.bottom = "70px"
-  checkBtn.style.right = "10px"
-
-  checkBtn.onclick = async () => {
-    const res = await fetch(`${API}/check-payment`, {
+  // автоматическая проверка каждые 10 секунд
+  setInterval(async () => {
+    await fetch(`${API}/check-payment`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user: userId })
     })
-    const data = await res.json()
+    updateBalance()
+  }, 10000)
 
-    if (data.ok) {
-      alert("Платёж найден! Баланс обновлён.")
-      updateBalance()
-    } else {
-      alert("Платёж не найден или уже зачислен: " + (data.message || ""))
-    }
-  }
-
-  // Ссылка на канал
   document.getElementById("subscribeBtn").onclick = () => {
     window.open("https://t.me/KosmoGiftOfficial", "_blank")
   }
