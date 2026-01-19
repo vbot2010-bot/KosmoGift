@@ -50,11 +50,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const timerBlock = document.getElementById("timerBlock");
   const timerText = document.getElementById("timerText");
 
-  const caseTitle = document.getElementById("caseTitle");
-
   let subscribeShown = false;
   let isSpinning = false;
-  let currentCase = "daily"; // daily | unlucky
+  let currentCase = "daily";
 
   avatar.src = user.photo_url || "";
   profileAvatar.src = user.photo_url || "";
@@ -135,7 +133,8 @@ document.addEventListener("DOMContentLoaded", () => {
   updateBalance();
   setInterval(updateBalance, 5000);
 
-  // PRIZES
+  // ====== ПРИЗЫ DAILY ======
+  // **Старый дроп (тот что был в Daily)**
   const dailyPrizes = [
     { type: "ton", value: 0.01, chance: 90 },
     { type: "ton", value: 0.02, chance: 5 },
@@ -147,28 +146,30 @@ document.addEventListener("DOMContentLoaded", () => {
     { type: "nft", value: "lol pop", chance: 0.01 }
   ];
 
+  // ====== ПРИЗЫ UNLUCKY ======
+  // **Твой дроп**
   const unluckyPrizes = [
     { type: "ton", value: 0.2, chance: 70 },
     { type: "ton", value: 0.35, chance: 19 },
     { type: "ton", value: 0.6, chance: 7 },
-    { type: "ton", value: 1.0, chance: 2.5 },
+    { type: "ton", value: 1, chance: 2.5 },
     { type: "nft", value: "Desk calendar", chance: 0.5 },
     { type: "nft", value: "Top hat", chance: 0.25 },
     { type: "nft", value: "Signet ring", chance: 0.15 },
     { type: "nft", value: "durov's cap", chance: 0.001 }
   ];
 
-  function randomPrize(prizes) {
+  function randomPrize(prizeArray) {
     const r = Math.random() * 100;
     let sum = 0;
-    for (const p of prizes) {
+    for (const p of prizeArray) {
       sum += p.chance;
       if (r <= sum) return p;
     }
-    return prizes[0];
+    return prizeArray[0];
   }
 
-  // ====== ТАЙМЕР 24 ЧАСА ======
+  // ТАЙМЕР DAILY
   const TIMER_KEY = "case_timer_end";
   const ONE_DAY = 24 * 60 * 60 * 1000;
 
@@ -212,25 +213,26 @@ document.addEventListener("DOMContentLoaded", () => {
   setInterval(updateTimer, 1000);
   updateTimer();
 
-  // OPEN CASES
+  // OPEN CASE
   openDaily.onclick = async () => {
     currentCase = "daily";
-    caseTitle.innerText = "Daily Case";
-
     if (!subscribeShown) {
       subscribeModal.style.display = "flex";
       subscribeShown = true;
       return;
     }
-
-    caseModal.style.display = "flex";
+    openCase("Daily Case");
   };
 
   openUnlucky.onclick = async () => {
     currentCase = "unlucky";
-    caseTitle.innerText = "Unlucky Case";
-    caseModal.style.display = "flex";
+    openCase("Unlucky Case");
   };
+
+  function openCase(title) {
+    document.querySelector(".caseTitle").innerText = title;
+    caseModal.style.display = "flex";
+  }
 
   closeCase.onclick = () => caseModal.style.display = "none";
 
@@ -240,29 +242,28 @@ document.addEventListener("DOMContentLoaded", () => {
     caseModal.style.display = "flex";
   };
 
-  // OPEN CASE BUTTON
   openCaseBtn.onclick = async () => {
     if (isSpinning) return;
     isSpinning = true;
 
-    const prizes = currentCase === "daily" ? dailyPrizes : unluckyPrizes;
-    const prize = randomPrize(prizes);
+    const prize = currentCase === "daily"
+      ? randomPrize(dailyPrizes)
+      : randomPrize(unluckyPrizes);
 
-    // reset strip
-    strip.style.transition = "none";
-    strip.style.transform = `translateX(0px)`;
     strip.innerHTML = "";
 
-    // 12 spins
-    const spins = 12;
-    const itemsCount = 60 * spins;
+    const itemsCount = 80;
     const stripItems = [];
 
     for (let i = 0; i < itemsCount; i++) {
-      const item = prizes[Math.floor(Math.random() * prizes.length)];
+      const item = (currentCase === "daily")
+        ? dailyPrizes[Math.floor(Math.random() * dailyPrizes.length)]
+        : unluckyPrizes[Math.floor(Math.random() * unluckyPrizes.length)];
       stripItems.push(item);
     }
 
+    stripItems.push(prize);
+    stripItems.push(prize);
     stripItems.push(prize);
 
     stripItems.forEach(item => {
@@ -275,31 +276,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const itemWidth = 218;
     const targetIndex = stripItems.length - 1;
     const stripWrapWidth = document.querySelector(".stripWrap").clientWidth;
-
     const targetX = targetIndex * itemWidth - (stripWrapWidth / 2 - itemWidth / 2);
 
-    strip.style.transition = "transform 5s cubic-bezier(.17,.67,.3,1)";
+    strip.style.transition = "transform 7s cubic-bezier(.17,.67,.3,1)";
     strip.style.transform = `translateX(-${targetX}px)`;
 
     setTimeout(async () => {
       isSpinning = false;
 
       if (currentCase === "daily") setTimer();
-
-      if (currentCase === "unlucky") {
-        const res = await fetch(`${API}/remove-balance`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user: userId, amount: 0.25 })
-        });
-        const data = await res.json();
-        if (!data.ok) {
-          alert("Недостаточно баланса");
-          caseModal.style.display = "none";
-          return;
-        }
-        updateBalance();
-      }
 
       rewardModal.style.display = "flex";
       rewardText.innerText = prize.type === "ton"
@@ -339,7 +324,7 @@ document.addEventListener("DOMContentLoaded", () => {
         updateBalance();
       };
 
-    }, 5200);
+    }, 7200);
   };
 
   // INVENTORY
