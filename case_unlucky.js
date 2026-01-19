@@ -1,44 +1,28 @@
 document.addEventListener("DOMContentLoaded", () => {
-
-  const API = "https://kosmogift-worker.v-bot-2010.workers.dev"; // позже заменим
-
-  const user = window.Telegram.WebApp.initDataUnsafe.user || {};
-  const userId = String(user.id);
-
+  const openUnlucky = document.getElementById("openUnlucky");
   const caseModal = document.getElementById("caseModal");
-  const closeCase = document.getElementById("closeCase");
+  const caseModalTitle = document.getElementById("caseModalTitle");
   const openCaseBtn = document.getElementById("openCaseBtn");
   const strip = document.getElementById("strip");
-
   const rewardModal = document.getElementById("rewardModal");
   const rewardText = document.getElementById("rewardText");
   const rewardBtnTon = document.getElementById("rewardBtnTon");
-  const rewardBtnSell = document.getElementById("rewardBtnSell");
-  const rewardBtnInv = document.getElementById("rewardBtnInv");
 
-  const balanceEl = document.getElementById("balance");
-  const balanceProfile = document.getElementById("balanceProfile");
+  const API = "https://kosmogift-worker.v-bot-2010.workers.dev";
+  const COST = 0.25;
 
-  const openDaily = document.getElementById("openDaily");
-
-  let isSpinning = false;
-
-  // ====== Unlucky Case ======
-  const CASE_PRICE = 0.25;
+  let spinning = false;
+  let currentPrize = null;
 
   const prizes = [
-    { type: "ton", value: 0.2, chance: 70 },
-    { type: "ton", value: 0.35, chance: 19 },
-    { type: "ton", value: 0.6, chance: 7 },
-    { type: "ton", value: 1.0, chance: 2.5 },
-    { type: "nft", value: "Desk calendar", chance: 0.5 },
-    { type: "nft", value: "Top hat", chance: 0.25 },
-    { type: "nft", value: "Signet ring", chance: 0.15 },
-    { type: "nft", value: "durov's cap", chance: 0.001 }
+    { value: 0.2, chance: 70 },
+    { value: 0.35, chance: 19 },
+    { value: 0.6, chance: 7 },
+    { value: 1, chance: 2.5 }
   ];
 
-  function randomPrize() {
-    const r = Math.random() * 100;
+  function rollPrize() {
+    let r = Math.random() * 100;
     let sum = 0;
     for (const p of prizes) {
       sum += p.chance;
@@ -47,125 +31,70 @@ document.addEventListener("DOMContentLoaded", () => {
     return prizes[0];
   }
 
-  async function getBalance() {
-    const res = await fetch(`${API}/balance?user=${userId}`);
-    const data = await res.json();
-    return data.balance;
-  }
+  function buildStrip(winValue) {
+    strip.innerHTML = "";
+    strip.style.transition = "none";
+    strip.style.transform = "translateX(0)";
 
-  async function updateBalance() {
-    const bal = await getBalance();
-    balanceEl.innerText = bal.toFixed(2) + " TON";
-    balanceProfile.innerText = bal.toFixed(2) + " TON";
-  }
-
-  updateBalance();
-  setInterval(updateBalance, 5000);
-
-  // Открытие кейса (отдельная кнопка)
-  document.getElementById("openUnlucky")?.addEventListener("click", async () => {
-
-    const balance = await getBalance();
-    if (balance < CASE_PRICE) {
-      return alert("Недостаточно баланса для открытия Unlucky Case");
+    // мусор
+    for (let i = 0; i < 40; i++) {
+      const d = document.createElement("div");
+      d.className = "drop";
+      d.innerText =
+        prizes[Math.floor(Math.random() * prizes.length)].value + " TON";
+      strip.appendChild(d);
     }
 
-    caseModal.style.display = "flex";
-    document.querySelector(".caseTitle").innerText = "Unlucky Case";
-  });
+    // выигрыш
+    const win = document.createElement("div");
+    win.className = "drop";
+    win.innerText = winValue + " TON";
+    strip.appendChild(win);
+  }
 
-  closeCase.onclick = () => caseModal.style.display = "none";
+  openUnlucky.onclick = () => {
+    caseModalTitle.innerText = "Unlucky Case";
+    caseModal.style.display = "flex";
+  };
 
   openCaseBtn.onclick = async () => {
-    if (isSpinning) return;
-    isSpinning = true;
+    if (spinning) return;
+    spinning = true;
 
-    const balance = await getBalance();
-    if (balance < CASE_PRICE) {
-      isSpinning = false;
-      return alert("Баланс слишком маленький");
-    }
+    currentPrize = rollPrize();
+    buildStrip(currentPrize.value);
 
-    const prize = randomPrize();
-
-    // рулетка
-    strip.innerHTML = "";
-    const itemsCount = 60;
-    const stripItems = [];
-
-    for (let i = 0; i < itemsCount; i++) {
-      const item = prizes[Math.floor(Math.random() * prizes.length)];
-      stripItems.push(item);
-    }
-
-    stripItems.push(prize);
-
-    stripItems.forEach(item => {
-      const div = document.createElement("div");
-      div.className = "drop";
-      div.innerText = item.type === "ton" ? `${item.value} TON` : item.value;
-      strip.appendChild(div);
+    requestAnimationFrame(() => {
+      strip.style.transition = "transform 4.5s cubic-bezier(.12,.8,.25,1)";
+      strip.style.transform = "translateX(-4200px)";
     });
 
-    const itemWidth = 218;
-    const targetIndex = stripItems.length - 1;
-    const stripWrapWidth = document.querySelector(".stripWrap").clientWidth;
-
-    const targetX = targetIndex * itemWidth - (stripWrapWidth / 2 - itemWidth / 2);
-
-    strip.style.transition = "transform 5s cubic-bezier(.17,.67,.3,1)";
-    strip.style.transform = `translateX(-${targetX}px)`;
-
     setTimeout(async () => {
-      isSpinning = false;
-
-      // списываем баланс
-      await fetch(`${API}/remove-balance`, {
+      await fetch(`${API}/add-balance`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user: userId, amount: CASE_PRICE })
+        body: JSON.stringify({
+          user: Telegram.WebApp.initDataUnsafe.user.id,
+          amount: -COST
+        })
       });
 
-      updateBalance();
-
+      rewardText.innerText = `Вы выиграли ${currentPrize.value} TON`;
       rewardModal.style.display = "flex";
-      rewardText.innerText = prize.type === "ton"
-        ? `Вы выиграли ${prize.value} TON`
-        : `Вы выиграли NFT "${prize.value}"`;
+      spinning = false;
+    }, 4600);
+  };
 
-      rewardBtnTon.style.display = prize.type === "ton" ? "block" : "none";
-      rewardBtnSell.style.display = prize.type === "nft" ? "block" : "none";
-      rewardBtnInv.style.display = prize.type === "nft" ? "block" : "none";
+  rewardBtnTon.onclick = async () => {
+    await fetch(`${API}/add-balance`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        user: Telegram.WebApp.initDataUnsafe.user.id,
+        amount: currentPrize.value
+      })
+    });
 
-      rewardBtnTon.onclick = async () => {
-        await fetch(`${API}/add-balance`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user: userId, amount: prize.value })
-        });
-        rewardModal.style.display = "none";
-        updateBalance();
-      };
-
-      rewardBtnInv.onclick = async () => {
-        await fetch(`${API}/add-nft`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user: userId, nft: { name: prize.value, price: 3.27 } })
-        });
-        rewardModal.style.display = "none";
-      };
-
-      rewardBtnSell.onclick = async () => {
-        await fetch(`${API}/add-balance`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user: userId, amount: 3.27 })
-        });
-        rewardModal.style.display = "none";
-        updateBalance();
-      };
-
-    }, 5200);
+    rewardModal.style.display = "none";
   };
 });
