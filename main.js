@@ -24,8 +24,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const amountInput = document.getElementById("amount");
 
   const openDaily = document.getElementById("openDaily");
-  const timerBlock = document.getElementById("timerBlock");
-  const timerText = document.getElementById("timerText");
 
   const caseModal = document.getElementById("caseModal");
   const closeCase = document.getElementById("closeCase");
@@ -143,7 +141,7 @@ document.addEventListener("DOMContentLoaded", () => {
     { type: "nft", value: "lol pop", chance: 0.01 }
   ];
 
-  function randomPrize() {
+  function randomPrizeByChance() {
     const r = Math.random() * 100;
     let sum = 0;
     for (const p of prizes) {
@@ -171,40 +169,50 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   openCaseBtn.onclick = async () => {
-    const prize = randomPrize();
+    const prize = randomPrizeByChance();
 
     // Создаем рулетку из всего списка
     strip.innerHTML = "";
-    for (let i = 0; i < 60; i++) {
-      const item = prizes[i % prizes.length];
-      const div = document.createElement("div");
-      div.className = "drop";
-      div.innerText = item.type === "ton" ? `${item.value} TON` : item.value;
-      strip.appendChild(div);
+    const stripItems = [];
+    for (let i = 0; i < 30; i++) {
+      for (const p of prizes) {
+        stripItems.push(p);
+        const div = document.createElement("div");
+        div.className = "drop";
+        div.innerText = p.type === "ton" ? `${p.value} TON` : p.value;
+        strip.appendChild(div);
+      }
     }
 
-    // Вычисляем позицию, чтобы остановиться на нужном призе
-    const index = prizes.findIndex(p => p.type === prize.type && p.value === prize.value);
-    const offset = (index + 20) * 220; // 220 — ширина блока + gap
+    // находим случайную позицию в stripItems где такой приз есть
+    const positions = stripItems
+      .map((p, idx) => ({ p, idx }))
+      .filter(x => x.p.type === prize.type && x.p.value === prize.value);
+
+    const stopIndex = positions[Math.floor(Math.random() * positions.length)].idx;
+
+    const offset = stopIndex * 220;
 
     strip.style.transition = "transform 5s cubic-bezier(.17,.67,.3,1)";
     strip.style.transform = `translateX(-${offset}px)`;
 
     setTimeout(async () => {
-      rewardModal.style.display = "flex";
-      rewardText.innerText = prize.type === "ton"
-        ? `Вы выиграли ${prize.value} TON`
-        : `Вы выиграли NFT "${prize.value}"`;
+      const finalPrize = stripItems[stopIndex];
 
-      rewardBtnTon.style.display = prize.type === "ton" ? "block" : "none";
-      rewardBtnSell.style.display = prize.type === "nft" ? "block" : "none";
-      rewardBtnInv.style.display = prize.type === "nft" ? "block" : "none";
+      rewardModal.style.display = "flex";
+      rewardText.innerText = finalPrize.type === "ton"
+        ? `Вы выиграли ${finalPrize.value} TON`
+        : `Вы выиграли NFT "${finalPrize.value}"`;
+
+      rewardBtnTon.style.display = finalPrize.type === "ton" ? "block" : "none";
+      rewardBtnSell.style.display = finalPrize.type === "nft" ? "block" : "none";
+      rewardBtnInv.style.display = finalPrize.type === "nft" ? "block" : "none";
 
       rewardBtnTon.onclick = async () => {
         await fetch(`${API}/add-balance`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user: userId, amount: prize.value })
+          body: JSON.stringify({ user: userId, amount: finalPrize.value })
         });
         rewardModal.style.display = "none";
         caseModal.style.display = "none";
@@ -215,7 +223,7 @@ document.addEventListener("DOMContentLoaded", () => {
         await fetch(`${API}/add-nft`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user: userId, nft: { name: prize.value, price: 3.27 } })
+          body: JSON.stringify({ user: userId, nft: { name: finalPrize.value, price: 3.27 } })
         });
         rewardModal.style.display = "none";
         caseModal.style.display = "none";
