@@ -86,7 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // пополнение
   deposit.onclick = () => {
-    modal.style.display = "block";
+    modal.style.display = "flex";
   };
 
   closeModal.onclick = () => {
@@ -251,7 +251,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // ================= INVENTORY =================
-  openInventory.onclick = async () => {
+  document.getElementById("openInventory").onclick = async () => {
     const res = await fetch(`${API}/inventory?user=${userId}`);
     const inv = await res.json();
 
@@ -276,7 +276,7 @@ document.addEventListener("DOMContentLoaded", () => {
           body: JSON.stringify({ user: userId, index: idx })
         });
         updateBalance();
-        openInventory.click();
+        document.getElementById("openInventory").click();
       };
     });
 
