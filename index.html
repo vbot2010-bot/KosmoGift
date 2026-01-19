@@ -16,10 +16,7 @@
   <div class="top">
     <div class="userBar">
       <img id="avatar" class="avatar">
-      <div class="balanceBlock">
-        <div id="balance" class="balance">0.00 TON</div>
-        <div class="subBalance">Баланс</div>
-      </div>
+      <span id="balance">0.00 TON</span>
     </div>
   </div>
 
@@ -40,19 +37,17 @@
   <div class="top">
     <div class="userBar">
       <img id="profileAvatar" class="avatar big">
-      <div class="balanceBlock">
-        <div id="balanceProfile" class="balance">0.00 TON</div>
-        <div class="subBalance">Баланс</div>
-      </div>
+      <span id="balanceProfile">0.00 TON</span>
     </div>
   </div>
 
-  <div id="username" class="username"></div>
+  <div id="username"></div>
 
-  <button id="connectWallet" class="mainBtn">Подключить кошелёк</button>
-  <button id="deposit" class="mainBtn">Пополнить баланс</button>
-  <button id="openInventory" class="mainBtn">Инвентарь</button>
-  <button id="disconnectWallet" class="mainBtn" style="display:none">Отключить кошелёк</button>
+  <button id="connectWallet">Подключить кошелёк</button>
+  <button id="disconnectWallet" style="display:none">Отключить кошелёк</button>
+
+  <button id="deposit">Пополнить баланс</button>
+  <button id="openInventory">Инвентарь</button>
 </div>
 
 <!-- MODAL POPOLNENIE -->
@@ -70,10 +65,8 @@
 <!-- SUBSCRIBE MODAL -->
 <div id="subscribeModal" class="modal">
   <div class="subscribeContent">
-    <div class="subscribeTitle">Подпишись на канал</div>
     <div class="subscribeText">Для открытия кейса нужно подписаться на канал</div>
     <button id="subscribeBtn" class="caseBtn">Подписаться</button>
-    <button id="skipSubscribe" class="caseBtn secondary">Пропустить</button>
   </div>
 </div>
 
@@ -91,10 +84,11 @@
     </div>
 
     <div class="dropInfo">
-      <div class="dropInfoTitle">Дроп и шансы</div>
-      <div class="dropInfoText">0.01 TON — 90% | 0.02 TON — 5% | NFT — 0.01%</div>
+      <div class="dropInfoTitle">Дроп</div>
+      <div class="dropInfoText">Шанс выпадения: по честным шансам</div>
     </div>
 
+    <div id="resultText" class="resultText">Нажми "Открыть кейс"</div>
     <button id="openCaseBtn" class="caseBtn">Открыть кейс</button>
   </div>
 </div>
@@ -119,8 +113,8 @@
 </div>
 
 <div class="nav">
-  <button id="btnHome" class="navBtn active">Главная</button>
-  <button id="btnProfile" class="navBtn">Профиль</button>
+  <button id="btnHome">Главная</button>
+  <button id="btnProfile">Профиль</button>
 </div>
 
 <script src="main.js"></script>
