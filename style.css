@@ -65,6 +65,7 @@ body {
   background: #3a86ff;
   color: white;
   font-weight: bold;
+  cursor: pointer;
 }
 
 .nav {
@@ -76,6 +77,7 @@ body {
 .nav button {
   flex: 1;
   padding: 15px;
+  cursor: pointer;
 }
 
 /* MODALS */
@@ -92,6 +94,7 @@ body {
   z-index: 1000;
 }
 
+/* SUBSCRIBE */
 .subscribeContent {
   width: 90%;
   max-width: 320px;
@@ -101,6 +104,7 @@ body {
   text-align: center;
 }
 
+/* CASE */
 .caseModalContent {
   width: 90%;
   max-width: 420px;
@@ -144,6 +148,7 @@ body {
   font-weight: bold;
 }
 
+/* САМАЯ ВАЖНАЯ ЧАСТЬ: ПАЛОЧКА ПО ЦЕНТРУ */
 .pointer {
   position: absolute;
   width: 4px;
@@ -172,6 +177,7 @@ body {
   color: #000;
 }
 
+/* REWARD MODAL */
 .rewardContent {
   width: 90%;
   max-width: 320px;
@@ -205,6 +211,7 @@ body {
   margin-bottom: 10px;
 }
 
+/* TIMER */
 .timerBlock {
   margin-top: 20px;
 }
@@ -212,4 +219,21 @@ body {
 .timerText {
   font-size: 22px;
   font-weight: bold;
-    }
+}
+
+/* ПРИЗЫ В КЕЙСЕ (СПИСОК) */
+.prizesList {
+  margin-top: 10px;
+  padding: 10px;
+  background: #1b2635;
+  border-radius: 12px;
+}
+
+.prizesList div {
+  padding: 5px 0;
+  border-bottom: 1px solid #2a3a4a;
+}
+
+.prizesList div:last-child {
+  border-bottom: none;
+  }
