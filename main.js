@@ -173,19 +173,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const prize = randomPrize();
 
-    // рулетка
     strip.innerHTML = "";
+
+    // сбрасываем трансформацию, чтобы рулетка крутилась снова
+    strip.style.transition = "none";
+    strip.style.transform = "translateX(0)";
 
     const itemsCount = 60;
     const stripItems = [];
 
-    // создаём случайный список из призов
     for (let i = 0; i < itemsCount; i++) {
       const item = prizes[Math.floor(Math.random() * prizes.length)];
       stripItems.push(item);
     }
 
-    // добавляем финальный приз в конце, чтобы точно выпало
     stripItems.push(prize);
 
     stripItems.forEach(item => {
@@ -195,15 +196,20 @@ document.addEventListener("DOMContentLoaded", () => {
       strip.appendChild(div);
     });
 
-    // вычисляем позицию финального элемента
+    // обязательно пересчитываем ширину после добавления элементов
     const itemWidth = 218;
     const targetIndex = stripItems.length - 1;
     const stripWrapWidth = document.querySelector(".stripWrap").clientWidth;
 
     const targetX = targetIndex * itemWidth - (stripWrapWidth / 2 - itemWidth / 2);
 
-    strip.style.transition = "transform 5s cubic-bezier(.17,.67,.3,1)";
-    strip.style.transform = `translateX(-${targetX}px)`;
+    // даём браузеру время применить reset
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        strip.style.transition = "transform 5s cubic-bezier(.17,.67,.3,1)";
+        strip.style.transform = `translateX(-${targetX}px)`;
+      });
+    });
 
     setTimeout(async () => {
       isSpinning = false;
