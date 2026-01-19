@@ -33,7 +33,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const closeCase = document.getElementById("closeCase");
   const openCaseBtn = document.getElementById("openCaseBtn");
   const resultText = document.getElementById("resultText");
-  const strip = document.getElementById("strip");
+
+  const winModal = document.getElementById("winModal");
+  const closeWin = document.getElementById("closeWin");
+  const winTitle = document.getElementById("winTitle");
+  const winDesc = document.getElementById("winDesc");
+  const getTonBtn = document.getElementById("getTonBtn");
+  const toInventoryBtn = document.getElementById("toInventoryBtn");
 
   const inventoryModal = document.getElementById("inventoryModal");
   const closeInventory = document.getElementById("closeInventory");
@@ -43,12 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const disconnectWallet = document.getElementById("disconnectWallet");
   const deposit = document.getElementById("deposit");
 
-  const winModal = document.getElementById("winModal");
-  const winTitle = document.getElementById("winTitle");
-  const winPrize = document.getElementById("winPrize");
-  const getTonBtn = document.getElementById("getTonBtn");
-  const toInvBtn = document.getElementById("toInvBtn");
-  const sellBtn = document.getElementById("sellBtn");
+  const strip = document.getElementById("strip");
 
   /* ================= USER ================= */
   avatar.src = user.photo_url || "";
@@ -66,7 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* ================= BALANCE ================= */
   async function loadBalance() {
-    const r = await fetch(`${API}/balance?user_id=${userId}`);
+    const r = await fetch(`${API}/balance?user=${userId}`);
     const d = await r.json();
     balance.innerText = `${Number(d.balance).toFixed(2)} TON`;
     balanceProfile.innerText = `${Number(d.balance).toFixed(2)} TON`;
@@ -81,7 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   connectWallet.onclick = async () => {
     try {
-      await tonConnectUI.connect();
+      await tonConnectUI.connectWallet();
     } catch {}
   };
 
@@ -126,55 +127,33 @@ document.addEventListener("DOMContentLoaded", () => {
     subscribeModal.style.display = "none";
   };
 
-  /* ================= DAILY CASE ================= */
-  const PRIZES = [
-    { type: "ton", amount: 0.01, chance: 90 },
-    { type: "ton", amount: 0.02, chance: 5 },
-    { type: "ton", amount: 0.03, chance: 2.5 },
-    { type: "ton", amount: 0.04, chance: 1 },
-    { type: "ton", amount: 0.05, chance: 0.75 },
-    { type: "ton", amount: 0.06, chance: 0.5 },
-    { type: "ton", amount: 0.07, chance: 0.24 },
-    { type: "nft", name: "lol pop", chance: 0.01 }
+  /* ================= PRIZES ================= */
+  const prizes = [
+    { name: "NFT #1", type: "nft", price: 3.27, chance: 10 },
+    { name: "NFT #2", type: "nft", price: 3.27, chance: 5 },
+    { name: "10 TON", type: "ton", amount: 10, chance: 20 },
+    { name: "5 TON", type: "ton", amount: 5, chance: 25 },
+    { name: "1 TON", type: "ton", amount: 1, chance: 40 },
   ];
 
-  function pickPrize() {
-    const rnd = Math.random() * 100;
-    let sum = 0;
-    for (const p of PRIZES) {
-      sum += p.chance;
-      if (rnd <= sum) return p;
+  function getRandomPrize() {
+    const total = prizes.reduce((a, b) => a + b.chance, 0);
+    let r = Math.random() * total;
+    for (const p of prizes) {
+      r -= p.chance;
+      if (r <= 0) return p;
     }
-    return PRIZES[0];
+    return prizes[0];
   }
 
-  function buildStrip(prize) {
-    strip.innerHTML = "";
-    for (let i = 0; i < 20; i++) {
-      const d = document.createElement("div");
-      d.className = "drop";
-
-      const p = PRIZES[Math.floor(Math.random() * PRIZES.length)];
-      if (i === 10) {
-        // середина всегда приз
-        if (prize.type === "ton") d.innerText = `${prize.amount} TON`;
-        else d.innerText = prize.name;
-      } else {
-        if (p.type === "ton") d.innerText = `${p.amount} TON`;
-        else d.innerText = p.name;
-      }
-
-      strip.appendChild(d);
-    }
-  }
-
+  /* ================= DAILY CASE ================= */
   openDaily.onclick = async () => {
     if (needSubscribe()) {
       subscribeModal.style.display = "flex";
       return;
     }
 
-    const r = await fetch(`${API}/daily?user_id=${userId}`);
+    const r = await fetch(`${API}/daily?user=${userId}`);
     const d = await r.json();
 
     if (d.error === "already") {
@@ -184,53 +163,116 @@ document.addEventListener("DOMContentLoaded", () => {
 
     caseModal.style.display = "flex";
     resultText.innerText = "Нажми «Открыть кейс»";
-    strip.style.transform = "translateX(0)";
+
+    // Build roulette strip
+    strip.innerHTML = "";
+    for (let i = 0; i < 12; i++) {
+      const prize = prizes[i % prizes.length];
+      const div = document.createElement("div");
+      div.className = "drop";
+      div.innerText = prize.name;
+      strip.appendChild(div);
+    }
   };
 
   closeCase.onclick = () => caseModal.style.display = "none";
 
+  let prize = null;
+
   openCaseBtn.onclick = async () => {
-    const prize = pickPrize();
-    buildStrip(prize);
+    // animation
+    prize = getRandomPrize();
 
-    // плавный прокрут
-    const rollDistance = 2000; // пикселей
-    strip.style.transition = "transform 3s cubic-bezier(.2,.8,.2,1)";
-    strip.style.transform = `translateX(-${rollDistance}px)`;
+    const distance = 3000 + Math.random() * 2000; // smooth spin
+    strip.style.transition = "transform 4s cubic-bezier(.1,.9,.2,1)";
+    strip.style.transform = `translateX(-${distance}px)`;
 
-    // после остановки
-    setTimeout(async () => {
+    setTimeout(() => {
+      strip.style.transition = "";
+      strip.style.transform = "translateX(0)";
       caseModal.style.display = "none";
 
+      // show win modal
       winModal.style.display = "flex";
-      winTitle.innerText = prize.type === "ton" ? "Вы выиграли TON" : "Вы выиграли NFT";
-      winPrize.innerText = prize.type === "ton" ? `${prize.amount} TON` : prize.name;
+      winTitle.innerText = prize.name;
 
-      // кнопки
       if (prize.type === "ton") {
+        winDesc.innerText = `Вы выиграли ${prize.amount} TON`;
         getTonBtn.style.display = "block";
-        toInvBtn.style.display = "none";
-        sellBtn.style.display = "none";
+        toInventoryBtn.style.display = "none";
+      } else {
+        winDesc.innerText = `NFT стоимостью ${prize.price} TON`;
+        getTonBtn.style.display = "none";
+        toInventoryBtn.style.display = "block";
+      }
+    }, 4200);
+  };
 
-                getTonBtn.onclick = async () => {
-  try {
-    const res = await fetch(`${API}/add-ton`, {
+  closeWin.onclick = () => winModal.style.display = "none";
+
+  getTonBtn.onclick = async () => {
+    try {
+      const res = await fetch(`${API}/add-ton`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: userId, amount: prize.amount })
+      });
+
+      const data = await res.json();
+      console.log("ADD TON RESPONSE:", data);
+
+      if (!res.ok) {
+        alert("Ошибка сервера при начислении TON: " + (data.error || res.status));
+        return;
+      }
+
+      loadBalance();
+      winModal.style.display = "none";
+    } catch (e) {
+      alert("Ошибка при запросе: " + e.message);
+    }
+  };
+
+  toInventoryBtn.onclick = async () => {
+    await fetch(`${API}/add-nft`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ user_id: userId, amount: prize.amount })
+      body: JSON.stringify({ user_id: userId, name: prize.name, price: prize.price })
     });
-
-    const data = await res.json();
-    console.log("ADD TON RESPONSE:", data);
-
-    if (!res.ok) {
-      alert("Ошибка сервера при начислении TON: " + (data.error || res.status));
-      return;
-    }
 
     loadBalance();
     winModal.style.display = "none";
-  } catch (e) {
-    alert("Ошибка при запросе: " + e.message);
-  }
-};
+  };
+
+  /* ================= INVENTORY ================= */
+  openInventory.onclick = async () => {
+    inventoryModal.style.display = "flex";
+    inventoryList.innerHTML = "";
+
+    const r = await fetch(`${API}/inventory?user=${userId}`);
+    const inv = await r.json();
+
+    inv.forEach((item, i) => {
+      const div = document.createElement("div");
+      div.className = "itemCard";
+      div.innerHTML = `
+        <div>${item.name}</div>
+        <button>Продать</button>
+      `;
+
+      div.querySelector("button").onclick = async () => {
+        await fetch(`${API}/sell-nft`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user_id: userId, index: i })
+        });
+        loadBalance();
+        openInventory.click();
+      };
+
+      inventoryList.appendChild(div);
+    });
+  };
+
+  closeInventory.onclick = () => inventoryModal.style.display = "none";
+});
