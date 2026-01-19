@@ -65,7 +65,11 @@ body {
   background: #3a86ff;
   color: white;
   font-weight: bold;
-  margin-bottom: 10px;
+  margin-top: 12px;
+}
+
+.subscribeBtn {
+  background: #7d7d7d;
 }
 
 .nav {
@@ -93,36 +97,26 @@ body {
   z-index: 1000;
 }
 
-.modalContent {
+.modalContent, .subscribeContent, .caseModalContent, .rewardContent, .inventoryContent {
   width: 90%;
-  max-width: 320px;
+  max-width: 420px;
   background: #7d7d7d;
   border-radius: 20px;
   padding: 20px;
-  text-align: center;
 }
 
 .modalHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
 }
 
-.caseModalContent {
-  width: 90%;
-  max-width: 420px;
-  height: 75vh;
-  background: #7d7d7d;
-  border-radius: 20px;
-  padding: 20px;
-  position: relative;
-}
-
-.caseHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.closeBtn {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #000;
 }
 
 .stripWrap {
@@ -167,30 +161,12 @@ body {
   text-align: center;
 }
 
-.closeBtn {
-  background: transparent;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: #000;
-}
-
 .rewardContent {
-  width: 90%;
-  max-width: 320px;
-  background: #7d7d7d;
-  border-radius: 20px;
-  padding: 20px;
   text-align: center;
 }
 
 .inventoryContent {
-  width: 90%;
-  max-width: 420px;
   height: 60vh;
-  background: #7d7d7d;
-  border-radius: 20px;
-  padding: 20px;
   overflow-y: auto;
 }
 
@@ -208,4 +184,4 @@ body {
 .timerText {
   font-size: 22px;
   font-weight: bold;
-}
+    }
