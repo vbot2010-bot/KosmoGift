@@ -27,7 +27,7 @@
     <button id="openDaily" class="caseBtn">Открыть кейс</button>
 
     <div id="timerBlock" class="timerBlock" style="display:none;">
-      <div id="timerText" class="timerText">23:59:58</div>
+      <div id="timerText" class="timerText">00:00:00</div>
     </div>
   </div>
 </div>
@@ -43,13 +43,13 @@
 
   <div id="username"></div>
 
-  <button id="connectWallet">Подключить кошелёк</button>
-  <button id="disconnectWallet" style="display:none">Отключить кошелёк</button>
-  <button id="deposit">Пополнить баланс</button>
-  <button id="openInventory">Инвентарь</button>
+  <button id="connectWallet" class="caseBtn">Подключить кошелёк</button>
+  <button id="disconnectWallet" class="caseBtn" style="display:none">Отключить кошелёк</button>
+  <button id="deposit" class="caseBtn">Пополнить баланс</button>
+  <button id="openInventory" class="caseBtn">Инвентарь</button>
 </div>
 
-<!-- MODAL POPOLNENIE -->
+<!-- MODAL ПОПОЛНЕНИЕ -->
 <div id="modal" class="modal">
   <div class="modalContent">
     <div class="modalHeader">
@@ -62,13 +62,21 @@
 </div>
 
 <!-- CASE MODAL -->
-<div id="caseModal" class="modal">
+<div id="caseModal" class="modal halfModal">
   <div class="caseModalContent">
     <div class="caseHeader">
       <div class="caseTitle">Daily Case</div>
       <button id="closeCase" class="closeBtn">✕</button>
     </div>
 
+    <!-- Блок подписки -->
+    <div id="subscribeBlock" class="subscribeBlock">
+      <div class="subscribeText">Для открытия кейса нужно подписаться на канал</div>
+      <button id="subscribeBtn" class="caseBtn">Подписаться</button>
+      <button id="continueBtn" class="caseBtn" style="margin-top: 10px;">Открыть кейс</button>
+    </div>
+
+    <!-- Рулетка -->
     <div class="stripWrap">
       <div id="strip" class="strip"></div>
       <div class="pointer"></div>
@@ -83,10 +91,7 @@
 <div id="rewardModal" class="modal">
   <div class="rewardContent">
     <div id="rewardText" class="rewardText"></div>
-
     <button id="rewardBtnTon" class="caseBtn">Получить TON</button>
-    <button id="rewardBtnSell" class="caseBtn">Продать NFT</button>
-    <button id="rewardBtnInv" class="caseBtn">В инвентарь</button>
   </div>
 </div>
 
@@ -99,10 +104,10 @@
 </div>
 
 <div class="nav">
-  <button id="btnHome">Главная</button>
-  <button id="btnProfile">Профиль</button>
+  <button id="btnHome" class="caseBtn">Главная</button>
+  <button id="btnProfile" class="caseBtn">Профиль</button>
 </div>
 
 <script src="main.js"></script>
 </body>
-      </html>
+        </html>
