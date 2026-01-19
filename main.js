@@ -26,8 +26,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const amountInput = document.getElementById("amount");
 
   const openDaily = document.getElementById("openDaily");
-  const timerBlock = document.getElementById("timerBlock");
-  const timerText = document.getElementById("timerText");
 
   const caseModal = document.getElementById("caseModal");
   const closeCase = document.getElementById("closeCase");
@@ -121,36 +119,14 @@ document.addEventListener("DOMContentLoaded", () => {
   async function updateBalance() {
     const res = await fetch(`${API}/balance?user=${userId}`);
     const data = await res.json();
-    balanceEl.innerText = data.balance.toFixed(2) + " TON";
-    balanceProfile.innerText = data.balance.toFixed(2) + " TON";
+    if (data.ok) {
+      balanceEl.innerText = data.balance.toFixed(2) + " TON";
+      balanceProfile.innerText = data.balance.toFixed(2) + " TON";
+    }
   }
 
   updateBalance();
   setInterval(updateBalance, 5000);
-
-  // ================= TIMER =================
-  async function updateTimer() {
-    const res = await fetch(`${API}/daily-status?user=${userId}`);
-    const data = await res.json();
-
-    if (data.remaining > 0) {
-      timerBlock.style.display = "block";
-      openDaily.style.display = "none";
-
-      const seconds = Math.floor(data.remaining / 1000);
-      const h = String(Math.floor(seconds / 3600)).padStart(2, "0");
-      const m = String(Math.floor((seconds % 3600) / 60)).padStart(2, "0");
-      const s = String(seconds % 60).padStart(2, "0");
-
-      timerText.innerText = `${h}:${m}:${s}`;
-    } else {
-      timerBlock.style.display = "none";
-      openDaily.style.display = "block";
-    }
-  }
-
-  updateTimer();
-  setInterval(updateTimer, 1000);
 
   // ================= DAILY CASE =================
   const prizes = [
@@ -175,10 +151,26 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   openDaily.onclick = async () => {
-    const res = await fetch(`${API}/daily?user=${userId}`);
-    const data = await res.json();
-    if (data.error) return alert("Кейс доступен раз в 24 часа");
+    // показываем подписку
+    document.getElementById("subscribeModal").style.display = "flex";
+  };
 
+  // подписка
+  document.getElementById("subscribeBtn").onclick = () => {
+    window.Telegram.WebApp.openLink("https://t.me/KosmoGiftOfficial");
+  };
+
+  // закрываем подписку по клику вне
+  document.getElementById("subscribeModal").onclick = (e) => {
+    if (e.target.id === "subscribeModal") {
+      document.getElementById("subscribeModal").style.display = "none";
+    }
+  };
+
+  // после подписки (нажали "Подписаться") — открываем кейс
+  document.getElementById("subscribeBtn").onclick = () => {
+    window.Telegram.WebApp.openLink("https://t.me/KosmoGiftOfficial");
+    document.getElementById("subscribeModal").style.display = "none";
     caseModal.style.display = "flex";
   };
 
@@ -188,6 +180,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const prize = randomPrize();
 
     strip.innerHTML = "";
+    rewardModal.style.display = "none";
+
     for (let i = 0; i < 25; i++) {
       const div = document.createElement("div");
       div.className = "drop";
@@ -195,7 +189,7 @@ document.addEventListener("DOMContentLoaded", () => {
       strip.appendChild(div);
     }
 
-    strip.style.transition = "transform 3.5s cubic-bezier(.17,.67,.3,1)";
+    strip.style.transition = "transform 4.5s cubic-bezier(.17,.67,.3,1)";
     strip.style.transform = "translateX(-1200px)";
 
     setTimeout(() => {
@@ -204,89 +198,57 @@ document.addEventListener("DOMContentLoaded", () => {
         ? `Вы выиграли ${prize.value} TON`
         : `Вы выиграли NFT "${prize.value}"`;
 
-      // TON -> только кнопка забрать
-      rewardBtnTon.onclick = async () => {
-  try {
-    rewardBtnTon.disabled = true;
-    rewardBtnTon.innerText = "Зачисление...";
+      if (prize.type === "ton") {
+        rewardBtnTon.style.display = "block";
+        rewardBtnSell.style.display = "none";
+        rewardBtnInv.style.display = "none";
 
-    const res = await fetch(`${API}/add-balance`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        user: userId,
-        amount: Number(prize.value) // важно: именно Number
-      })
-    });
-
-    const data = await res.json();
-
-    if (!data.ok) {
-      alert("Ошибка сервера: " + (data.error || "unknown"));
-      rewardBtnTon.disabled = false;
-      rewardBtnTon.innerText = "Получить TON";
-      return;
-    }
-
-    // обновляем баланс на экране
-    updateBalance();
-
-    rewardModal.style.display = "none";
-    caseModal.style.display = "none";
-
-    rewardBtnTon.disabled = false;
-    rewardBtnTon.innerText = "Получить TON";
-
-    alert("TON зачислены успешно!");
-  } catch (e) {
-    alert("Ошибка запроса: " + e.message);
-    rewardBtnTon.disabled = false;
-    rewardBtnTon.innerText = "Получить TON";
-  }
-};
-
-      // NFT -> кнопки продать/в инвентарь
-      if (prize.type === "nft") {
+        rewardBtnTon.onclick = async () => {
+          await fetch(`${API}/add-balance`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ user: userId, amount: prize.value })
+          });
+          updateBalance();
+          rewardModal.style.display = "none";
+          caseModal.style.display = "none";
+        };
+      } else {
         rewardBtnTon.style.display = "none";
         rewardBtnSell.style.display = "block";
         rewardBtnInv.style.display = "block";
+
+        const nft = { name: prize.value, price: 3.27 };
+
+        rewardBtnInv.onclick = async () => {
+          await fetch(`${API}/add-nft`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ user: userId, nft })
+          });
+          rewardModal.style.display = "none";
+          caseModal.style.display = "none";
+        };
+
+        rewardBtnSell.onclick = async () => {
+          await fetch(`${API}/add-nft`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ user: userId, nft })
+          });
+
+          await fetch(`${API}/sell-nft`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ user: userId, index: 0 })
+          });
+
+          updateBalance();
+          rewardModal.style.display = "none";
+          caseModal.style.display = "none";
+        };
       }
-
-      rewardBtnTon.onclick = async () => {
-        await fetch(`${API}/add-balance`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user: userId, amount: prize.value })
-        });
-        rewardModal.style.display = "none";
-        caseModal.style.display = "none";
-        updateBalance();
-      };
-
-      const nft = { name: prize.value, price: 3.27 };
-
-      rewardBtnInv.onclick = async () => {
-        await fetch(`${API}/add-nft`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user: userId, nft })
-        });
-        rewardModal.style.display = "none";
-        caseModal.style.display = "none";
-      };
-
-      rewardBtnSell.onclick = async () => {
-        await fetch(`${API}/add-balance`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user: userId, amount: nft.price })
-        });
-        rewardModal.style.display = "none";
-        caseModal.style.display = "none";
-        updateBalance();
-      };
-
-    }, 3500);
+    }, 4500);
   };
 
   // ================= INVENTORY =================
@@ -295,7 +257,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const inv = await res.json();
 
     inventoryList.innerHTML = "";
-    inv.forEach((item, index) => {
+    inv.inventory.forEach((item, index) => {
       const card = document.createElement("div");
       card.className = "itemCard";
       card.innerHTML = `
