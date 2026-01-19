@@ -167,12 +167,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // Если таймера нет - показываем кнопку
     if (!timerBlock || !timerText) return;
 
-    const endTime = localStorage.getItem(TIMER_KEY);
-    if (!endTime) {
-      timerBlock.style.display = "none";
-      openCaseBtn.style.display = "block";
-      return;
-    }
+const endTime = localStorage.getItem(TIMER_KEY);
+if (!endTime) {
+  timerBlock.style.display = "none";
+  openCaseBtn.style.display = "block";
+  return;
+}
 
     const remaining = endTime - Date.now();
 
