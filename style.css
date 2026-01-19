@@ -1,221 +1,80 @@
 body {
-  margin: 0;
-  background: #0e1621;
-  color: white;
   font-family: Arial, sans-serif;
-}
-
-.page {
-  display: none;
-}
-.page.active {
-  display: block;
-}
-
-.top {
-  padding: 70px 20px 0 20px;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-}
-
-.big {
-  width: 60px;
-  height: 60px;
-}
-
-.userBar {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: #1b2635;
-  padding: 10px 14px;
-  border-radius: 20px;
-}
-
-.caseBlock {
-  margin: 120px 20px 0 20px;
-  width: 170px;
-  text-align: left;
-}
-
-.caseIcon {
-  width: 70px;
-  height: 70px;
-  background: #7d7d7d;
-  border-radius: 15px;
-  margin-bottom: 8px;
-}
-
-.caseTitle {
-  font-size: 16px;
-  margin-bottom: 8px;
-}
-
-.caseBtn {
-  width: 100%;
-  padding: 10px;
-  border: none;
-  border-radius: 12px;
-  background: #3a86ff;
+  background: #0b0b0b;
   color: white;
-  font-weight: bold;
-  cursor: pointer;
+  margin: 0;
+  padding: 0;
 }
 
-.nav {
-  position: fixed;
-  bottom: 0;
+.page { display: none; }
+.page.active { display: block; padding: 20px; }
+
+.btn {
   width: 100%;
-  display: flex;
-}
-.nav button {
-  flex: 1;
   padding: 15px;
-  cursor: pointer;
+  margin: 10px 0;
+  border: none;
+  background: #2b2b2b;
+  color: white;
+  border-radius: 12px;
+  font-size: 16px;
 }
 
-/* distance between buttons */
-#connectWallet, #deposit, #openInventory {
-  display: block;
-  width: 90%;
-  margin: 12px auto;
-}
-
-/* MODALS */
 .modal {
   display: none;
   position: fixed;
-  top: 0;
-  left: 0;
+  top: 0; left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0,0,0,0.7);
   justify-content: center;
   align-items: center;
-  z-index: 1000;
 }
 
-/* bottom modal */
-.bottomModal {
-  align-items: flex-end;
-}
-
-.subscribeContent {
-  width: 100%;
-  height: 25vh;
-  background: #7d7d7d;
-  border-radius: 20px 20px 0 0;
+.modalContent {
+  background: #121212;
   padding: 20px;
-  text-align: center;
-}
-
-.caseModalContent {
+  border-radius: 18px;
   width: 90%;
-  max-width: 420px;
-  height: 75vh;
-  background: #7d7d7d;
-  border-radius: 20px;
-  padding: 20px;
+  max-width: 400px;
   position: relative;
 }
 
-.caseHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.stripWrap {
-  position: relative;
-  height: 140px;
-  overflow: hidden;
-  margin-top: 20px;
-  background: #000;
-  border-radius: 15px;
+.closeBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 18px;
 }
 
 .strip {
   display: flex;
-  gap: 18px;
-  padding: 20px 0;
-  transform: translateX(0);
+  overflow: hidden;
+  width: 100%;
+  margin: 20px 0;
 }
 
 .drop {
-  min-width: 200px;
-  height: 100px;
-  background: #222;
-  border-radius: 12px;
+  width: 120px;
+  height: 80px;
+  margin-right: 10px;
+  background: #2b2b2b;
+  border-radius: 10px;
   display: flex;
-  align-items: center;
   justify-content: center;
-  font-weight: bold;
+  align-items: center;
 }
 
-.pointer {
+.caseContent {
+  width: 90%;
+}
+
+.subscribeModal .modalContent {
+  width: 100%;
   position: absolute;
-  width: 4px;
-  height: 140px;
-  background: #ff0;
-  left: 50%;
-  top: 0;
-  transform: translateX(-50%);
-}
-
-.resultText {
-  margin-top: 20px;
-  text-align: center;
-}
-
-.closeBtn {
-  background: transparent;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: #000;
-}
-
-.rewardContent {
-  width: 90%;
-  max-width: 320px;
-  background: #7d7d7d;
-  border-radius: 20px;
-  padding: 20px;
-  text-align: center;
-}
-
-.rewardText {
-  margin-bottom: 20px;
-}
-
-.inventoryContent {
-  width: 90%;
-  max-width: 420px;
-  height: 60vh;
-  background: #7d7d7d;
-  border-radius: 20px;
-  padding: 20px;
-  overflow-y: auto;
-}
-
-.inventoryList .itemCard {
-  background: #000;
-  padding: 10px;
-  border-radius: 12px;
-  margin-bottom: 10px;
-}
-
-.timerBlock {
-  margin-top: 20px;
-}
-
-.timerText {
-  font-size: 22px;
-  font-weight: bold;
+  bottom: 0;
+  border-radius: 18px 18px 0 0;
 }
