@@ -5,7 +5,6 @@ body {
   font-family: Arial, sans-serif;
 }
 
-/* ================= PAGES ================= */
 .page {
   display: none;
 }
@@ -13,7 +12,6 @@ body {
   display: block;
 }
 
-/* ================= TOP ================= */
 .top {
   padding: 70px 20px 0 20px;
   display: flex;
@@ -40,7 +38,6 @@ body {
   border-radius: 20px;
 }
 
-/* ================= HOME ================= */
 .caseBlock {
   margin: 120px 20px 0 20px;
   width: 170px;
@@ -68,28 +65,9 @@ body {
   background: #3a86ff;
   color: white;
   font-weight: bold;
-  cursor: pointer;
+  margin-bottom: 10px;
 }
 
-/* ================= PROFILE ================= */
-#profile {
-  padding: 20px;
-}
-
-/* Кнопки в профиле (с отступом между ними) */
-#profile button {
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 12px;
-  background: #3a86ff;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  margin-top: 16px; /* отступ между кнопками */
-}
-
-/* ================= NAV ================= */
 .nav {
   position: fixed;
   bottom: 0;
@@ -99,13 +77,9 @@ body {
 .nav button {
   flex: 1;
   padding: 15px;
-  border: none;
-  background: #1b2635;
-  color: white;
-  cursor: pointer;
 }
 
-/* ================= MODALS ================= */
+/* MODALS */
 .modal {
   display: none;
   position: fixed;
@@ -119,8 +93,7 @@ body {
   z-index: 1000;
 }
 
-/* ====== SUBSCRIBE ====== */
-.subscribeContent {
+.modalContent {
   width: 90%;
   max-width: 320px;
   background: #7d7d7d;
@@ -129,7 +102,13 @@ body {
   text-align: center;
 }
 
-/* ====== CASE ====== */
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
 .caseModalContent {
   width: 90%;
   max-width: 420px;
@@ -196,7 +175,6 @@ body {
   color: #000;
 }
 
-/* ====== REWARD ====== */
 .rewardContent {
   width: 90%;
   max-width: 320px;
@@ -206,14 +184,6 @@ body {
   text-align: center;
 }
 
-.rewardImg {
-  width: 120px;
-  height: 120px;
-  object-fit: cover;
-  margin-bottom: 10px;
-}
-
-/* ====== INVENTORY ====== */
 .inventoryContent {
   width: 90%;
   max-width: 420px;
@@ -231,7 +201,6 @@ body {
   margin-bottom: 10px;
 }
 
-/* ====== TIMER ====== */
 .timerBlock {
   margin-top: 20px;
 }
@@ -239,4 +208,4 @@ body {
 .timerText {
   font-size: 22px;
   font-weight: bold;
-}
+  }
