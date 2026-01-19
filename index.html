@@ -11,6 +11,7 @@
 </head>
 <body>
 
+<!-- HOME -->
 <div id="home" class="page active">
   <div class="top">
     <div class="userBar">
@@ -26,6 +27,7 @@
   </div>
 </div>
 
+<!-- PROFILE -->
 <div id="profile" class="page">
   <div class="top">
     <div class="userBar">
@@ -42,6 +44,7 @@
   <button id="openInventory">Инвентарь</button>
 </div>
 
+<!-- SUBSCRIBE MODAL -->
 <div id="subscribeModal" class="modal">
   <div class="subscribeContent">
     <div class="subscribeText">Для открытия кейса нужно подписаться на канал</div>
@@ -49,6 +52,7 @@
   </div>
 </div>
 
+<!-- CASE MODAL -->
 <div id="caseModal" class="modal">
   <div class="caseModalContent">
     <div class="caseHeader">
@@ -57,7 +61,7 @@
     </div>
 
     <div class="stripWrap">
-      <div class="strip" id="strip"></div>
+      <div id="strip" class="strip"></div>
       <div class="pointer"></div>
     </div>
 
@@ -66,20 +70,20 @@
   </div>
 </div>
 
-<div id="prizeModal" class="modal">
-  <div class="prizeContent">
-    <div id="prizeTitle" class="prizeTitle"></div>
-    <div id="prizeImage" class="prizeImage"></div>
-    <div id="prizeText" class="prizeText"></div>
-
-    <div id="prizeButtons" class="prizeButtons">
-      <button id="getTonBtn" class="caseBtn">Получить TON</button>
-      <button id="sellBtn" class="caseBtn">Продать NFT</button>
-      <button id="toInventoryBtn" class="caseBtn">В инвентарь</button>
+<!-- WIN MODAL -->
+<div id="winModal" class="modal">
+  <div class="winContent">
+    <div id="winTitle" class="winTitle"></div>
+    <div id="winPrize" class="winPrize"></div>
+    <div class="winButtons">
+      <button id="getTonBtn" class="caseBtn">Получить</button>
+      <button id="toInvBtn" class="caseBtn">В инвентарь</button>
+      <button id="sellBtn" class="caseBtn">Продать за 3.27 TON</button>
     </div>
   </div>
 </div>
 
+<!-- INVENTORY MODAL -->
 <div id="inventoryModal" class="modal">
   <div class="inventoryContent">
     <button id="closeInventory" class="closeBtn">✕</button>
@@ -94,4 +98,4 @@
 
 <script src="main.js"></script>
 </body>
-    </html>
+</html>
