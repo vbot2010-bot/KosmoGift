@@ -160,6 +160,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
     caseModal.style.display = "flex";
+    caseModal.classList.add("showCase");
   };
 
   subscribeBtn.onclick = () => {
@@ -167,16 +168,19 @@ document.addEventListener("DOMContentLoaded", () => {
     subscribed = true;
     subscribeModal.style.display = "none";
     caseModal.style.display = "flex";
+    caseModal.classList.add("showCase");
   };
 
-  closeCase.onclick = () => caseModal.style.display = "none";
+  closeCase.onclick = () => {
+    caseModal.classList.remove("showCase");
+    caseModal.style.display = "none";
+  };
 
   openCaseBtn.onclick = async () => {
     const prize = randomPrize();
 
     strip.innerHTML = "";
 
-    // создаём длинный список дропов, чтобы видно было целиком
     for (let i = 0; i < 30; i++) {
       const div = document.createElement("div");
       div.className = "drop";
@@ -190,10 +194,7 @@ document.addEventListener("DOMContentLoaded", () => {
     strip.style.transform = "translateX(0)";
     strip.offsetWidth;
 
-    // Делаем прокрутку 5 секунд
     strip.style.transition = "transform 5s cubic-bezier(.17,.67,.3,1)";
-
-    // считаем позицию чтобы остановиться на 15 элементе (центре)
     const stopPosition = -((160 + 18) * 14);
     strip.style.transform = `translateX(${stopPosition}px)`;
 
@@ -214,6 +215,7 @@ document.addEventListener("DOMContentLoaded", () => {
           body: JSON.stringify({ user: userId, amount: prize.value })
         });
         rewardModal.style.display = "none";
+        caseModal.classList.remove("showCase");
         caseModal.style.display = "none";
         updateBalance();
       };
@@ -225,6 +227,7 @@ document.addEventListener("DOMContentLoaded", () => {
           body: JSON.stringify({ user: userId, nft: prize })
         });
         rewardModal.style.display = "none";
+        caseModal.classList.remove("showCase");
         caseModal.style.display = "none";
         updateBalance();
       };
@@ -236,6 +239,7 @@ document.addEventListener("DOMContentLoaded", () => {
           body: JSON.stringify({ user: userId, nft: prize })
         });
         rewardModal.style.display = "none";
+        caseModal.classList.remove("showCase");
         caseModal.style.display = "none";
       };
 
