@@ -92,29 +92,34 @@ body {
   z-index: 1000;
 }
 
-.subscribeContent {
-  width: 90%;
-  max-width: 320px;
-  background: #7d7d7d;
-  border-radius: 20px;
-  padding: 20px;
-  text-align: center;
-}
-
-.caseModalContent {
+.modalContent, .caseModalContent, .rewardContent, .inventoryContent {
   width: 90%;
   max-width: 420px;
-  height: 75vh;
   background: #7d7d7d;
   border-radius: 20px;
   padding: 20px;
-  position: relative;
 }
 
-.caseHeader {
+.modalHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.closeBtn {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #000;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 15px;
+  border-radius: 12px;
+  border: none;
 }
 
 .stripWrap {
@@ -159,37 +164,13 @@ body {
   text-align: center;
 }
 
-.closeBtn {
-  background: transparent;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: #000;
-}
-
-.rewardContent {
-  width: 90%;
-  max-width: 320px;
-  background: #7d7d7d;
-  border-radius: 20px;
-  padding: 20px;
+.rewardText {
   text-align: center;
-}
-
-.rewardImg {
-  width: 120px;
-  height: 120px;
-  object-fit: cover;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 
 .inventoryContent {
-  width: 90%;
-  max-width: 420px;
   height: 60vh;
-  background: #7d7d7d;
-  border-radius: 20px;
-  padding: 20px;
   overflow-y: auto;
 }
 
