@@ -5,9 +5,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   const userId = String(tg.initDataUnsafe.user.id)
   const API = "https://kosmogift-worker.v-bot-2010.workers.dev"
 
-  // ЭЛЕМЕНТЫ
+  // ================== ЭЛЕМЕНТЫ ==================
   const homeTab = document.getElementById("home")
   const profileTab = document.getElementById("profile")
+
   const btnHome = document.getElementById("btnHome")
   const btnProfile = document.getElementById("btnProfile")
 
@@ -27,7 +28,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   const rewardText = document.getElementById("rewardText")
   const rewardBtnTon = document.getElementById("rewardBtnTon")
 
-  // ВКЛАДКИ
+  const connectWallet = document.getElementById("connectWallet")
+  const disconnectWallet = document.getElementById("disconnectWallet")
+  const depositBtn = document.getElementById("deposit")
+
+  const balanceSpan = document.getElementById("balance")
+  const balanceProfile = document.getElementById("balanceProfile")
+
+  // ================== ВКЛАДКИ ==================
   btnHome.onclick = () => {
     homeTab.classList.add("active")
     profileTab.classList.remove("active")
@@ -37,12 +45,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     homeTab.classList.remove("active")
   }
 
-  // ПОДПИСКА
+  // ================== ПОДПИСКА ==================
   subscribeBtn.onclick = () => {
-    window.open("https://t.me/KosmoGiftOfficial", "_blank")
+    window.open("https://t.me/ТВОЙ_КАНАЛ", "_blank")
   }
 
-  // ПЕРЕМЕННЫЕ ПРИЗОВ
+  // ================== ПРИЗЫ ==================
   const prizes = [
     { type: "ton", value: 0.01, chance: 90 },
     { type: "ton", value: 0.02, chance: 5 },
@@ -72,7 +80,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     return `${h}:${m}:${s}`
   }
 
-  // ТАЙМЕР ДОСТУПА
+  // ================== БАЛАНС ==================
+  async function refreshBalance() {
+    const res = await fetch(`${API}/balance?user=${userId}`)
+    const data = await res.json()
+    const bal = Number(data.balance).toFixed(2)
+
+    balanceSpan.innerText = `${bal} TON`
+    balanceProfile.innerText = `${bal} TON`
+  }
+
+  refreshBalance()
+
+  // ================== ТАЙМЕР ==================
   function startCooldown() {
     fetch(`${API}/daily-status?user=${userId}`)
       .then(r => r.json())
@@ -83,12 +103,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         if (remaining <= 0) {
           timerBlock.style.display = "none"
+          openDaily.style.display = "block"
           openDaily.disabled = false
-          openDaily.innerText = "Открыть кейс"
           return
         }
 
-        openDaily.disabled = true
+        // скрываем кнопку
+        openDaily.style.display = "none"
         timerBlock.style.display = "block"
 
         const interval = setInterval(() => {
@@ -98,8 +119,8 @@ document.addEventListener("DOMContentLoaded", async () => {
           if (diff <= 0) {
             clearInterval(interval)
             timerBlock.style.display = "none"
+            openDaily.style.display = "block"
             openDaily.disabled = false
-            openDaily.innerText = "Открыть кейс"
           } else {
             timerText.innerText = formatTime(diff)
           }
@@ -109,9 +130,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   startCooldown()
 
-  // ОТКРЫТЬ КЕЙС
+  // ================== ОТКРЫТЬ КЕЙС ==================
   openDaily.onclick = async () => {
-    // ПОПЫТКА ОТКРЫТЬ (проверка)
     const res = await fetch(`${API}/daily?user=${userId}`)
     const data = await res.json()
 
@@ -127,7 +147,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     caseModal.style.display = "none"
   }
 
-  // КРУТИМ РУЛЕТКУ
+  // ================== РУЛЕТКА ==================
   openCaseBtn.onclick = () => {
     const prize = randomPrize()
 
@@ -161,9 +181,40 @@ document.addEventListener("DOMContentLoaded", async () => {
 
           rewardModal.style.display = "none"
           caseModal.style.display = "none"
+          refreshBalance()
           startCooldown()
         }
       }
     }, 3200)
+  }
+
+  // ================== КОШЕЛЁК ==================
+  let tonConnectUI = null
+  let wallet = null
+
+  connectWallet.onclick = async () => {
+    if (!tonConnectUI) {
+      tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+        manifestUrl: "https://kocmogift-v22.vercel.app/tonconnect-manifest.json"
+      })
+    }
+
+    const result = await tonConnectUI.connect()
+    wallet = result.account
+    disconnectWallet.style.display = "block"
+    connectWallet.style.display = "none"
+    alert("Кошелёк подключён: " + wallet.address)
+  }
+
+  disconnectWallet.onclick = () => {
+    wallet = null
+    disconnectWallet.style.display = "none"
+    connectWallet.style.display = "block"
+    alert("Кошелёк отключён")
+  }
+
+  // ================== ПОПОЛНИТЬ БАЛАНС ==================
+  depositBtn.onclick = () => {
+    alert("Пока пополнение не реализовано. Это можно сделать через TON transfer.")
   }
 })
