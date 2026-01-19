@@ -5,7 +5,6 @@ body {
   font-family: Arial, sans-serif;
 }
 
-/* Страницы */
 .page {
   display: none;
 }
@@ -13,7 +12,6 @@ body {
   display: block;
 }
 
-/* Верх */
 .top {
   padding: 70px 20px 0 20px;
   display: flex;
@@ -26,6 +24,11 @@ body {
   border-radius: 50%;
 }
 
+.big {
+  width: 60px;
+  height: 60px;
+}
+
 .userBar {
   display: flex;
   align-items: center;
@@ -35,7 +38,6 @@ body {
   border-radius: 20px;
 }
 
-/* Daily case блок */
 .caseBlock {
   margin: 120px 20px 0 20px;
   width: 170px;
@@ -65,7 +67,6 @@ body {
   font-weight: bold;
 }
 
-/* Навигация */
 .nav {
   position: fixed;
   bottom: 0;
@@ -77,7 +78,7 @@ body {
   padding: 15px;
 }
 
-/* Модалки */
+/* MODALS */
 .modal {
   display: none;
   position: fixed;
@@ -91,7 +92,6 @@ body {
   z-index: 1000;
 }
 
-/* Subscribe */
 .subscribeContent {
   width: 90%;
   max-width: 320px;
@@ -101,7 +101,6 @@ body {
   text-align: center;
 }
 
-/* Case modal */
 .caseModalContent {
   width: 90%;
   max-width: 420px;
@@ -155,6 +154,11 @@ body {
   transform: translateX(-50%);
 }
 
+.resultBlock {
+  margin-top: 20px;
+  text-align: center;
+}
+
 .resultText {
   margin-top: 20px;
   text-align: center;
@@ -168,8 +172,7 @@ body {
   color: #000;
 }
 
-/* WIN modal */
-.winContent {
+.rewardContent {
   width: 90%;
   max-width: 320px;
   background: #7d7d7d;
@@ -177,14 +180,14 @@ body {
   padding: 20px;
   text-align: center;
 }
-.winButtons {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 15px;
+
+.rewardImg {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  margin-bottom: 10px;
 }
 
-/* Inventory */
 .inventoryContent {
   width: 90%;
   max-width: 420px;
@@ -200,4 +203,13 @@ body {
   padding: 10px;
   border-radius: 12px;
   margin-bottom: 10px;
-  }
+}
+
+.timerBlock {
+  margin-top: 20px;
+}
+
+.timerText {
+  font-size: 22px;
+  font-weight: bold;
+    }
