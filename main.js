@@ -31,6 +31,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const caseModal = document.getElementById("caseModal");
   const closeCase = document.getElementById("closeCase");
+
+  const subscribeBlock = document.getElementById("subscribeBlock");
+  const subscribeBtn = document.getElementById("subscribeBtn");
+  const continueBtn = document.getElementById("continueBtn");
+
   const openCaseBtn = document.getElementById("openCaseBtn");
   const strip = document.getElementById("strip");
 
@@ -177,10 +182,24 @@ document.addEventListener("DOMContentLoaded", () => {
     const data = await res.json();
     if (data.error) return alert("Кейс доступен раз в 24 часа");
 
+    // показываем подписку
+    subscribeBlock.style.display = "block";
+    openCaseBtn.style.display = "none";
     caseModal.style.display = "flex";
   };
 
   closeCase.onclick = () => caseModal.style.display = "none";
+
+  // Кнопка подписаться
+  subscribeBtn.onclick = () => {
+    window.Telegram.WebApp.openLink("https://t.me/KosmoGiftOfficial");
+  };
+
+  // Кнопка продолжить после подписки
+  continueBtn.onclick = () => {
+    subscribeBlock.style.display = "none";
+    openCaseBtn.style.display = "block";
+  };
 
   openCaseBtn.onclick = async () => {
     const prize = randomPrize();
@@ -210,6 +229,7 @@ document.addEventListener("DOMContentLoaded", () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ user: userId, amount: prize.value })
         });
+
         rewardModal.style.display = "none";
         caseModal.style.display = "none";
         updateBalance();
