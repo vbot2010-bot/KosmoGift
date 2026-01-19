@@ -15,7 +15,7 @@ body {
 
 /* Верх */
 .top {
-  padding: 70px 20px 0 20px; /* ↓ ниже */
+  padding: 70px 20px 0 20px;
   display: flex;
   justify-content: flex-end;
 }
@@ -37,7 +37,7 @@ body {
 
 /* Daily case блок */
 .caseBlock {
-  margin: 120px 20px 0 20px; /* ↓ ниже */
+  margin: 120px 20px 0 20px;
   width: 170px;
   text-align: left;
 }
