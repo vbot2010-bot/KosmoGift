@@ -5,24 +5,44 @@ document.addEventListener("DOMContentLoaded", async () => {
   const userId = String(tg.initDataUnsafe.user.id)
   const API = "https://kosmogift-worker.v-bot-2010.workers.dev"
 
+  // ЭЛЕМЕНТЫ
+  const homeTab = document.getElementById("home")
+  const profileTab = document.getElementById("profile")
+  const btnHome = document.getElementById("btnHome")
+  const btnProfile = document.getElementById("btnProfile")
+
   const openDaily = document.getElementById("openDaily")
+  const timerBlock = document.getElementById("timerBlock")
+  const timerText = document.getElementById("timerText")
+
+  const subscribeModal = document.getElementById("subscribeModal")
+  const subscribeBtn = document.getElementById("subscribeBtn")
+
   const caseModal = document.getElementById("caseModal")
+  const closeCase = document.getElementById("closeCase")
   const openCaseBtn = document.getElementById("openCaseBtn")
   const strip = document.getElementById("strip")
 
   const rewardModal = document.getElementById("rewardModal")
   const rewardText = document.getElementById("rewardText")
   const rewardBtnTon = document.getElementById("rewardBtnTon")
-  const rewardBtnSell = document.getElementById("rewardBtnSell")
-  const rewardBtnInv = document.getElementById("rewardBtnInv")
 
-  const profileTab = document.getElementById("profile")
-  const homeTab = document.getElementById("home")
-  const btnHome = document.getElementById("btn-home")
-  const btnProfile = document.getElementById("btn-profile")
+  // ВКЛАДКИ
+  btnHome.onclick = () => {
+    homeTab.classList.add("active")
+    profileTab.classList.remove("active")
+  }
+  btnProfile.onclick = () => {
+    profileTab.classList.add("active")
+    homeTab.classList.remove("active")
+  }
 
-  const subscribeBtn = document.getElementById("subscribeBtn")
+  // ПОДПИСКА
+  subscribeBtn.onclick = () => {
+    window.open("https://t.me/ТВОЙ_КАНАЛ", "_blank")
+  }
 
+  // ПЕРЕМЕННЫЕ ПРИЗОВ
   const prizes = [
     { type: "ton", value: 0.01, chance: 90 },
     { type: "ton", value: 0.02, chance: 5 },
@@ -31,7 +51,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     { type: "ton", value: 0.05, chance: 0.75 },
     { type: "ton", value: 0.06, chance: 0.5 },
     { type: "ton", value: 0.07, chance: 0.24 },
-    { type: "nft", value: "lol pop", chance: 0.01 }
+    { type: "nft", value: "Super NFT", chance: 0.01 }
   ]
 
   function randomPrize() {
@@ -44,36 +64,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     return prizes[0]
   }
 
-  function startDailyCooldown() {
-    fetch(`${API}/daily-status?user=${userId}`)
-      .then(r => r.json())
-      .then(d => {
-        if (!d.ok) return
-        const remaining = d.remaining
-
-        if (remaining <= 0) {
-          openDaily.style.display = "block"
-          openDaily.innerText = "Открыть кейс"
-          return
-        }
-
-        openDaily.style.display = "block"
-        openDaily.innerText = formatTime(remaining)
-        openDaily.disabled = true
-
-        const interval = setInterval(() => {
-          const r2 = remaining - (Date.now() - d.last)
-          if (r2 <= 0) {
-            clearInterval(interval)
-            openDaily.innerText = "Открыть кейс"
-            openDaily.disabled = false
-          } else {
-            openDaily.innerText = formatTime(r2)
-          }
-        }, 1000)
-      })
-  }
-
   function formatTime(ms) {
     const total = Math.floor(ms / 1000)
     const h = String(Math.floor(total / 3600)).padStart(2, "0")
@@ -82,41 +72,67 @@ document.addEventListener("DOMContentLoaded", async () => {
     return `${h}:${m}:${s}`
   }
 
-  // вкладки
-  btnHome.onclick = () => {
-    homeTab.classList.add("active")
-    profileTab.classList.remove("active")
-  }
-  btnProfile.onclick = () => {
-    profileTab.classList.add("active")
-    homeTab.classList.remove("active")
+  // ТАЙМЕР ДОСТУПА
+  function startCooldown() {
+    fetch(`${API}/daily-status?user=${userId}`)
+      .then(r => r.json())
+      .then(data => {
+        if (!data.ok) return
+
+        const remaining = data.remaining
+
+        if (remaining <= 0) {
+          timerBlock.style.display = "none"
+          openDaily.disabled = false
+          openDaily.innerText = "Открыть кейс"
+          return
+        }
+
+        openDaily.disabled = true
+        timerBlock.style.display = "block"
+
+        const interval = setInterval(() => {
+          const now = Date.now()
+          const diff = data.last + 86400000 - now
+
+          if (diff <= 0) {
+            clearInterval(interval)
+            timerBlock.style.display = "none"
+            openDaily.disabled = false
+            openDaily.innerText = "Открыть кейс"
+          } else {
+            timerText.innerText = formatTime(diff)
+          }
+        }, 1000)
+      })
   }
 
-  // кнопка подписаться
-  subscribeBtn.onclick = () => {
-    window.open("https://t.me/ТВОЙ_КАНАЛ", "_blank")
-  }
+  startCooldown()
 
-  // старт таймера
-  startDailyCooldown()
-
+  // ОТКРЫТЬ КЕЙС
   openDaily.onclick = async () => {
-    const r = await fetch(`${API}/daily?user=${userId}`)
-    const d = await r.json()
+    // ПОПЫТКА ОТКРЫТЬ (проверка)
+    const res = await fetch(`${API}/daily?user=${userId}`)
+    const data = await res.json()
 
-    if (d.error) {
-      startDailyCooldown()
+    if (data.error) {
+      startCooldown()
       return alert("Кейс доступен раз в 24 часа")
     }
 
     caseModal.style.display = "flex"
   }
 
-  openCaseBtn.onclick = async () => {
+  closeCase.onclick = () => {
+    caseModal.style.display = "none"
+  }
+
+  // КРУТИМ РУЛЕТКУ
+  openCaseBtn.onclick = () => {
     const prize = randomPrize()
 
     strip.innerHTML = ""
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 30; i++) {
       const div = document.createElement("div")
       div.className = "drop"
       div.innerText =
@@ -125,63 +141,27 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     strip.style.transition = "transform 3s cubic-bezier(.17,.67,.3,1)"
-    strip.style.transform = "translateX(-1500px)" // круче крутится
+    strip.style.transform = "translateX(-1600px)"
 
-    setTimeout(async () => {
+    setTimeout(() => {
       rewardModal.style.display = "flex"
       rewardText.innerText =
         prize.type === "ton"
           ? `Вы выиграли ${prize.value} TON`
-          : `Вы выиграли NFT "${prize.value}"`
+          : `Вы выиграли NFT: ${prize.value}`
 
       if (prize.type === "ton") {
         rewardBtnTon.style.display = "block"
-        rewardBtnSell.style.display = "none"
-        rewardBtnInv.style.display = "none"
-
         rewardBtnTon.onclick = async () => {
-          const res = await fetch(`${API}/add-balance`, {
+          await fetch(`${API}/add-balance`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ user: userId, amount: prize.value })
           })
 
-          const data = await res.json()
-          if (data.ok) {
-            rewardModal.style.display = "none"
-            caseModal.style.display = "none"
-            startDailyCooldown()
-          } else {
-            alert("Ошибка начисления")
-          }
-        }
-      } else {
-        rewardBtnTon.style.display = "none"
-        rewardBtnSell.style.display = "block"
-        rewardBtnInv.style.display = "block"
-
-        const nft = { name: prize.value, price: 3.27 }
-
-        rewardBtnInv.onclick = async () => {
-          await fetch(`${API}/add-nft`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ user: userId, nft })
-          })
           rewardModal.style.display = "none"
           caseModal.style.display = "none"
-          startDailyCooldown()
-        }
-
-        rewardBtnSell.onclick = async () => {
-          await fetch(`${API}/add-balance`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ user: userId, amount: 3.27 })
-          })
-          rewardModal.style.display = "none"
-          caseModal.style.display = "none"
-          startDailyCooldown()
+          startCooldown()
         }
       }
     }, 3200)
