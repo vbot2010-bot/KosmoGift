@@ -3,15 +3,95 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>КосмоГифт</title>
-<link rel="stylesheet" href="style.css">
+<title>CosmoGift</title>
+
+<style>
+  body{
+    font-family: Arial, sans-serif;
+    background:#0b0b0b;
+    color:white;
+    margin:0;
+    padding:0;
+  }
+
+  .page{ display:none; padding:20px; }
+  .page.active{ display:block; }
+
+  .btn{
+    width:100%;
+    padding:15px;
+    margin:12px 0;
+    border:none;
+    background:#2b2b2b;
+    color:white;
+    border-radius:12px;
+    font-size:16px;
+  }
+
+  /* МОДАЛКИ */
+  .modal{
+    display:none;
+    position:fixed;
+    top:0; left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.7);
+    justify-content:center;
+    align-items:center;
+  }
+  .modalContent{
+    background:#121212;
+    padding:20px;
+    border-radius:18px;
+    width:90%;
+    max-width:400px;
+    position:relative;
+  }
+  .closeBtn{
+    position:absolute;
+    top:10px;
+    right:10px;
+    background:transparent;
+    border:none;
+    color:white;
+    font-size:18px;
+  }
+
+  .strip{
+    display:flex;
+    overflow:hidden;
+    width:100%;
+    margin:20px 0;
+  }
+  .drop{
+    width:120px;
+    height:80px;
+    margin-right:10px;
+    background:#2b2b2b;
+    border-radius:10px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+  }
+
+  .caseContent{
+    width:90%;
+  }
+
+  /* МОДАЛКА ПОДПИСКИ СНИЗУ */
+  .subscribeModal .modalContent{
+    width:100%;
+    position:absolute;
+    bottom:0;
+    border-radius:18px 18px 0 0;
+  }
+</style>
+
 </head>
 <body>
 
 <div id="home" class="page active">
-  <div class="top">
-    <div id="balance">0 TON</div>
-  </div>
+  <div id="balance">0 TON</div>
 
   <button id="connectWallet" class="btn">Подключить кошелёк</button>
   <button id="disconnectWallet" class="btn" style="display:none;">Отключить кошелёк</button>
@@ -20,10 +100,6 @@
   <button id="openDaily" class="btn">Открыть кейс</button>
   <button id="showSubscribe" class="btn">Подписаться</button>
   <button id="openInventory" class="btn">Инвентарь</button>
-</div>
-
-<div id="profile" class="page">
-  <div id="balanceProfile">0 TON</div>
 </div>
 
 <!-- Модалки -->
@@ -39,16 +115,15 @@
   <div class="caseContent">
     <button id="closeCase" class="closeBtn">X</button>
     <div id="strip" class="strip"></div>
-    <button id="openCaseBtn">Крутить</button>
+    <button id="openCaseBtn" class="btn">Крутить</button>
   </div>
 </div>
 
 <div id="rewardModal" class="modal">
   <div class="modalContent">
     <div id="rewardText"></div>
-    <button id="rewardBtnTon">Забрать TON</button>
-    <button id="rewardBtnInv">В инвентарь</button>
-    <button id="rewardBtnSell">Продать</button>
+    <button id="rewardBtnTon" class="btn">Забрать TON</button>
+    <button id="rewardBtnInv" class="btn">В инвентарь</button>
   </div>
 </div>
 
@@ -69,4 +144,4 @@
 <script src="https://cdn.jsdelivr.net/npm/@tonconnect/ui/dist/tonconnect-ui.min.js"></script>
 <script src="main.js"></script>
 </body>
-</html>
+  </html>
