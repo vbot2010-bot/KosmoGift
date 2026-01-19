@@ -119,7 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
     alert("Оплата отправлена");
   };
 
-  /* ================= SUBSCRIBE (1 TIME) ================= */
+  /* ================= SUBSCRIBE ================= */
   function needSubscribe() {
     return !localStorage.getItem("subscribed");
   }
@@ -130,62 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
     subscribeModal.style.display = "none";
   };
 
-  /* ================= TIMER ================= */
-    function startTimerByRemaining(ms) {
-  timerBlock.style.display = "block";
-
-  const end = Date.now() + ms;
-
-  const tick = () => {
-    const diff = end - Date.now();
-    if (diff <= 0) {
-      timerText.innerText = "00:00:00";
-      timerBlock.style.display = "none";
-      openDaily.style.display = "block";
-      return;
-    }
-
-    const h = String(Math.floor(diff / 3600000)).padStart(2, "0");
-    const m = String(Math.floor((diff % 3600000) / 60000)).padStart(2, "0");
-    const s = String(Math.floor((diff % 60000) / 1000)).padStart(2, "0");
-    timerText.innerText = `${h}:${m}:${s}`;
-  };
-
-  tick();
-  setInterval(tick, 1000);
-        }
-
-  /* ================= DAILY CASE ================= */
-  openDaily.onclick = async () => {
-  if (needSubscribe()) {
-    subscribeModal.style.display = "flex";
-    return;
-  }
-
-  // проверяем статус
-  const status = await fetch(`${API}/daily-status?user=${userId}`);
-  const st = await status.json();
-
-  if (st.remaining > 0) {
-    alert("Кейс доступен раз в 24 часа");
-    startTimerByRemaining(st.remaining);
-    return;
-  }
-
-  const r = await fetch(`${API}/daily?user=${userId}`);
-  const d = await r.json();
-
-  if (d.error === "already") {
-    alert("Кейс доступен раз в 24 часа");
-    return;
-  }
-
-  caseModal.style.display = "flex";
-  resultBlock.style.display = "none";
-  resultText.innerText = "Нажми «Открыть кейс»";
-};
-
-  /* ================= ROULETTE ================= */
+  /* ================= PRIZES ================= */
   const prizes = [
     { type: "ton", value: 0.01, chance: 90 },
     { type: "ton", value: 0.02, chance: 5 },
@@ -209,29 +154,86 @@ document.addEventListener("DOMContentLoaded", () => {
     return prizes[0];
   }
 
-  function buildStrip() {
+  function buildStrip(prize) {
     strip.innerHTML = "";
-    for (let i = 0; i < 20; i++) {
-      const p = prizes[Math.floor(Math.random() * prizes.length)];
+
+    // 30 items чтобы рулетка была длинной
+    for (let i = 0; i < 30; i++) {
       const div = document.createElement("div");
       div.className = "drop";
-      div.innerText = p.type === "ton" ? `${p.value} TON` : p.value;
+
+      // если это последний элемент, ставим приз
+      if (i === 29) {
+        div.innerText = prize.type === "ton" ? `${prize.value} TON` : prize.value;
+      } else {
+        const p = prizes[Math.floor(Math.random() * prizes.length)];
+        div.innerText = p.type === "ton" ? `${p.value} TON` : p.value;
+      }
+
       strip.appendChild(div);
     }
   }
 
+  /* ================= TIMER ================= */
+  let timerInterval = null;
+
+  function startTimer(ms) {
+    timerBlock.style.display = "block";
+    openDaily.style.display = "none";
+
+    const end = Date.now() + ms;
+
+    if (timerInterval) clearInterval(timerInterval);
+
+    timerInterval = setInterval(() => {
+      const diff = end - Date.now();
+
+      if (diff <= 0) {
+        clearInterval(timerInterval);
+        timerBlock.style.display = "none";
+        openDaily.style.display = "block";
+        return;
+      }
+
+      const h = String(Math.floor(diff / 3600000)).padStart(2, "0");
+      const m = String(Math.floor((diff % 3600000) / 60000)).padStart(2, "0");
+      const s = String(Math.floor((diff % 60000) / 1000)).padStart(2, "0");
+      timerText.innerText = `${h}:${m}:${s}`;
+    }, 1000);
+  }
+
+  /* ================= DAILY CASE ================= */
+  openDaily.onclick = async () => {
+    if (needSubscribe()) {
+      subscribeModal.style.display = "flex";
+      return;
+    }
+
+    const r = await fetch(`${API}/daily?user=${userId}`);
+    const d = await r.json();
+
+    if (d.error === "already") {
+      alert("Кейс доступен раз в 24 часа");
+      startTimer(24 * 60 * 60 * 1000);
+      return;
+    }
+
+    // открываем модалку
+    caseModal.style.display = "flex";
+    resultBlock.style.display = "none";
+    resultText.innerText = "Нажми «Открыть кейс»";
+  };
+
+  /* ================= ROULETTE ================= */
   async function openCase() {
     openCaseBtn.disabled = true;
 
     const prize = randomPrize();
-    buildStrip();
+    buildStrip(prize);
 
-    // анимация
-    const totalWidth = strip.scrollWidth;
-    const randomShift = Math.floor(Math.random() * (totalWidth - 300)) + 150;
-
-    strip.style.transition = "transform 3.5s cubic-bezier(.17,.67,.3,1)";
-    strip.style.transform = `translateX(-${randomShift}px)`;
+    // анимация рулетки
+    strip.style.transition = "transform 3.8s cubic-bezier(.17,.67,.3,1)";
+    strip.style.transform = `translateX(-${strip.scrollWidth - 220}px)`; // остановка на последнем элементе
 
     setTimeout(async () => {
       openCaseBtn.disabled = false;
@@ -257,14 +259,17 @@ document.addEventListener("DOMContentLoaded", () => {
         rewardBtnInv.style.display = "none";
 
         rewardBtnTon.onclick = async () => {
-          await fetch(`${API}/daily?user=${userId}`);
+          await fetch(`${API}/add-ton`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ user: userId, amount: prize.value })
+          });
+
           loadBalance();
           rewardModal.style.display = "none";
           caseModal.style.display = "none";
-          openDaily.style.display = "none";
-          startTimer();
+          startTimer(24 * 60 * 60 * 1000);
         };
-
       } else {
         rewardBtnTon.style.display = "none";
         rewardBtnSell.style.display = "block";
@@ -278,10 +283,10 @@ document.addEventListener("DOMContentLoaded", () => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ user: userId, nft })
           });
+
           rewardModal.style.display = "none";
           caseModal.style.display = "none";
-          openDaily.style.display = "none";
-          startTimer();
+          startTimer(24 * 60 * 60 * 1000);
         };
 
         rewardBtnSell.onclick = async () => {
@@ -300,12 +305,11 @@ document.addEventListener("DOMContentLoaded", () => {
           loadBalance();
           rewardModal.style.display = "none";
           caseModal.style.display = "none";
-          openDaily.style.display = "none";
-          startTimer();
+          startTimer(24 * 60 * 60 * 1000);
         };
       }
 
-    }, 3600);
+    }, 3800);
   }
 
   openCaseBtn.onclick = openCase;
