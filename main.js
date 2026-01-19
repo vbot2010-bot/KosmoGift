@@ -46,6 +46,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const subscribeModal = document.getElementById("subscribeModal");
   const subscribeBtn = document.getElementById("subscribeBtn");
 
+  const timerBlock = document.getElementById("timerBlock");
+  const timerText = document.getElementById("timerText");
+
   let subscribeShown = false;
   let isSpinning = false;
 
@@ -151,47 +154,48 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ====== ТАЙМЕР 24 ЧАСА ======
-  const TIMER_KEY = `daily_case_timer_${userId}`;
-
-  function getTimerLeft() {
-    const stored = localStorage.getItem(TIMER_KEY);
-    if (!stored) return 0;
-    const end = parseInt(stored);
-    return Math.max(0, end - Date.now());
-  }
+  const TIMER_KEY = "case_timer_end";
+  const ONE_DAY = 24 * 60 * 60 * 1000;
 
   function setTimer() {
-    const end = Date.now() + 24 * 60 * 60 * 1000;
-    localStorage.setItem(TIMER_KEY, String(end));
+    const endTime = Date.now() + ONE_DAY;
+    localStorage.setItem(TIMER_KEY, endTime);
+    updateTimer();
   }
 
-  function formatTime(ms) {
-    const totalSeconds = Math.floor(ms / 1000);
-    const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
-    const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
-    const seconds = String(totalSeconds % 60).padStart(2, "0");
-    return `${hours}:${minutes}:${seconds}`;
-  }
-
-  function updateTimerUI() {
-    const left = getTimerLeft();
-    const timerBlock = document.getElementById("timerBlock");
-    const timerText = document.getElementById("timerText");
-
-    if (left <= 0) {
+  function updateTimer() {
+    const endTime = localStorage.getItem(TIMER_KEY);
+    if (!endTime) {
       timerBlock.style.display = "none";
-      openDaily.disabled = false;
-      openDaily.innerText = "Открыть кейс";
-    } else {
-      timerBlock.style.display = "block";
-      timerText.innerText = formatTime(left);
-      openDaily.disabled = true;
-      openDaily.innerText = "Кейс скоро";
+      openCaseBtn.style.display = "block";
+      return;
     }
+
+    const remaining = endTime - Date.now();
+
+    if (remaining <= 0) {
+      localStorage.removeItem(TIMER_KEY);
+      timerBlock.style.display = "none";
+      openCaseBtn.style.display = "block";
+      return;
+    }
+
+    openCaseBtn.style.display = "none";
+    timerBlock.style.display = "block";
+
+    const hours = Math.floor(remaining / (1000 * 60 * 60));
+    const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+
+    timerText.innerText =
+      String(hours).padStart(2, "0") + ":" +
+      String(minutes).padStart(2, "0") + ":" +
+      String(seconds).padStart(2, "0");
   }
 
-  setInterval(updateTimerUI, 1000);
-  updateTimerUI();
+  setInterval(updateTimer, 1000);
+  updateTimer();
+  // ================================
 
   openDaily.onclick = async () => {
     if (!subscribeShown) {
@@ -199,10 +203,6 @@ document.addEventListener("DOMContentLoaded", () => {
       subscribeShown = true;
       return;
     }
-
-    const left = getTimerLeft();
-    if (left > 0) return;
-
     caseModal.style.display = "flex";
   };
 
@@ -252,9 +252,8 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(async () => {
       isSpinning = false;
 
-      // Ставим таймер на 24 часа
+      // Запускаем таймер на 24 часа
       setTimer();
-      updateTimerUI();
 
       rewardModal.style.display = "flex";
       rewardText.innerText = prize.type === "ton"
@@ -323,6 +322,15 @@ document.addEventListener("DOMContentLoaded", () => {
           body: JSON.stringify({ user: userId, index: idx })
         });
         updateBalance();
+        document.getElementById("openInventory").click();
+      };
+    });
+
+    inventoryModal.style.display = "flex";
+  };
+
+  closeInventory.onclick = () => inventoryModal.style.display = "none";
+});      updateBalance();
         document.getElementById("openInventory").click();
       };
     });
