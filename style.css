@@ -65,6 +65,7 @@ body {
   background: #3a86ff;
   color: white;
   font-weight: bold;
+  cursor: pointer;
 }
 
 .nav {
@@ -73,9 +74,13 @@ body {
   width: 100%;
   display: flex;
 }
-.nav button {
+.navBtn {
   flex: 1;
   padding: 15px;
+  background: #1b2635;
+  border: none;
+  color: white;
+  cursor: pointer;
 }
 
 /* MODALS */
@@ -92,34 +97,41 @@ body {
   z-index: 1000;
 }
 
-.modalContent, .caseModalContent, .rewardContent, .inventoryContent {
+.modalBottom {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  background: rgba(0,0,0,0.6);
+  justify-content: flex-end;
+  align-items: flex-end;
+  z-index: 1000;
+}
+
+.modalContent {
   width: 90%;
-  max-width: 420px;
+  max-width: 320px;
   background: #7d7d7d;
   border-radius: 20px;
   padding: 20px;
+  text-align: center;
 }
 
-.modalHeader {
+.caseModalContent {
+  width: 100%;
+  height: 100%;
+  background: #7d7d7d;
+  border-radius: 20px 20px 0 0;
+  padding: 20px;
+  position: relative;
+}
+
+.caseHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.closeBtn {
-  background: transparent;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: #000;
-}
-
-input {
-  width: 100%;
-  padding: 10px;
-  margin-top: 15px;
-  border-radius: 12px;
-  border: none;
 }
 
 .stripWrap {
@@ -164,13 +176,30 @@ input {
   text-align: center;
 }
 
-.rewardText {
+.closeBtn {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #000;
+}
+
+.rewardContent {
+  width: 90%;
+  max-width: 320px;
+  background: #7d7d7d;
+  border-radius: 20px;
+  padding: 20px;
   text-align: center;
-  margin-bottom: 15px;
 }
 
 .inventoryContent {
+  width: 90%;
+  max-width: 420px;
   height: 60vh;
+  background: #7d7d7d;
+  border-radius: 20px;
+  padding: 20px;
   overflow-y: auto;
 }
 
