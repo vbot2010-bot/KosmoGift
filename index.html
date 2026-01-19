@@ -25,10 +25,6 @@
     <div class="caseTitle">Daily Case</div>
 
     <button id="openDaily" class="caseBtn">Открыть кейс</button>
-
-    <div id="timerBlock" class="timerBlock" style="display:none;">
-      <div id="timerText" class="timerText">23:59:58</div>
-    </div>
   </div>
 </div>
 
@@ -46,8 +42,21 @@
   <button id="connectWallet">Подключить кошелёк</button>
   <button id="disconnectWallet" style="display:none">Отключить кошелёк</button>
 
-  <button id="deposit" class="caseBtn">Пополнить баланс</button>
-  <button id="openInventory" class="caseBtn">Инвентарь</button>
+  <div class="space"></div>
+
+  <button id="deposit">Пополнить баланс</button>
+
+  <div class="space"></div>
+
+  <button id="openInventory">Инвентарь</button>
+</div>
+
+<!-- SUBSCRIBE MODAL (снизу вверх) -->
+<div id="subscribeModal" class="modal bottomModal">
+  <div class="subscribeContent">
+    <div class="subscribeText">Для открытия кейса нужно подписаться на канал</div>
+    <button id="subscribeBtn" class="caseBtn">Подписаться</button>
+  </div>
 </div>
 
 <!-- MODAL POPOLNENIE -->
@@ -85,7 +94,7 @@
   <div class="rewardContent">
     <div id="rewardText" class="rewardText"></div>
 
-    <button id="rewardBtnTon" class="caseBtn">Забрать TON</button>
+    <button id="rewardBtnTon" class="caseBtn">Получить TON</button>
     <button id="rewardBtnSell" class="caseBtn">Продать NFT</button>
     <button id="rewardBtnInv" class="caseBtn">В инвентарь</button>
   </div>
@@ -106,4 +115,4 @@
 
 <script src="main.js"></script>
 </body>
-      </html>
+    </html>
