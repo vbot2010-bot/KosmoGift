@@ -196,8 +196,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // вычисляем позицию финального элемента
-    const itemWidth = 218; // 200 + gap 18
-    const targetIndex = stripItems.length - 1; // последний элемент = приз
+    const itemWidth = 218;
+    const targetIndex = stripItems.length - 1;
     const stripWrapWidth = document.querySelector(".stripWrap").clientWidth;
 
     const targetX = targetIndex * itemWidth - (stripWrapWidth / 2 - itemWidth / 2);
