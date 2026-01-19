@@ -26,8 +26,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const amountInput = document.getElementById("amount");
 
   const openDaily = document.getElementById("openDaily");
-  const timerBlock = document.getElementById("timerBlock");
-  const timerText = document.getElementById("timerText");
 
   const caseModal = document.getElementById("caseModal");
   const closeCase = document.getElementById("closeCase");
@@ -154,7 +152,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ================= DAILY CASE =================
-  let subscribed = false; // окно подписки только 1 раз
+  let subscribed = false;
 
   openDaily.onclick = async () => {
     if (!subscribed) {
@@ -178,6 +176,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     strip.innerHTML = "";
 
+    // создаём длинный список дропов, чтобы видно было целиком
     for (let i = 0; i < 30; i++) {
       const div = document.createElement("div");
       div.className = "drop";
@@ -191,8 +190,12 @@ document.addEventListener("DOMContentLoaded", () => {
     strip.style.transform = "translateX(0)";
     strip.offsetWidth;
 
-    strip.style.transition = "transform 3s cubic-bezier(.17,.67,.3,1)";
-    strip.style.transform = "translateX(-900px)";
+    // Делаем прокрутку 5 секунд
+    strip.style.transition = "transform 5s cubic-bezier(.17,.67,.3,1)";
+
+    // считаем позицию чтобы остановиться на 15 элементе (центре)
+    const stopPosition = -((160 + 18) * 14);
+    strip.style.transform = `translateX(${stopPosition}px)`;
 
     setTimeout(() => {
       rewardModal.style.display = "flex";
@@ -236,7 +239,7 @@ document.addEventListener("DOMContentLoaded", () => {
         caseModal.style.display = "none";
       };
 
-    }, 3000);
+    }, 5000);
   };
 
   // ================= INVENTORY =================
