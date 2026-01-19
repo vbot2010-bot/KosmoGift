@@ -5,48 +5,118 @@ body {
   font-family: Arial, sans-serif;
 }
 
-.page { display: none; }
-.page.active { display: block; }
+/* Страницы */
+.page {
+  display: none;
+}
+.page.active {
+  display: block;
+}
 
-.top { padding: 70px 20px 0 20px; display: flex; justify-content: flex-end; }
+/* Верх */
+.top {
+  padding: 70px 20px 0 20px;
+  display: flex;
+  justify-content: flex-end;
+}
 
-.avatar { width: 32px; height: 32px; border-radius: 50%; }
-.userBar { display: flex; align-items: center; gap: 10px; background: #1b2635; padding: 10px 14px; border-radius: 20px; }
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
 
-.caseBlock { margin: 120px 20px 0 20px; width: 170px; text-align: left; }
-.caseIcon { width: 70px; height: 70px; background: #7d7d7d; border-radius: 15px; margin-bottom: 8px; }
-.caseTitle { font-size: 16px; margin-bottom: 8px; }
-.caseBtn { width: 100%; padding: 10px; border: none; border-radius: 12px; background: #3a86ff; color: white; font-weight: bold; }
+.userBar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #1b2635;
+  padding: 10px 14px;
+  border-radius: 20px;
+}
 
-.nav { position: fixed; bottom: 0; width: 100%; display: flex; }
-.nav button { flex: 1; padding: 15px; }
+/* Daily case блок */
+.caseBlock {
+  margin: 120px 20px 0 20px;
+  width: 170px;
+  text-align: left;
+}
 
+.caseIcon {
+  width: 70px;
+  height: 70px;
+  background: #7d7d7d;
+  border-radius: 15px;
+  margin-bottom: 8px;
+}
+
+.caseTitle {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.caseBtn {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 12px;
+  background: #3a86ff;
+  color: white;
+  font-weight: bold;
+}
+
+/* Навигация */
+.nav {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+}
+.nav button {
+  flex: 1;
+  padding: 15px;
+}
+
+/* Модалки */
 .modal {
   display: none;
   position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background: rgba(0,0,0,0.6);
-  justify-content: center; align-items: center;
+  justify-content: center;
+  align-items: center;
   z-index: 1000;
 }
 
-.subscribeContent, .caseModalContent, .prizeContent, .inventoryContent {
+/* Subscribe */
+.subscribeContent {
+  width: 90%;
+  max-width: 320px;
   background: #7d7d7d;
   border-radius: 20px;
   padding: 20px;
+  text-align: center;
 }
 
-.subscribeContent { width: 90%; max-width: 320px; text-align: center; }
-
+/* Case modal */
 .caseModalContent {
   width: 90%;
   max-width: 420px;
   height: 75vh;
+  background: #7d7d7d;
+  border-radius: 20px;
+  padding: 20px;
   position: relative;
 }
 
-.caseHeader { display: flex; justify-content: space-between; align-items: center; }
+.caseHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
 .stripWrap {
   position: relative;
@@ -65,7 +135,7 @@ body {
 }
 
 .drop {
-  min-width: 220px;
+  min-width: 200px;
   height: 100px;
   background: #222;
   border-radius: 12px;
@@ -73,9 +143,6 @@ body {
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  font-size: 18px;
-  text-align: center;
-  white-space: pre-line;
 }
 
 .pointer {
@@ -88,23 +155,49 @@ body {
   transform: translateX(-50%);
 }
 
-.resultText { margin-top: 20px; text-align: center; }
-.closeBtn { background: transparent; border: none; font-size: 24px; cursor: pointer; color: #000; }
+.resultText {
+  margin-top: 20px;
+  text-align: center;
+}
 
-.prizeContent { width: 90%; max-width: 420px; text-align: center; }
-.prizeTitle { font-size: 22px; margin-bottom: 10px; }
-.prizeImage { width: 100px; height: 100px; margin: 0 auto 10px; background: #000; border-radius: 20px; display:flex; align-items:center; justify-content:center; }
-.prizeButtons { display: flex; flex-direction: column; gap: 10px; }
+.closeBtn {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #000;
+}
 
+/* WIN modal */
+.winContent {
+  width: 90%;
+  max-width: 320px;
+  background: #7d7d7d;
+  border-radius: 20px;
+  padding: 20px;
+  text-align: center;
+}
+.winButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+/* Inventory */
 .inventoryContent {
   width: 90%;
   max-width: 420px;
   height: 60vh;
+  background: #7d7d7d;
+  border-radius: 20px;
+  padding: 20px;
   overflow-y: auto;
 }
+
 .inventoryList .itemCard {
   background: #000;
   padding: 10px;
   border-radius: 12px;
   margin-bottom: 10px;
-}
+  }
