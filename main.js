@@ -168,11 +168,25 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!timerBlock || !timerText) return;
 
 const endTime = localStorage.getItem(TIMER_KEY);
+
+// Если таймера нет - показываем кнопку и скрываем таймер
 if (!endTime) {
   timerBlock.style.display = "none";
   openCaseBtn.style.display = "block";
   return;
 }
+
+// Если таймер есть - скрываем кнопку и показываем таймер
+const remaining = endTime - Date.now();
+if (remaining <= 0) {
+  localStorage.removeItem(TIMER_KEY);
+  timerBlock.style.display = "none";
+  openCaseBtn.style.display = "block";
+  return;
+}
+
+openCaseBtn.style.display = "none";
+timerBlock.style.display = "flex";  // Важно: flex, чтобы занимал место
 
     const remaining = endTime - Date.now();
 
