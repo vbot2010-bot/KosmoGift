@@ -1,81 +1,61 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
   <title>Gift Mini App</title>
-
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
 
-  <link rel="stylesheet" href="style.css">
+  <style>
+    body{margin:0;font-family:Arial}
+    .page{display:none}
+    .page.active{display:block}
+    .nav{position:fixed;bottom:0;left:0;right:0;display:flex}
+    .nav button{flex:1;padding:15px}
+    .modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);align-items:center;justify-content:center}
+    .modal .content{background:#fff;padding:20px;border-radius:10px;width:90%;max-width:400px;text-align:center;position:relative}
+    .caseBtn{padding:10px 20px;margin-top:10px}
+    .closeBtn{position:absolute;top:10px;right:10px}
+    .inventoryItem{display:flex;justify-content:space-between;margin:5px 0}
+  </style>
 </head>
 <body>
 
-<!-- HOME -->
 <div id="home" class="page active">
-  <div class="top">
-    <div class="userBar">
-      <img id="avatar" class="avatar">
-      <span id="balance">0.00 TON</span>
-    </div>
-  </div>
-
-  <div class="caseBlock">
-    <div class="caseIcon"></div>
-    <div class="caseTitle">Daily Case</div>
-    <button id="openDaily" class="caseBtn">Открыть кейс</button>
-  </div>
+  <h2>Home</h2>
+  <div>Баланс: <span id="balance">0.00 TON</span></div>
+  <button id="openDaily">Открыть кейс</button>
 </div>
 
-<!-- PROFILE -->
 <div id="profile" class="page">
-  <div class="top">
-    <div class="userBar">
-      <img id="profileAvatar" class="avatar big">
-      <span id="balanceProfile">0.00 TON</span>
-    </div>
-  </div>
-
-  <div id="username"></div>
-
+  <h2>Profile</h2>
+  <div>Баланс: <span id="balanceProfile">0.00 TON</span></div>
   <button id="connectWallet">Подключить кошелёк</button>
   <button id="disconnectWallet" style="display:none">Отключить кошелёк</button>
   <button id="deposit">Пополнить баланс</button>
   <button id="openInventory">Инвентарь</button>
 </div>
 
-<!-- SUBSCRIBE MODAL -->
 <div id="subscribeModal" class="modal">
-  <div class="subscribeContent">
-    <div class="subscribeText">Для открытия кейса нужно подписаться на канал</div>
+  <div class="content">
+    <div>Подпишись на канал</div>
     <button id="subscribeBtn" class="caseBtn">Подписаться</button>
   </div>
 </div>
 
-<!-- CASE MODAL -->
 <div id="caseModal" class="modal">
-  <div class="caseModalContent">
-    <div class="caseHeader">
-      <div class="caseTitle">Daily Case</div>
-      <button id="closeCase" class="closeBtn">✕</button>
-    </div>
-
-    <div class="stripWrap">
-      <div id="strip" class="strip"></div>
-      <div class="pointer"></div>
-    </div>
-
-    <div id="resultText" class="resultText">Нажми "Открыть кейс"</div>
+  <div class="content">
+    <div>Кейс</div>
+    <div id="resultText">Нажми открыть</div>
     <button id="openCaseBtn" class="caseBtn">Открыть кейс</button>
   </div>
 </div>
 
-<!-- INVENTORY MODAL -->
 <div id="inventoryModal" class="modal">
-  <div class="inventoryContent">
-    <button id="closeInventory" class="closeBtn">✕</button>
-    <div id="inventoryList" class="inventoryList"></div>
+  <div class="content">
+    <div>Инвентарь</div>
+    <div id="inventoryList"></div>
+    <button id="closeInventory" class="caseBtn">Закрыть</button>
   </div>
 </div>
 
@@ -98,21 +78,26 @@ document.addEventListener("DOMContentLoaded", () => {
   const user = tg.initDataUnsafe.user || {};
   const userId = user.id;
 
+  const API_URL = "https://kosmogift-worker.v-bot-2010.workers.dev";
+  const CHANNEL_URL = "https://t.me/KosmoGiftOfficial";
+  const WALLET_ADDRESS = "UQAFXBXzBzau6ZCWzruiVrlTg3HAc8MF6gKIntqTLDifuWOi";
+
   const balance = document.getElementById("balance");
   const balanceProfile = document.getElementById("balanceProfile");
-  const deposit = document.getElementById("deposit");
-  const openDaily = document.getElementById("openDaily");
-  const connectWallet = document.getElementById("connectWallet");
-  const openInventory = document.getElementById("openInventory");
 
   const btnHome = document.getElementById("btnHome");
   const btnProfile = document.getElementById("btnProfile");
+
+  const openDaily = document.getElementById("openDaily");
+  const connectWallet = document.getElementById("connectWallet");
+  const disconnectWallet = document.getElementById("disconnectWallet");
+  const deposit = document.getElementById("deposit");
+  const openInventory = document.getElementById("openInventory");
 
   const subscribeModal = document.getElementById("subscribeModal");
   const subscribeBtn = document.getElementById("subscribeBtn");
 
   const caseModal = document.getElementById("caseModal");
-  const closeCase = document.getElementById("closeCase");
   const openCaseBtn = document.getElementById("openCaseBtn");
   const resultText = document.getElementById("resultText");
 
@@ -120,234 +105,169 @@ document.addEventListener("DOMContentLoaded", () => {
   const closeInventory = document.getElementById("closeInventory");
   const inventoryList = document.getElementById("inventoryList");
 
-  const API_URL = "https://kosmogift-worker.v-bot-2010.workers.dev";
+  let subscribed = localStorage.getItem("subscribed") === "true";
 
-  let balanceValue = 0;
-  let walletAddress = null;
-  let subscribed = false;
-
-  // =======================
-  // 1) ЗАГРУЗКА БАЛАНСА
-  // =======================
-  async function loadBalance() {
-    try {
-      const res = await fetch(API_URL + "/balance?user_id=" + userId);
-      const data = await res.json();
-      balanceValue = parseFloat(data.balance || 0);
-      balance.innerText = balanceValue.toFixed(2) + " TON";
-      balanceProfile.innerText = balanceValue.toFixed(2) + " TON";
-    } catch (e) {
-      console.log("Ошибка баланса", e);
-    }
+  async function loadBalance(){
+    const res = await fetch(`${API_URL}/balance?user_id=${userId}`);
+    const data = await res.json();
+    balance.innerText = parseFloat(data.balance || 0).toFixed(2) + " TON";
+    balanceProfile.innerText = parseFloat(data.balance || 0).toFixed(2) + " TON";
   }
   loadBalance();
 
-  // =======================
-  // 2) NAVIGATION
-  // =======================
   btnHome.onclick = () => {
     document.getElementById("home").classList.add("active");
     document.getElementById("profile").classList.remove("active");
   };
-
   btnProfile.onclick = () => {
     document.getElementById("profile").classList.add("active");
     document.getElementById("home").classList.remove("active");
   };
 
-  // =======================
-  // 3) DEPOSIT
-  // =======================
-  deposit.addEventListener("click", async () => {
-    const amount = parseFloat(prompt("Сколько TON пополнить? (мин. 0.1)"));
-
-    if (!amount || isNaN(amount) || amount < 0.1) {
-      return alert("Минимум 0.1 TON");
-    }
-
-    const paymentId = "pay_" + Date.now();
-
-    // Ссылка на Tonkeeper
-    const tonLink = `https://tonkeeper.com/transfer/UQAFXBXzBzau6ZCWzruiVrlTg3HAc8MF6gKIntqTLDifuWOi?amount=${amount}&text=${paymentId}`;
-
-    tg.openUrl(tonLink);
-    alert("Оплатите в Tonkeeper.");
-
-    const interval = setInterval(async () => {
-      const res = await fetch(API_URL + "/check-payment", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ payment_id: paymentId, amount })
-      });
-
-      const d = await res.json();
-
-      if (d.ok) {
-        clearInterval(interval);
-        await loadBalance();
-        alert("Пополнение успешно!");
-      }
-    }, 3000);
-  });
-
-  // =======================
-  // 4) TONCONNECT
-  // =======================
-  connectWallet.addEventListener("click", async () => {
-    const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-      manifestUrl: "https://kosmogift.pages.dev/tonconnect-manifest.json"
-    });
-
-    try {
-      const wallet = await tonConnectUI.connect();
-      walletAddress = wallet.account.address;
-      alert("Кошелёк подключён: " + walletAddress);
-      connectWallet.style.display = "none";
-      document.getElementById("disconnectWallet").style.display = "block";
-    } catch (e) {
-      alert("Подключение кошелька отменено");
-    }
-  });
-
-  // =======================
-  // 5) SUBSCRIBE (1 раз)
-  // =======================
-  function showSubscribe() {
-    if (subscribed) return;
+  function showSubscribe(){
+    if(subscribed) return true;
     subscribeModal.style.display = "flex";
+    return false;
   }
 
-  subscribeBtn.addEventListener("click", () => {
-    tg.openUrl("https://t.me/your_channel"); // <- Поставь свой канал
+  subscribeBtn.onclick = () => {
+    tg.openUrl(CHANNEL_URL);
     subscribed = true;
-    subscribeModal.style.display = "none";
-  });
+    localStorage.setItem("subscribed","true");
+    subscribeModal.style.display="none";
+    openDaily.click();
+  };
 
-  // =======================
-  // 6) DAILY CASE
-  // =======================
-  closeCase.addEventListener("click", () => {
-    caseModal.style.display = "none";
-  });
+  subscribeModal.onclick = (e)=>{ if(e.target===subscribeModal) subscribeModal.style.display="none"; };
 
-  openDaily.addEventListener("click", async () => {
+  openDaily.onclick = async () => {
+    if(!showSubscribe()) return;
 
-    // Показываем подписку 1 раз
-    showSubscribe();
-
-    // Проверка "раз в 24 часа"
-    const res = await fetch(API_URL + "/daily?user_id=" + userId);
+    const res = await fetch(`${API_URL}/daily?user_id=${userId}`);
     const d = await res.json();
-
-    if (d.error === "already") {
+    if(d.error === "already"){
       alert("Кейс можно открыть раз в 24 часа");
       return;
     }
-
-    // Открываем окно кейса
     caseModal.style.display = "flex";
-    resultText.innerText = "Нажми \"Открыть кейс\"";
-  });
+    resultText.innerText = "Нажми открыть";
+  };
 
-  openCaseBtn.addEventListener("click", async () => {
+  caseModal.onclick = (e)=>{ if(e.target===caseModal) caseModal.style.display="none"; };
 
-    // Шансы:
-    // 0.01 - 90%
-    // 0.02 - 5%
-    // 0.03 - 2.5%
-    // 0.04 - 1%
-    // 0.05 - 0.75%
-    // 0.06 - 0.5%
-    // 0.07 - 0.24%
-    // NFT lol pop - 0.01%
+  openCaseBtn.onclick = async () => {
+    const rnd = Math.random()*100;
+    let prize;
 
-    const rnd = Math.random() * 100;
+    if(rnd < 90) prize={type:"ton", amount:0.01};
+    else if(rnd < 95) prize={type:"ton", amount:0.02};
+    else if(rnd < 97.5) prize={type:"ton", amount:0.03};
+    else if(rnd < 98.5) prize={type:"ton", amount:0.04};
+    else if(rnd < 99.25) prize={type:"ton", amount:0.05};
+    else if(rnd < 99.75) prize={type:"ton", amount:0.06};
+    else if(rnd < 99.99) prize={type:"ton", amount:0.07};
+    else prize={type:"nft", name:"lol pop"};
 
-    let prize = null;
-
-    if (rnd < 90) prize = { type: "ton", amount: 0.01 };
-    else if (rnd < 95) prize = { type: "ton", amount: 0.02 };
-    else if (rnd < 97.5) prize = { type: "ton", amount: 0.03 };
-    else if (rnd < 98.5) prize = { type: "ton", amount: 0.04 };
-    else if (rnd < 99.25) prize = { type: "ton", amount: 0.05 };
-    else if (rnd < 99.75) prize = { type: "ton", amount: 0.06 };
-    else if (rnd < 99.99) prize = { type: "ton", amount: 0.07 };
-    else prize = { type: "nft", name: "lol pop" };
-
-    // Если TON
-    if (prize.type === "ton") {
-      const add = await fetch(API_URL + "/add-ton", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_id: userId, amount: prize.amount })
+    if(prize.type==="ton"){
+      await fetch(`${API_URL}/add-ton`, {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({user_id:userId, amount:prize.amount})
       });
-
-      const addRes = await add.json();
       await loadBalance();
-
       resultText.innerText = `Вы выиграли ${prize.amount} TON`;
-    }
-
-    // Если NFT
-    if (prize.type === "nft") {
-      await fetch(API_URL + "/add-nft", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_id: userId, nft: { name: prize.name } })
+    } else {
+      await fetch(`${API_URL}/add-nft`, {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({user_id:userId, nft:{name:prize.name}})
       });
-
       resultText.innerText = `Вы выиграли NFT: ${prize.name}`;
     }
-  });
+  };
 
-  // =======================
-  // 7) INVENTORY
-  // =======================
-  closeInventory.addEventListener("click", () => {
-    inventoryModal.style.display = "none";
-  });
-
-  openInventory.addEventListener("click", async () => {
-    inventoryModal.style.display = "flex";
-
-    const res = await fetch(API_URL + "/inventory?user_id=" + userId);
+  openInventory.onclick = async () => {
+    inventoryModal.style.display="flex";
+    const res = await fetch(`${API_URL}/inventory?user_id=${userId}`);
     const d = await res.json();
+    inventoryList.innerHTML="";
 
-    inventoryList.innerHTML = "";
+    if(d.inventory.length===0){
+      inventoryList.innerHTML="<div>Инвентарь пуст</div>";
+      return;
+    }
 
-    d.inventory.forEach((item, idx) => {
-      const el = document.createElement("div");
-      el.className = "inventoryItem";
-
-      el.innerHTML = `
-        <div>${item.name || item.type}</div>
-        <button data-idx="${idx}" class="sellBtn">Продать</button>
-      `;
-
-      inventoryList.appendChild(el);
+    d.inventory.forEach((item, idx)=>{
+      const div = document.createElement("div");
+      div.className="inventoryItem";
+      div.innerHTML = `<div>${item.name}</div><button data-idx="${idx}" class="sellBtn">Продать</button>`;
+      inventoryList.appendChild(div);
     });
 
-    // SELL buttons
-    document.querySelectorAll(".sellBtn").forEach(btn => {
-      btn.addEventListener("click", async () => {
+    document.querySelectorAll(".sellBtn").forEach(btn=>{
+      btn.onclick = async () => {
         const idx = btn.getAttribute("data-idx");
         const item = d.inventory[idx];
-
-        // Если NFT lol pop => цена 3.26
         const price = item.name === "lol pop" ? 3.26 : 0;
 
-        await fetch(API_URL + "/sell-nft", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user_id: userId, nft_name: item.name, price })
+        await fetch(`${API_URL}/sell-nft`, {
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body: JSON.stringify({user_id:userId, nft_name:item.name, price})
         });
 
         await loadBalance();
         alert("Продано!");
-        openInventory.click(); // обновить инвентарь
-      });
+        openInventory.click();
+      };
     });
-  });
+  };
+
+  closeInventory.onclick = ()=>inventoryModal.style.display="none";
+  inventoryModal.onclick = (e)=>{ if(e.target===inventoryModal) inventoryModal.style.display="none"; };
+
+  deposit.onclick = async () => {
+    const amount = parseFloat(prompt("Сколько TON пополнить? (мин 0.1)"));
+    if(!amount || isNaN(amount) || amount < 0.1) return alert("Мин. 0.1 TON");
+
+    const paymentId = "pay_" + Date.now();
+    const tonLink = `https://tonkeeper.com/transfer/${WALLET_ADDRESS}?amount=${amount}&text=${paymentId}`;
+    tg.openUrl(tonLink);
+
+    const interval = setInterval(async ()=>{
+      const res = await fetch(`${API_URL}/check-payment`, {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({payment_id:paymentId, amount})
+      });
+      const d = await res.json();
+      if(d.ok){
+        clearInterval(interval);
+        loadBalance();
+        alert("Пополнение успешно!");
+      }
+    },3000);
+  };
+
+  connectWallet.onclick = async () => {
+    const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+      manifestUrl: "https://kosmogift.pages.dev/tonconnect-manifest.json"
+    });
+    try{
+      const wallet = await tonConnectUI.connect();
+      alert("Кошелёк подключён: " + wallet.account.address);
+      connectWallet.style.display="none";
+      disconnectWallet.style.display="block";
+    }catch(e){
+      alert("Подключение кошелька отменено");
+    }
+  };
+
+  disconnectWallet.onclick = () => {
+    connectWallet.style.display="block";
+    disconnectWallet.style.display="none";
+    alert("Кошелёк отключён");
+  };
 
 });
 </script>
