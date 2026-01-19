@@ -53,6 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let subscribeShown = false;
   let isSpinning = false;
   let currentCase = "daily";
+  let currentBalance = 0;
 
   avatar.src = user.photo_url || "";
   profileAvatar.src = user.photo_url || "";
@@ -126,6 +127,8 @@ document.addEventListener("DOMContentLoaded", () => {
   async function updateBalance() {
     const res = await fetch(`${API}/balance?user=${userId}`);
     const data = await res.json();
+    currentBalance = data.balance;
+
     balanceEl.innerText = data.balance.toFixed(2) + " TON";
     balanceProfile.innerText = data.balance.toFixed(2) + " TON";
   }
@@ -134,7 +137,6 @@ document.addEventListener("DOMContentLoaded", () => {
   setInterval(updateBalance, 5000);
 
   // ====== ПРИЗЫ DAILY ======
-  // **Старый дроп (тот что был в Daily)**
   const dailyPrizes = [
     { type: "ton", value: 0.01, chance: 90 },
     { type: "ton", value: 0.02, chance: 5 },
@@ -147,7 +149,6 @@ document.addEventListener("DOMContentLoaded", () => {
   ];
 
   // ====== ПРИЗЫ UNLUCKY ======
-  // **Твой дроп**
   const unluckyPrizes = [
     { type: "ton", value: 0.2, chance: 70 },
     { type: "ton", value: 0.35, chance: 19 },
@@ -226,6 +227,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   openUnlucky.onclick = async () => {
     currentCase = "unlucky";
+
+    // Проверка баланса
+    if (currentBalance < 0.25) {
+      alert("Недостаточно средств");
+      return;
+    }
+
     openCase("Unlucky Case");
   };
 
@@ -246,6 +254,16 @@ document.addEventListener("DOMContentLoaded", () => {
     if (isSpinning) return;
     isSpinning = true;
 
+    // Списание баланса для Unlucky
+    if (currentCase === "unlucky") {
+      await fetch(`${API}/add-balance`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user: userId, amount: -0.25 })
+      });
+      await updateBalance();
+    }
+
     const prize = currentCase === "daily"
       ? randomPrize(dailyPrizes)
       : randomPrize(unluckyPrizes);
@@ -262,6 +280,7 @@ document.addEventListener("DOMContentLoaded", () => {
       stripItems.push(item);
     }
 
+    // чтобы анимация работала 2-3 раза
     stripItems.push(prize);
     stripItems.push(prize);
     stripItems.push(prize);
@@ -278,8 +297,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const stripWrapWidth = document.querySelector(".stripWrap").clientWidth;
     const targetX = targetIndex * itemWidth - (stripWrapWidth / 2 - itemWidth / 2);
 
-    strip.style.transition = "transform 7s cubic-bezier(.17,.67,.3,1)";
-    strip.style.transform = `translateX(-${targetX}px)`;
+    // ОБЯЗАТЕЛЬНО СБРОС ТРАНСФОРМА ПЕРЕД НОВОЙ АНИМАЦИЕЙ
+    strip.style.transition = "none";
+    strip.style.transform = "translateX(0px)";
+
+    // небольшой таймаут чтобы transition применился корректно
+    setTimeout(() => {
+      strip.style.transition = "transform 7s cubic-bezier(.17,.67,.3,1)";
+      strip.style.transform = `translateX(-${targetX}px)`;
+    }, 20);
 
     setTimeout(async () => {
       isSpinning = false;
