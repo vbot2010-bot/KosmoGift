@@ -1,9 +1,14 @@
 document.addEventListener("DOMContentLoaded", () => {
-
   const API = "https://kosmogift-worker.v-bot-2010.workers.dev";
 
   const user = window.Telegram.WebApp.initDataUnsafe.user || {};
   const userId = String(user.id);
+
+  const balanceEl = document.getElementById("balance");
+  const balanceProfile = document.getElementById("balanceProfile");
+
+  const openDaily = document.getElementById("openDaily");
+  const openUnlucky = document.getElementById("openUnlucky");
 
   const caseModal = document.getElementById("caseModal");
   const closeCase = document.getElementById("closeCase");
@@ -16,17 +21,23 @@ document.addEventListener("DOMContentLoaded", () => {
   const rewardBtnSell = document.getElementById("rewardBtnSell");
   const rewardBtnInv = document.getElementById("rewardBtnInv");
 
-  const balanceEl = document.getElementById("balance");
-  const balanceProfile = document.getElementById("balanceProfile");
-
-  const openUnlucky = document.getElementById("openUnlucky");
+  const inventoryModal = document.getElementById("inventoryModal");
+  const closeInventory = document.getElementById("closeInventory");
+  const inventoryList = document.getElementById("inventoryList");
 
   let isSpinning = false;
+  let currentCase = null;
 
-  // ====== Unlucky Case ======
-  const CASE_PRICE = 0.25;
+  const DAILY_PRICE = 0; // если нужен бесплатно
+  const UNLUCKY_PRICE = 25;
 
-  const prizes = [
+  const prizesDaily = [
+    { type: "ton", value: 0.5, chance: 50 },
+    { type: "ton", value: 1.0, chance: 30 },
+    { type: "nft", value: "Daily NFT", chance: 20 }
+  ];
+
+  const prizesUnlucky = [
     { type: "ton", value: 0.2, chance: 70 },
     { type: "ton", value: 0.35, chance: 19 },
     { type: "ton", value: 0.6, chance: 7 },
@@ -37,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
     { type: "nft", value: "durov's cap", chance: 0.001 }
   ];
 
-  function randomPrize() {
+  function randomPrize(prizes) {
     const r = Math.random() * 100;
     let sum = 0;
     for (const p of prizes) {
@@ -55,77 +66,71 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function updateBalance() {
     const bal = await getBalance();
-    balanceEl.innerText = bal.toFixed(2) + " TON";
     balanceProfile.innerText = bal.toFixed(2) + " TON";
   }
 
   updateBalance();
   setInterval(updateBalance, 5000);
 
-  // Открытие Unlucky Case
-  openUnlucky.onclick = async () => {
-    const balance = await getBalance();
-    if (balance < CASE_PRICE) {
-      return alert("Недостаточно баланса");
-    }
-
+  function openCase(prizes, price, title) {
+    currentCase = { prizes, price };
     caseModal.style.display = "flex";
-    document.querySelector(".caseTitle").innerText = "Unlucky Case";
+    document.querySelector(".caseHeader .caseTitle").innerText = title;
+  }
+
+  openDaily.onclick = async () => {
+    const bal = await getBalance();
+    if (bal < DAILY_PRICE) return alert("Недостаточно баланса");
+    openCase(prizesDaily, DAILY_PRICE, "Daily Case");
   };
 
-  closeCase.onclick = () => caseModal.style.display = "none";
+  openUnlucky.onclick = async () => {
+    const bal = await getBalance();
+    if (bal < UNLUCKY_PRICE) return alert("Недостаточно баланса");
+    openCase(prizesUnlucky, UNLUCKY_PRICE, "Unlucky Case");
+  };
+
+  closeCase.onclick = () => {
+    caseModal.style.display = "none";
+  };
 
   openCaseBtn.onclick = async () => {
     if (isSpinning) return;
     isSpinning = true;
 
-    const balance = await getBalance();
-    if (balance < CASE_PRICE) {
+    const bal = await getBalance();
+    if (bal < currentCase.price) {
       isSpinning = false;
       return alert("Недостаточно баланса");
     }
 
-    const prize = randomPrize();
-
-    strip.innerHTML = "";
-    const itemsCount = 60;
-    const stripItems = [];
-
-    for (let i = 0; i < itemsCount; i++) {
-      const item = prizes[Math.floor(Math.random() * prizes.length)];
-      stripItems.push(item);
-    }
-
-    stripItems.push(prize);
-
-    stripItems.forEach(item => {
-      const div = document.createElement("div");
-      div.className = "drop";
-      div.innerText = item.type === "ton" ? `${item.value} TON` : item.value;
-      strip.appendChild(div);
+    await fetch(`${API}/remove-balance`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user: userId, amount: currentCase.price })
     });
 
-    const itemWidth = 218;
-    const targetIndex = stripItems.length - 1;
-    const stripWrapWidth = document.querySelector(".stripWrap").clientWidth;
+    const prize = randomPrize(currentCase.prizes);
+    strip.innerHTML = "";
 
-    const targetX = targetIndex * itemWidth - (stripWrapWidth / 2 - itemWidth / 2);
+    for (let i = 0; i < 50; i++) {
+      const p = currentCase.prizes[Math.floor(Math.random() * currentCase.prizes.length)];
+      const d = document.createElement("div");
+      d.className = "drop";
+      d.innerText = p.type === "ton" ? `${p.value} TON` : p.value;
+      strip.appendChild(d);
+    }
+
+    const win = document.createElement("div");
+    win.className = "drop";
+    win.innerText = prize.type === "ton" ? `${prize.value} TON` : prize.value;
+    strip.appendChild(win);
 
     strip.style.transition = "transform 5s cubic-bezier(.17,.67,.3,1)";
-    strip.style.transform = `translateX(-${targetX}px)`;
+    strip.style.transform = `translateX(-${(strip.children.length - 1) * 218}px)`;
 
-    setTimeout(async () => {
+    setTimeout(() => {
       isSpinning = false;
-
-      // списываем баланс
-      await fetch(`${API}/remove-balance`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user: userId, amount: CASE_PRICE })
-      });
-
-      updateBalance();
-
       rewardModal.style.display = "flex";
       rewardText.innerText = prize.type === "ton"
         ? `Вы выиграли ${prize.value} TON`
@@ -163,10 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
         rewardModal.style.display = "none";
         updateBalance();
       };
-
     }, 5200);
-  };
-});.style.display = "flex";
   };
 
   closeInventory.onclick = () => inventoryModal.style.display = "none";
