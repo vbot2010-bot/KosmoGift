@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", async () => {
+
   const tg = window.Telegram.WebApp
   tg.expand()
 
@@ -205,7 +206,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     inventoryModal.style.display = "flex"
   }
 
-  closeInventory.onclick = () => inventoryModal.style.display = "none")
+  closeInventory.onclick = () => inventoryModal.style.display = "none"
 
   deposit.onclick = async () => {
     const amount = prompt("Введите сумму для пополнения (минимум 0.1 TON):")
@@ -237,4 +238,5 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("subscribeBtn").onclick = () => {
     window.open("https://t.me/KosmoGiftOfficial", "_blank")
   }
+
 })
