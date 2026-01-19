@@ -80,6 +80,30 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
   await updateBalance();
 
+  // Deposit modal
+  const modal = document.getElementById("modal");
+  const closeModal = document.getElementById("closeModal");
+  const pay = document.getElementById("pay");
+  const amountInput = document.getElementById("amount");
+
+  deposit.onclick = () => modal.style.display = "flex";
+  closeModal.onclick = () => modal.style.display = "none";
+
+  pay.onclick = async () => {
+    const amount = parseFloat(amountInput.value);
+    if (!amount || amount < 0.1) return alert("Минимум 0.1 TON");
+
+    await tonConnectUI.sendTransaction({
+      validUntil: Math.floor(Date.now() / 1000) + 600,
+      messages: [{
+        address: "UQAFXBXzBzau6ZCWzruiVrlTg3HAc8MF6gKIntqTLDifuWOi",
+        amount: (amount * 1e9).toString()
+      }]
+    });
+
+    modal.style.display = "none";
+  };
+
   // Inventory
   openInventory.onclick = async () => {
     const r = await fetch(`${API}/inventory?user=${userId}`);
@@ -115,13 +139,21 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   closeInventory.onclick = () => inventoryModal.style.display = "none";
 
-  // Subscribe modal (required)
+  // Subscribe modal (only once)
   openDaily.onclick = () => {
+    const already = localStorage.getItem("subscribed");
+    if (already === "true") {
+      caseModal.style.display = "flex";
+      return;
+    }
     subscribeModal.style.display = "flex";
   };
 
   subscribeBtn.onclick = () => {
     window.open("https://t.me/KosmoGiftOfficial", "_blank");
+    localStorage.setItem("subscribed", "true");
+    subscribeModal.style.display = "none";
+    caseModal.style.display = "flex";
   };
 
   subscribeModal.onclick = (e) => {
@@ -145,12 +177,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     return prizes[0];
   }
-
-  // after user clicked subscribe
-  subscribeBtn.addEventListener("click", () => {
-    subscribeModal.style.display = "none";
-    caseModal.style.display = "flex";
-  });
 
   closeCase.onclick = () => caseModal.style.display = "none";
 
