@@ -68,10 +68,6 @@ body {
   margin-top: 12px;
 }
 
-.subscribeBtn {
-  background: #7d7d7d;
-}
-
 .nav {
   position: fixed;
   bottom: 0;
@@ -97,12 +93,13 @@ body {
   z-index: 1000;
 }
 
-.modalContent, .subscribeContent, .caseModalContent, .rewardContent, .inventoryContent {
+.modalContent {
   width: 90%;
-  max-width: 420px;
+  max-width: 320px;
   background: #7d7d7d;
   border-radius: 20px;
   padding: 20px;
+  text-align: center;
 }
 
 .modalHeader {
@@ -111,12 +108,20 @@ body {
   align-items: center;
 }
 
-.closeBtn {
-  background: transparent;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: #000;
+.caseModalContent {
+  width: 90%;
+  max-width: 420px;
+  height: 75vh;
+  background: #7d7d7d;
+  border-radius: 20px;
+  padding: 20px;
+  position: relative;
+}
+
+.caseHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .stripWrap {
@@ -161,12 +166,30 @@ body {
   text-align: center;
 }
 
+.closeBtn {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #000;
+}
+
 .rewardContent {
+  width: 90%;
+  max-width: 320px;
+  background: #7d7d7d;
+  border-radius: 20px;
+  padding: 20px;
   text-align: center;
 }
 
 .inventoryContent {
+  width: 90%;
+  max-width: 420px;
   height: 60vh;
+  background: #7d7d7d;
+  border-radius: 20px;
+  padding: 20px;
   overflow-y: auto;
 }
 
@@ -184,4 +207,4 @@ body {
 .timerText {
   font-size: 22px;
   font-weight: bold;
-    }
+  }
