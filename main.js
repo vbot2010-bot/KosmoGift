@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const subscribeModal = document.getElementById("subscribeModal");
   const subscribeBtn = document.getElementById("subscribeBtn");
 
-  const timerBlock = document.getElementById("timerBlock"); // <- тут таймер
+  const timerBlock = document.getElementById("timerBlock");
   const timerText = document.getElementById("timerText");
 
   let subscribeShown = false;
@@ -164,41 +164,25 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function updateTimer() {
-    // Если таймера нет - показываем кнопку
-    if (!timerBlock || !timerText) return;
+    const endTime = localStorage.getItem(TIMER_KEY);
 
-const endTime = localStorage.getItem(TIMER_KEY);
-
-// Если таймера нет - показываем кнопку и скрываем таймер
-if (!endTime) {
-  timerBlock.style.display = "none";
-  openCaseBtn.style.display = "block";
-  return;
-}
-
-// Если таймер есть - скрываем кнопку и показываем таймер
-const remaining = endTime - Date.now();
-if (remaining <= 0) {
-  localStorage.removeItem(TIMER_KEY);
-  timerBlock.style.display = "none";
-  openCaseBtn.style.display = "block";
-  return;
-}
-
-openCaseBtn.style.display = "none";
-timerBlock.style.display = "flex";  // Важно: flex, чтобы занимал место
+    if (!endTime) {
+      timerBlock.style.display = "none";
+      openDaily.style.display = "block";
+      return;
+    }
 
     const remaining = endTime - Date.now();
 
     if (remaining <= 0) {
       localStorage.removeItem(TIMER_KEY);
       timerBlock.style.display = "none";
-      openCaseBtn.style.display = "block";
+      openDaily.style.display = "block";
       return;
     }
 
-    openCaseBtn.style.display = "none";
-    timerBlock.style.display = "block";
+    openDaily.style.display = "none";
+    timerBlock.style.display = "flex";
 
     const hours = Math.floor(remaining / (1000 * 60 * 60));
     const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
