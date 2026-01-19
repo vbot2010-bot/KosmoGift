@@ -150,12 +150,59 @@ document.addEventListener("DOMContentLoaded", () => {
     return prizes[0];
   }
 
+  // ====== ТАЙМЕР 24 ЧАСА ======
+  const TIMER_KEY = `daily_case_timer_${userId}`;
+
+  function getTimerLeft() {
+    const stored = localStorage.getItem(TIMER_KEY);
+    if (!stored) return 0;
+    const end = parseInt(stored);
+    return Math.max(0, end - Date.now());
+  }
+
+  function setTimer() {
+    const end = Date.now() + 24 * 60 * 60 * 1000;
+    localStorage.setItem(TIMER_KEY, String(end));
+  }
+
+  function formatTime(ms) {
+    const totalSeconds = Math.floor(ms / 1000);
+    const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
+    const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
+    const seconds = String(totalSeconds % 60).padStart(2, "0");
+    return `${hours}:${minutes}:${seconds}`;
+  }
+
+  function updateTimerUI() {
+    const left = getTimerLeft();
+    const timerBlock = document.getElementById("timerBlock");
+    const timerText = document.getElementById("timerText");
+
+    if (left <= 0) {
+      timerBlock.style.display = "none";
+      openDaily.disabled = false;
+      openDaily.innerText = "Открыть кейс";
+    } else {
+      timerBlock.style.display = "block";
+      timerText.innerText = formatTime(left);
+      openDaily.disabled = true;
+      openDaily.innerText = "Кейс скоро";
+    }
+  }
+
+  setInterval(updateTimerUI, 1000);
+  updateTimerUI();
+
   openDaily.onclick = async () => {
     if (!subscribeShown) {
       subscribeModal.style.display = "flex";
       subscribeShown = true;
       return;
     }
+
+    const left = getTimerLeft();
+    if (left > 0) return;
+
     caseModal.style.display = "flex";
   };
 
@@ -173,11 +220,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const prize = randomPrize();
 
+    // рулетка
     strip.innerHTML = "";
-
-    // сбрасываем трансформацию
-    strip.style.transition = "none";
-    strip.style.transform = "translateX(0)";
 
     const itemsCount = 60;
     const stripItems = [];
@@ -202,15 +246,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const targetX = targetIndex * itemWidth - (stripWrapWidth / 2 - itemWidth / 2);
 
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        strip.style.transition = "transform 5s cubic-bezier(.17,.67,.3,1)";
-        strip.style.transform = `translateX(-${targetX}px)`;
-      });
-    });
+    strip.style.transition = "transform 5s cubic-bezier(.17,.67,.3,1)";
+    strip.style.transform = `translateX(-${targetX}px)`;
 
     setTimeout(async () => {
       isSpinning = false;
+
+      // Ставим таймер на 24 часа
+      setTimer();
+      updateTimerUI();
 
       rewardModal.style.display = "flex";
       rewardText.innerText = prize.type === "ton"
