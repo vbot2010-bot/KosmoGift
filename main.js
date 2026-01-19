@@ -1,99 +1,96 @@
-const tg = Telegram.WebApp;
-tg.expand();
+document.addEventListener("DOMContentLoaded", async () => {
+  const tg = window.Telegram.WebApp;
+  tg.expand();
 
-const API = "https://kosmogift-worker.v-bot-2010.workers.dev";
-const user = tg.initDataUnsafe.user;
-const userId = String(user.id);
+  const user = tg.initDataUnsafe.user;
+  const userId = String(user.id);
+  const API = "https://kosmogift-worker.v-bot-2010.workers.dev";
 
-avatar.src = user.photo_url;
-profileAvatar.src = user.photo_url;
-username.innerText = user.username;
+  const balanceEl = document.getElementById("balance");
+  const balanceProfile = document.getElementById("balanceProfile");
 
-btnHome.onclick = () => switchPage("home");
-btnProfile.onclick = () => switchPage("profile");
+  document.getElementById("avatar").src = user.photo_url;
+  document.getElementById("profileAvatar").src = user.photo_url;
+  document.getElementById("username").innerText = user.username;
 
-function switchPage(id) {
-  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-}
+  document.getElementById("btnHome").onclick = () => switchPage("home");
+  document.getElementById("btnProfile").onclick = () => switchPage("profile");
 
-async function updateBalance() {
-  const r = await fetch(`${API}/balance?user=${userId}`);
-  const d = await r.json();
-  balance.innerText = d.balance.toFixed(2) + " TON";
-  balanceProfile.innerText = d.balance.toFixed(2) + " TON";
-}
-updateBalance();
-
-const prizes = [
-  { type: "ton", value: 0.01, chance: 90 },
-  { type: "ton", value: 0.02, chance: 9.99 },
-  { type: "nft", value: "Kosmo NFT", price: 0.3, chance: 0.01 }
-];
-
-function rollPrize() {
-  let r = Math.random() * 100, s = 0;
-  for (const p of prizes) {
-    s += p.chance;
-    if (r <= s) return p;
-  }
-}
-
-openDaily.onclick = () => subModal.style.display = "block";
-
-subBtn.onclick = () => window.open("https://t.me/KosmoGiftOfficial", "_blank");
-
-subContinue.onclick = () => {
-  subModal.style.display = "none";
-  startCase();
-};
-
-function startCase() {
-  caseModal.style.display = "flex";
-  strip.innerHTML = "";
-
-  const prize = rollPrize();
-
-  for (let i = 0; i < 30; i++) {
-    const d = document.createElement("div");
-    d.className = "drop";
-    d.innerText = prize.type === "ton" ? `${prize.value} TON` : prize.value;
-    strip.appendChild(d);
+  function switchPage(id) {
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
   }
 
-  strip.style.transition = "transform 7s cubic-bezier(.17,.67,.3,1)";
-  strip.style.transform = "translateX(-1800px)";
+  async function updateBalance() {
+    const r = await fetch(`${API}/balance?user=${userId}`);
+    const d = await r.json();
+    balanceEl.innerText = d.balance.toFixed(2) + " TON";
+    balanceProfile.innerText = d.balance.toFixed(2) + " TON";
+  }
 
-  setTimeout(async () => {
-    caseModal.style.display = "none";
-    rewardModal.style.display = "flex";
+  await updateBalance();
 
-    if (prize.type === "ton") {
-      rewardText.innerText = `Вы выиграли ${prize.value} TON`;
-      rewardTon.style.display = "block";
-      rewardInv.style.display = "none";
+  const prizes = [
+    { type: "ton", value: 0.01, chance: 85 },
+    { type: "ton", value: 0.02, chance: 10 },
+    { type: "ton", value: 0.05, chance: 4 },
+    { type: "nft", value: "LOL POP", price: 0.5, chance: 1 }
+  ];
 
-      rewardTon.onclick = async () => {
+  function rollPrize() {
+    let r = Math.random() * 100;
+    let s = 0;
+    for (const p of prizes) {
+      s += p.chance;
+      if (r <= s) return p;
+    }
+  }
+
+  document.getElementById("openDaily").onclick = async () => {
+    const r = await fetch(`${API}/daily?user=${userId}`);
+    const d = await r.json();
+    if (d.error) return alert("Кейс уже открывался");
+    document.getElementById("caseModal").style.display = "flex";
+  };
+
+  document.getElementById("openCaseBtn").onclick = async () => {
+    const prize = rollPrize();
+    const strip = document.getElementById("strip");
+    strip.innerHTML = "";
+
+    for (let i = 0; i < 30; i++) {
+      const div = document.createElement("div");
+      div.className = "drop";
+      div.innerText = prize.type === "ton" ? `${prize.value} TON` : prize.value;
+      strip.appendChild(div);
+    }
+
+    strip.style.transition = "transform 5s cubic-bezier(.17,.67,.3,1)";
+    strip.style.transform = "translateX(-1800px)";
+
+    setTimeout(() => {
+      document.getElementById("rewardModal").style.display = "flex";
+      document.getElementById("rewardText").innerText =
+        prize.type === "ton"
+          ? `Вы выиграли ${prize.value} TON`
+          : `Вы выиграли NFT ${prize.value}`;
+
+      document.getElementById("rewardBtnTon").onclick = async () => {
         await fetch(`${API}/add-balance`, {
           method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ user: userId, amount: prize.value })
         });
-        rewardModal.style.display = "none";
-        updateBalance();
+        await updateBalance();
       };
 
-    } else {
-      rewardText.innerText = `Вы выиграли NFT`;
-      rewardTon.style.display = "none";
-      rewardInv.style.display = "block";
-
-      rewardInv.onclick = async () => {
+      document.getElementById("rewardBtnInv").onclick = async () => {
         await fetch(`${API}/add-nft`, {
           method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ user: userId, nft: prize })
         });
-        rewardModal.style.display = "none";
       };
-    }
-  }, 7000);
-}
+    }, 5200);
+  };
+});
