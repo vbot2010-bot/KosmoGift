@@ -113,7 +113,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   subscribeBtn.onclick = () => {
-    tg.openUrl("https://t.me/KosmoGiftOfficial")
+    tg.openLink("https://t.me/KosmoGiftOfficial")
     localStorage.setItem("subscribed", "1")
     subscribeModal.style.display = "none"
   }
