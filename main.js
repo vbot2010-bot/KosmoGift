@@ -48,12 +48,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let subscribeShown = false;
 
-  // аватар и ник
   avatar.src = user.photo_url || "";
   profileAvatar.src = user.photo_url || "";
   username.innerText = user.username || "Telegram User";
 
-  // навигация
   btnHome.onclick = () => switchPage("home");
   btnProfile.onclick = () => switchPage("profile");
 
@@ -118,7 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
     modal.style.display = "none";
   };
 
-  // ================= BALANCE =================
+  // BALANCE
   async function updateBalance() {
     const res = await fetch(`${API}/balance?user=${userId}`);
     const data = await res.json();
@@ -129,7 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
   updateBalance();
   setInterval(updateBalance, 5000);
 
-  // ================= DAILY CASE =================
+  // PRIZES
   const prizes = [
     { type: "ton", value: 0.01, chance: 90 },
     { type: "ton", value: 0.02, chance: 5 },
@@ -141,7 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
     { type: "nft", value: "lol pop", chance: 0.01 }
   ];
 
-  function randomPrizeByChance() {
+  function randomPrize() {
     const r = Math.random() * 100;
     let sum = 0;
     for (const p of prizes) {
@@ -169,50 +167,39 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   openCaseBtn.onclick = async () => {
-    const prize = randomPrizeByChance();
+    const prize = randomPrize();
 
-    // Создаем рулетку из всего списка
+    // рулетка
     strip.innerHTML = "";
-    const stripItems = [];
-    for (let i = 0; i < 30; i++) {
-      for (const p of prizes) {
-        stripItems.push(p);
-        const div = document.createElement("div");
-        div.className = "drop";
-        div.innerText = p.type === "ton" ? `${p.value} TON` : p.value;
-        strip.appendChild(div);
-      }
+    for (let i = 0; i < 40; i++) {
+      const item = prizes[i % prizes.length];
+      const div = document.createElement("div");
+      div.className = "drop";
+      div.innerText = item.type === "ton" ? `${item.value} TON` : item.value;
+      strip.appendChild(div);
     }
 
-    // находим случайную позицию в stripItems где такой приз есть
-    const positions = stripItems
-      .map((p, idx) => ({ p, idx }))
-      .filter(x => x.p.type === prize.type && x.p.value === prize.value);
-
-    const stopIndex = positions[Math.floor(Math.random() * positions.length)].idx;
-
-    const offset = stopIndex * 220;
+    const index = prizes.findIndex(p => p.type === prize.type && p.value === prize.value);
+    const offset = (index + 10) * 218;
 
     strip.style.transition = "transform 5s cubic-bezier(.17,.67,.3,1)";
     strip.style.transform = `translateX(-${offset}px)`;
 
     setTimeout(async () => {
-      const finalPrize = stripItems[stopIndex];
-
       rewardModal.style.display = "flex";
-      rewardText.innerText = finalPrize.type === "ton"
-        ? `Вы выиграли ${finalPrize.value} TON`
-        : `Вы выиграли NFT "${finalPrize.value}"`;
+      rewardText.innerText = prize.type === "ton"
+        ? `Вы выиграли ${prize.value} TON`
+        : `Вы выиграли NFT "${prize.value}"`;
 
-      rewardBtnTon.style.display = finalPrize.type === "ton" ? "block" : "none";
-      rewardBtnSell.style.display = finalPrize.type === "nft" ? "block" : "none";
-      rewardBtnInv.style.display = finalPrize.type === "nft" ? "block" : "none";
+      rewardBtnTon.style.display = prize.type === "ton" ? "block" : "none";
+      rewardBtnSell.style.display = prize.type === "nft" ? "block" : "none";
+      rewardBtnInv.style.display = prize.type === "nft" ? "block" : "none";
 
       rewardBtnTon.onclick = async () => {
         await fetch(`${API}/add-balance`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user: userId, amount: finalPrize.value })
+          body: JSON.stringify({ user: userId, amount: prize.value })
         });
         rewardModal.style.display = "none";
         caseModal.style.display = "none";
@@ -223,7 +210,7 @@ document.addEventListener("DOMContentLoaded", () => {
         await fetch(`${API}/add-nft`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user: userId, nft: { name: finalPrize.value, price: 3.27 } })
+          body: JSON.stringify({ user: userId, nft: { name: prize.value, price: 3.27 } })
         });
         rewardModal.style.display = "none";
         caseModal.style.display = "none";
@@ -243,7 +230,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 5200);
   };
 
-  // ================= INVENTORY =================
+  // INVENTORY
   document.getElementById("openInventory").onclick = async () => {
     const res = await fetch(`${API}/inventory?user=${userId}`);
     const inv = await res.json();
