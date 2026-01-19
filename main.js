@@ -175,7 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     strip.innerHTML = "";
 
-    // сбрасываем трансформацию, чтобы рулетка крутилась снова
+    // сбрасываем трансформацию
     strip.style.transition = "none";
     strip.style.transform = "translateX(0)";
 
@@ -196,14 +196,12 @@ document.addEventListener("DOMContentLoaded", () => {
       strip.appendChild(div);
     });
 
-    // обязательно пересчитываем ширину после добавления элементов
     const itemWidth = 218;
     const targetIndex = stripItems.length - 1;
     const stripWrapWidth = document.querySelector(".stripWrap").clientWidth;
 
     const targetX = targetIndex * itemWidth - (stripWrapWidth / 2 - itemWidth / 2);
 
-    // даём браузеру время применить reset
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         strip.style.transition = "transform 5s cubic-bezier(.17,.67,.3,1)";
@@ -230,7 +228,6 @@ document.addEventListener("DOMContentLoaded", () => {
           body: JSON.stringify({ user: userId, amount: prize.value })
         });
         rewardModal.style.display = "none";
-        caseModal.style.display = "none";
         updateBalance();
       };
 
@@ -241,7 +238,6 @@ document.addEventListener("DOMContentLoaded", () => {
           body: JSON.stringify({ user: userId, nft: { name: prize.value, price: 3.27 } })
         });
         rewardModal.style.display = "none";
-        caseModal.style.display = "none";
       };
 
       rewardBtnSell.onclick = async () => {
@@ -251,7 +247,6 @@ document.addEventListener("DOMContentLoaded", () => {
           body: JSON.stringify({ user: userId, amount: 3.27 })
         });
         rewardModal.style.display = "none";
-        caseModal.style.display = "none";
         updateBalance();
       };
 
