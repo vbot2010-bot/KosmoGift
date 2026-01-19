@@ -1,3 +1,5 @@
+const API_URL = "https://kosmogift-worker.v-bot-2010.workers.dev";
+
 const tg = window.Telegram.WebApp;
 tg.expand();
 
@@ -5,292 +7,183 @@ const user = tg.initDataUnsafe.user || {};
 const userId = user.id;
 
 const avatar = document.getElementById("avatar");
-const profileAvatar = document.getElementById("profileAvatar");
 const username = document.getElementById("username");
 const balance = document.getElementById("balance");
-const balanceProfile = document.getElementById("balanceProfile");
 
-const btnHome = document.getElementById("btnHome");
-const btnProfile = document.getElementById("btnProfile");
-
-const connectWallet = document.getElementById("connectWallet");
-const disconnectWallet = document.getElementById("disconnectWallet");
-const deposit = document.getElementById("deposit");
-
-const modal = document.getElementById("modal");
-const amountInput = document.getElementById("amount");
-const pay = document.getElementById("pay");
-const closeModal = document.getElementById("closeModal");
+const openDaily = document.getElementById("openDaily");
 
 const subscribeModal = document.getElementById("subscribeModal");
 const subscribeBtn = document.getElementById("subscribeBtn");
 
 const caseModal = document.getElementById("caseModal");
-const openDaily = document.getElementById("openDaily");
 const openCaseBtn = document.getElementById("openCaseBtn");
 const strip = document.getElementById("strip");
-const resultText = document.getElementById("resultText");
 
-const inventoryModal = document.getElementById("inventoryModal");
-const openInventory = document.getElementById("openInventory");
-const closeInventory = document.getElementById("closeInventory");
-const inventoryList = document.getElementById("inventoryList");
+const resultBlock = document.getElementById("resultBlock");
+const resultIcon = document.getElementById("resultIcon");
+const resultText = document.getElementById("resultText");
+const sellBtn = document.getElementById("sellBtn");
+const toInvBtn = document.getElementById("toInvBtn");
 
 avatar.src = user.photo_url || "";
-profileAvatar.src = user.photo_url || "";
 username.innerText = user.username || "Telegram User";
 
-const API_URL = "https://kosmogift-worker.v-bot-2010.workers.dev";
+let balanceValue = 0;
+let subscribed = false;
+let currentPrize = null;
 
-// ==================
-// BALANCE (API)
-// ==================
 async function loadBalance() {
-  try {
-    const res = await fetch(API_URL + "/balance?user_id=" + userId);
-    const data = await res.json();
-    balance.innerText = (data.balance || 0).toFixed(2) + " TON";
-    balanceProfile.innerText = (data.balance || 0).toFixed(2) + " TON";
-  } catch (e) {
-    console.error("Ошибка загрузки баланса:", e);
-  }
+  const res = await fetch(`${API_URL}/balance?user_id=${userId}`);
+  const data = await res.json();
+  balanceValue = parseFloat(data.balance || 0);
+  balance.innerText = balanceValue.toFixed(2) + " TON";
 }
 loadBalance();
 
-// ==================
-// NAVIGATION
-// ==================
-btnHome.onclick = () => switchPage("home");
-btnProfile.onclick = () => switchPage("profile");
+openDaily.onclick = async () => {
+  // check daily
+  const res = await fetch(`${API_URL}/daily?user_id=${userId}`);
+  const data = await res.json();
 
-function switchPage(id) {
-  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-}
-
-// ==================
-// TON CONNECT
-// ==================
-const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-  manifestUrl: "https://kosmogift.pages.dev//tonconnect-manifest.json"
-});
-
-connectWallet.onclick = async () => {
-  await tonConnectUI.connectWallet();
-};
-
-disconnectWallet.onclick = async () => {
-  await tonConnectUI.disconnect();
-};
-
-tonConnectUI.onStatusChange(wallet => {
-  if (wallet) {
-    connectWallet.style.display = "none";
-    disconnectWallet.style.display = "block";
-  } else {
-    connectWallet.style.display = "block";
-    disconnectWallet.style.display = "none";
+  if (data.last && Date.now() - parseInt(data.last) < 24 * 60 * 60 * 1000) {
+    alert("Вы уже открывали кейс сегодня");
+    return;
   }
-});
 
-// ==================
-// INVENTORY (localStorage)
-// ==================
-let inventory = JSON.parse(localStorage.getItem(`inventory:${userId}`)) || [];
-
-function saveInventory() {
-  localStorage.setItem(`inventory:${userId}`, JSON.stringify(inventory));
-}
-
-// ==================
-// CASES
-// ==================
-const prizes = [
-  { name: "0.01 TON", value: 0.01 },
-  { name: "0.02 TON", value: 0.02 },
-  { name: "0.03 TON", value: 0.03 },
-  { name: "0.04 TON", value: 0.04 },
-  { name: "0.05 TON", value: 0.05 },
-  { name: "0.06 TON", value: 0.06 },
-  { name: "0.07 TON", value: 0.07 },
-  { name: "NFT lol pop", nft: true }
-];
-
-const ITEM_WIDTH = 200;
-const REPEAT = 20;
-
-function buildStrip() {
-  strip.innerHTML = "";
-  for (let i = 0; i < REPEAT; i++) {
-    for (let p of prizes) {
-      const div = document.createElement("div");
-      div.className = "drop";
-      div.innerText = p.name;
-      strip.appendChild(div);
-    }
-  }
-  const totalWidth = strip.children.length * ITEM_WIDTH;
-  const start = -totalWidth / 2 + ITEM_WIDTH / 2;
-  strip.style.transform = `translateX(${start}px)`;
-}
-buildStrip();
-
-function choosePrize() {
-  const rnd = Math.random() * 100;
-  if (rnd < 90) return prizes[0];
-  if (rnd < 95) return prizes[1];
-  if (rnd < 97.5) return prizes[2];
-  if (rnd < 98.5) return prizes[3];
-  if (rnd < 99.25) return prizes[4];
-  if (rnd < 99.75) return prizes[5];
-  if (rnd < 99.99) return prizes[6];
-  return prizes[7];
-}
-
-// ==================
-// SUBSCRIBE + CASE MODAL
-// ==================
-let subscribed = localStorage.getItem("subscribed") === "true";
-
-openDaily.onclick = () => {
   if (!subscribed) {
     subscribeModal.style.display = "flex";
-  } else {
-    caseModal.style.display = "flex";
+    return;
   }
+
+  caseModal.style.display = "flex";
+  buildStrip();
 };
 
 subscribeBtn.onclick = () => {
   tg.openLink("https://t.me/KosmoGiftOfficial");
   subscribed = true;
-  localStorage.setItem("subscribed", "true");
   subscribeModal.style.display = "none";
   caseModal.style.display = "flex";
+  buildStrip();
 };
 
-subscribeModal.onclick = (e) => {
-  if (e.target === subscribeModal) subscribeModal.style.display = "none";
-};
-
-caseModal.onclick = (e) => {
-  if (e.target === caseModal) caseModal.style.display = "none";
-};
-
-openCaseBtn.onclick = () => {
-  openCaseBtn.disabled = true;
-
-  const prize = choosePrize();
-  const targetIndex = prizes.findIndex(p => p.name === prize.name);
-
-  const totalItems = strip.children.length;
-  const centerIndex = Math.floor(totalItems / 2);
-
-  const targetPos = (centerIndex + targetIndex) * ITEM_WIDTH;
-  const end = -targetPos + ITEM_WIDTH / 2;
-
-  strip.style.transition = "transform 5s cubic-bezier(0.2, 0.8, 0.2, 1)";
-  strip.style.transform = `translateX(${end}px)`;
-
-  strip.addEventListener("transitionend", () => {
-    strip.style.transition = "none";
-    strip.style.transform = `translateX(${end}px)`;
-  }, { once: true });
-
-  setTimeout(() => {
-    resultText.innerText = "Выпало: " + prize.name;
-
-    if (prize.nft) {
-      inventory.push(prize.name);
-      saveInventory();
-    } else {
-      // !! не вызываем add-balance, просто обновляем локально
-      balance.innerText = (parseFloat(balance.innerText) + prize.value).toFixed(2) + " TON";
+function buildStrip() {
+  strip.innerHTML = "";
+  const prizes = [
+    "0.01 TON",
+    "0.02 TON",
+    "0.03 TON",
+    "0.04 TON",
+    "0.05 TON",
+    "0.06 TON",
+    "0.07 TON",
+    "NFT lol pop"
+  ];
+  for (let i = 0; i < 20; i++) {
+    for (let p of prizes) {
+      const div = document.createElement("div");
+      div.className = "drop";
+      div.innerText = p;
+      strip.appendChild(div);
     }
-
-    openCaseBtn.disabled = false;
-  }, 5000);
-};
-
-// ==================
-// INVENTORY MODAL
-// ==================
-openInventory.onclick = () => {
-  inventoryModal.style.display = "flex";
-  loadInventory();
-};
-closeInventory.onclick = () => inventoryModal.style.display = "none";
-
-function loadInventory() {
-  inventoryList.innerHTML = "";
-  if (inventory.length === 0) {
-    inventoryList.innerHTML = "<div>Инвентарь пуст</div>";
-    return;
   }
-  inventory.forEach(i => {
-    const div = document.createElement("div");
-    div.className = "itemCard";
-    div.innerHTML = `<div>${i}</div>`;
-    inventoryList.appendChild(div);
-  });
 }
 
-// ==================
-// DEPOSIT (API create-payment + check-payment)
-// ==================
-deposit.onclick = () => modal.style.display = "flex";
-closeModal.onclick = () => modal.style.display = "none";
+openCaseBtn.onclick = async () => {
+  openCaseBtn.disabled = true;
+  resultBlock.classList.add("hidden");
 
-pay.onclick = async () => {
-  const amount = parseFloat(amountInput.value);
-  if (!amount || amount < 0.1) return alert("Минимум 0.1 TON");
-
-  const createRes = await fetch(API_URL + "/create-payment", {
+  // get prize from API
+  const res = await fetch(`${API_URL}/open-daily`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ user_id: userId, amount })
+    body: JSON.stringify({ user_id: userId })
   });
-  const createData = await createRes.json();
-  if (createData.error) return alert(createData.error);
+  const data = await res.json();
 
-  const paymentId = createData.paymentId;
-
-  let tx;
-  try {
-    tx = await tonConnectUI.sendTransaction({
-      validUntil: Math.floor(Date.now() / 1000) + 600,
-      messages: [{
-        address: "UQAFXBXzBzau6ZCWzruiVrlTg3HAc8MF6gKIntqTLDifuWOi",
-        amount: (amount * 1e9).toString()
-      }]
-    });
-  } catch (e) {
-    return alert("Оплата отменена или не прошла.");
+  if (data.error) {
+    alert(data.error);
+    openCaseBtn.disabled = false;
+    return;
   }
 
-  const txId = tx.id;
-  if (!txId) return alert("Не удалось получить txId");
+  currentPrize = data.prize;
 
-  let attempts = 0;
-  let paid = false;
+  const prizeIndex = currentPrize.type === "nft" ? 7 : 
+    currentPrize.value === 0.01 ? 0 :
+    currentPrize.value === 0.02 ? 1 :
+    currentPrize.value === 0.03 ? 2 :
+    currentPrize.value === 0.04 ? 3 :
+    currentPrize.value === 0.05 ? 4 :
+    currentPrize.value === 0.06 ? 5 :
+    6;
 
-  while (attempts < 20 && !paid) {
-    attempts++;
-    const checkRes = await fetch(API_URL + "/check-payment", {
+  const itemWidth = 168;
+  const total = strip.children.length;
+  const target = (total / 2 + prizeIndex) * itemWidth;
+
+  strip.style.transition = "transform 5s cubic-bezier(0.2, 0.8, 0.2, 1)";
+  strip.style.transform = `translateX(-${target}px)`;
+
+  strip.addEventListener("transitionend", () => {
+    openCaseBtn.disabled = false;
+    showResult();
+  }, { once: true });
+};
+
+function showResult() {
+  resultBlock.classList.remove("hidden");
+
+  if (currentPrize.type === "ton") {
+    resultIcon.innerText = currentPrize.value + " TON";
+    resultText.innerText = "Вы выиграли TON";
+    toInvBtn.classList.add("hidden");
+  } else {
+    resultIcon.innerText = currentPrize.name;
+    resultText.innerText = "Вы выиграли NFT";
+    toInvBtn.classList.remove("hidden");
+  }
+}
+
+sellBtn.onclick = async () => {
+  if (!currentPrize) return;
+
+  if (currentPrize.type === "ton") {
+    await fetch(`${API_URL}/add-ton`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ payment_id: paymentId, tx_id: txId })
+      body: JSON.stringify({ user_id: userId, amount: currentPrize.value })
     });
-
-    const checkData = await checkRes.json();
-    if (!checkData.error) {
-      paid = true;
-      await loadBalance();
-      modal.style.display = "none";
-      amountInput.value = "";
-      break;
-    }
-    await new Promise(r => setTimeout(r, 3000));
+    await loadBalance();
+    alert("TON зачислен на баланс!");
+  } else {
+    await fetch(`${API_URL}/add-ton`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_id: userId, amount: currentPrize.price })
+    });
+    await loadBalance();
+    alert("NFT продан за TON!");
   }
 
-  if (!paid) alert("Платёж не подтверждён.");
-};
+  caseModal.style.display = "none";
+}
+
+toInvBtn.onclick = async () => {
+  if (!currentPrize || currentPrize.type !== "nft") return;
+
+  await fetch(`${API_URL}/add-nft`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ user_id: userId, nft: currentPrize })
+  });
+
+  alert("NFT добавлен в инвентарь");
+  caseModal.style.display = "none";
+}
+
+caseModal.onclick = (e) => {
+  if (e.target === caseModal) {
+    caseModal.style.display = "none";
+  }
+}
