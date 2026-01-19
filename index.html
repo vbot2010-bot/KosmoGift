@@ -1,84 +1,139 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Gift Case</title>
-<link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gift Mini App</title>
+
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="page active" id="home">
-    <div class="top">
-      <div class="userBar">
-        <img src="avatar.png" class="avatar" alt="avatar" />
-        <div>
-          <div id="username">User</div>
-          <div id="balanceProfile">0 TON</div>
+
+<!-- HOME -->
+<div id="home" class="page active">
+  <div class="top">
+    <div class="userBar">
+      <img id="avatar" class="avatar" />
+      <span id="balance">0.00 TON</span>
+    </div>
+  </div>
+
+  <!-- CASES ROW -->
+  <div class="caseRow" style="display:flex; justify-content:space-between; margin: 120px 20px 0 20px;">
+
+    <!-- DAILY CASE -->
+    <div class="caseBlock">
+      <div class="caseIcon"></div>
+      <div class="caseTitle">Daily Case</div>
+
+      <div id="caseAction">
+        <button id="openDaily" class="caseBtn">Открыть кейс</button>
+        <div id="timerBlock" class="timerBlock" style="display:none;">
+          <div id="timerText" class="timerText">23:59:58</div>
         </div>
       </div>
     </div>
 
-    <!-- CASES BLOCK -->
-    <div class="caseRow" style="display:flex; justify-content:space-between; margin: 120px 20px 0 20px;">
-      <!-- DAILY CASE -->
-      <div class="caseBlock">
-        <div class="caseIcon"></div>
-        <div class="caseTitle">Daily Case</div>
-        <button class="caseBtn" id="openDaily">Открыть</button>
-      </div>
-
-      <!-- UNLUCKY CASE (СПРАВА ОТ DAILY) -->
-      <div class="caseBlock">
-        <div class="caseIcon"></div>
-        <div class="caseTitle">Unlucky Case (25 TON)</div>
-        <button class="caseBtn" id="openUnlucky">Открыть</button>
-      </div>
+    <!-- UNLUCKY CASE (СПРАВА ОТ DAILY) -->
+    <div class="caseBlock">
+      <div class="caseIcon"></div>
+      <div class="caseTitle">Unlucky Case (0.25 TON)</div>
+      <button id="openUnlucky" class="caseBtn">Открыть</button>
     </div>
 
-    <!-- NAV -->
-    <div class="nav">
-      <button id="btn-home">Home</button>
-      <button id="btn-profile">Profile</button>
-      <button id="btn-wallet">Wallet</button>
-      <button id="btn-inventory">Inventory</button>
+  </div>
+</div>
+
+<!-- PROFILE -->
+<div id="profile" class="page">
+  <div class="top">
+    <div class="userBar">
+      <img id="profileAvatar" class="avatar big">
+      <span id="balanceProfile">0.00 TON</span>
     </div>
   </div>
 
-  <!-- CASE MODAL -->
-  <div class="modal" id="caseModal">
-    <div class="caseModalContent">
-      <div class="caseHeader">
-        <div class="caseTitle">Case</div>
-        <button class="closeBtn" id="closeCase">×</button>
-      </div>
+  <div id="username"></div>
 
-      <div class="stripWrap">
-        <div class="strip" id="strip"></div>
-        <div class="pointer"></div>
-      </div>
+  <button id="connectWallet" class="caseBtn">Подключить кошелёк</button>
+  <button id="disconnectWallet" class="caseBtn" style="display:none">Отключить кошелёк</button>
 
-      <button class="caseBtn" id="openCaseBtn" style="margin-top:20px;">Открыть кейс</button>
+  <button id="deposit" class="caseBtn">Пополнить баланс</button>
+  <button id="openInventory" class="caseBtn">Инвентарь</button>
+</div>
+
+<!-- MODAL POPOLNENIE -->
+<div id="modal" class="modal">
+  <div class="modalContent">
+    <div class="modalHeader">
+      <div>Пополнение</div>
+      <button id="closeModal" class="closeBtn">✕</button>
     </div>
+    <input id="amount" placeholder="Введите сумму (минимум 0.1)" />
+    <button id="pay" class="caseBtn">Оплатить</button>
   </div>
+</div>
 
-  <!-- REWARD MODAL -->
-  <div class="modal" id="rewardModal">
-    <div class="rewardContent">
-      <div id="rewardText">Вы выиграли...</div>
-      <button class="caseBtn" id="rewardBtnTon">Добавить TON</button>
-      <button class="caseBtn" id="rewardBtnSell">Продать за TON</button>
-      <button class="caseBtn" id="rewardBtnInv">В инвентарь</button>
-    </div>
+<!-- SUBSCRIBE MODAL -->
+<div id="subscribeModal" class="modal subscribeModal">
+  <div class="subscribeContent">
+    <div class="subscribeText">Для открытия кейса нужно подписаться на канал</div>
+    <button id="subscribeBtn" class="caseBtn">Подписаться</button>
   </div>
+</div>
 
-  <!-- INVENTORY MODAL -->
-  <div class="modal" id="inventoryModal">
-    <div class="inventoryContent">
-      <button class="closeBtn" id="closeInventory">×</button>
-      <div class="inventoryList" id="inventoryList"></div>
+<!-- CASE MODAL -->
+<div id="caseModal" class="modal">
+  <div class="caseModalContent">
+    <div class="caseHeader">
+      <div class="caseTitle">Daily Case</div>
+      <button id="closeCase" class="closeBtn">✕</button>
     </div>
+
+    <div class="stripWrap">
+      <div id="strip" class="strip"></div>
+      <div class="pointer"></div>
+    </div>
+
+    <div class="dropInfo">
+      <div class="dropInfoTitle">Дроп</div>
+      <div class="dropInfoText">Шанс выпадения: по честным шансам</div>
+    </div>
+
+    <div id="resultText" class="resultText">Нажми "Открыть кейс"</div>
+    <button id="openCaseBtn" class="caseBtn">Открыть кейс</button>
   </div>
+</div>
+
+<!-- REWARD MODAL -->
+<div id="rewardModal" class="modal">
+  <div class="rewardContent">
+    <div id="rewardText" class="rewardText"></div>
+
+    <button id="rewardBtnTon" class="caseBtn">Получить TON</button>
+    <button id="rewardBtnSell" class="caseBtn">Продать NFT</button>
+    <button id="rewardBtnInv" class="caseBtn">В инвентарь</button>
+  </div>
+</div>
+
+<!-- INVENTORY MODAL -->
+<div id="inventoryModal" class="modal">
+  <div class="inventoryContent">
+    <button id="closeInventory" class="closeBtn">✕</button>
+    <div id="inventoryList" class="inventoryList"></div>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <button id="btnHome">Главная</button>
+  <button id="btnProfile">Профиль</button>
+</div>
 
 <script src="main.js"></script>
+<script src="case_unlucky.js"></script>
 </body>
-</html>
+  </html>
