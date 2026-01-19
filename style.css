@@ -1,198 +1,138 @@
 body {
   margin: 0;
-  background: #0e1621;
-  color: white;
+  background: #0f0f0f;
+  color: #fff;
   font-family: Arial, sans-serif;
 }
 
-.page {
-  display: none;
-}
-.page.active {
-  display: block;
-}
+.page { display: none; padding: 20px; }
+.page.active { display: block; }
 
-.top {
-  padding: 70px 20px 0 20px;
+.header {
   display: flex;
-  justify-content: flex-end;
+  gap: 12px;
+  padding: 12px;
+  background: #1a1a1a;
 }
 
 .avatar {
-  width: 32px;
-  height: 32px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
 }
 
-.big {
-  width: 60px;
-  height: 60px;
+.profileAvatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin: 10px auto;
+  display: block;
 }
 
-.userBar {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: #1b2635;
-  padding: 10px 14px;
-  border-radius: 20px;
-}
-
-.caseBlock {
-  margin: 120px 20px 0 20px;
-  width: 170px;
-  text-align: left;
-}
-
-.caseIcon {
-  width: 70px;
-  height: 70px;
-  background: #7d7d7d;
-  border-radius: 15px;
-  margin-bottom: 8px;
-}
-
-.caseTitle {
+.mainBtn {
+  width: 100%;
+  padding: 14px;
+  margin-top: 12px;
+  border: none;
+  border-radius: 14px;
+  background: #2f80ed;
+  color: #fff;
   font-size: 16px;
-  margin-bottom: 8px;
 }
 
-.caseBtn {
+.mainBtn.gray {
+  background: #3a3a3a;
+}
+
+.subBtn {
   width: 100%;
   padding: 10px;
+  background: #333;
   border: none;
-  border-radius: 12px;
-  background: #3a86ff;
-  color: white;
-  font-weight: bold;
-  margin-top: 10px;
+  color: #aaa;
+  border-radius: 10px;
+  margin-top: 8px;
 }
 
 .nav {
   position: fixed;
   bottom: 0;
   width: 100%;
+  background: #1a1a1a;
   display: flex;
-}
-.nav button {
-  flex: 1;
-  padding: 15px;
+  justify-content: space-around;
+  padding: 10px 0;
 }
 
 .modal {
-  display: none;
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.6);
+  inset: 0;
+  display: none;
+  background: rgba(0,0,0,0.8);
+  align-items: center;
   justify-content: center;
-  align-items: center;
-  z-index: 1000;
 }
 
-.modalContent {
-  width: 90%;
-  max-width: 420px;
-  background: #7d7d7d;
+.caseBox {
+  background: #1c1c1c;
+  padding: 16px;
   border-radius: 20px;
-  padding: 20px;
-  position: relative;
-}
-
-.closeBtn {
-  background: transparent;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: #000;
-}
-
-.caseModalContent {
   width: 90%;
-  max-width: 420px;
-  height: 75vh;
-  background: #7d7d7d;
-  border-radius: 20px;
-  padding: 20px;
-  position: relative;
-}
-
-.caseHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.stripWrap {
-  position: relative;
-  height: 140px;
-  overflow: hidden;
-  margin-top: 20px;
-  background: #000;
-  border-radius: 15px;
+  max-width: 320px;
 }
 
 .strip {
   display: flex;
-  gap: 18px;
-  padding: 20px 0;
+  gap: 10px;
+  margin-bottom: 15px;
   transform: translateX(0);
 }
 
 .drop {
-  min-width: 200px;
-  height: 100px;
-  background: #222;
+  min-width: 120px;
+  background: #2a2a2a;
+  padding: 20px;
   border-radius: 12px;
-  display: flex;
+  text-align: center;
+}
+
+#rewardModal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: none;
   align-items: center;
   justify-content: center;
+}
+
+.rewardContent {
+  width: 260px;
+  height: 260px;
+  background: #1c1c1c;
+  border-radius: 20px;
+  padding: 16px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.rewardText {
+  font-size: 18px;
   font-weight: bold;
 }
 
-.pointer {
-  position: absolute;
-  width: 4px;
-  height: 140px;
-  background: #ff0;
-  left: 50%;
-  top: 0;
-  transform: translateX(-50%);
-}
-
-.resultText {
-  margin-top: 20px;
-  text-align: center;
-}
-
-.subscribeContent {
-  width: 90%;
-  max-width: 320px;
-  background: #7d7d7d;
-  border-radius: 20px;
-  padding: 20px;
-  text-align: center;
-}
-
 .bottomModal {
-  align-items: flex-end;
-}
-
-.inventoryContent {
-  width: 90%;
-  max-width: 420px;
-  height: 60vh;
-  background: #7d7d7d;
-  border-radius: 20px;
+  position: fixed;
+  bottom: -100%;
+  left: 0;
+  width: 100%;
+  height: 25%;
+  background: #1c1c1c;
   padding: 20px;
-  overflow-y: auto;
+  transition: 0.3s;
 }
 
-.inventoryList .itemCard {
-  background: #000;
-  padding: 10px;
-  border-radius: 12px;
-  margin-bottom: 10px;
+.bottomModal.show {
+  bottom: 0;
 }
