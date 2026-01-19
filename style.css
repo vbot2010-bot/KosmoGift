@@ -206,10 +206,15 @@ body {
 }
 
 .timerBlock {
-  margin-top: 20px;
+  margin-top: 10px;
+  width: 170px;
+  text-align: center;
 }
 
 .timerText {
-  font-size: 22px;
+  font-size: 18px;
   font-weight: bold;
-  }
+  background: #1b2635;
+  padding: 8px 12px;
+  border-radius: 12px;
+}
