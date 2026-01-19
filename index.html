@@ -27,7 +27,7 @@
     <button id="openDaily" class="caseBtn">Открыть кейс</button>
 
     <div id="timerBlock" class="timerBlock" style="display:none;">
-      <div id="timerText" class="timerText">00:00:00</div>
+      <div id="timerText" class="timerText">23:59:58</div>
     </div>
   </div>
 </div>
@@ -49,7 +49,7 @@
   <button id="openInventory" class="caseBtn">Инвентарь</button>
 </div>
 
-<!-- MODAL ПОПОЛНЕНИЕ -->
+<!-- MODAL POPOLNENIE -->
 <div id="modal" class="modal">
   <div class="modalContent">
     <div class="modalHeader">
@@ -62,21 +62,13 @@
 </div>
 
 <!-- CASE MODAL -->
-<div id="caseModal" class="modal halfModal">
+<div id="caseModal" class="modalBottom">
   <div class="caseModalContent">
     <div class="caseHeader">
       <div class="caseTitle">Daily Case</div>
       <button id="closeCase" class="closeBtn">✕</button>
     </div>
 
-    <!-- Блок подписки -->
-    <div id="subscribeBlock" class="subscribeBlock">
-      <div class="subscribeText">Для открытия кейса нужно подписаться на канал</div>
-      <button id="subscribeBtn" class="caseBtn">Подписаться</button>
-      <button id="continueBtn" class="caseBtn" style="margin-top: 10px;">Открыть кейс</button>
-    </div>
-
-    <!-- Рулетка -->
     <div class="stripWrap">
       <div id="strip" class="strip"></div>
       <div class="pointer"></div>
@@ -91,7 +83,10 @@
 <div id="rewardModal" class="modal">
   <div class="rewardContent">
     <div id="rewardText" class="rewardText"></div>
+
     <button id="rewardBtnTon" class="caseBtn">Получить TON</button>
+    <button id="rewardBtnSell" class="caseBtn">Продать NFT</button>
+    <button id="rewardBtnInv" class="caseBtn">В инвентарь</button>
   </div>
 </div>
 
@@ -104,10 +99,10 @@
 </div>
 
 <div class="nav">
-  <button id="btnHome" class="caseBtn">Главная</button>
-  <button id="btnProfile" class="caseBtn">Профиль</button>
+  <button id="btnHome" class="navBtn">Главная</button>
+  <button id="btnProfile" class="navBtn">Профиль</button>
 </div>
 
 <script src="main.js"></script>
 </body>
-        </html>
+</html>
