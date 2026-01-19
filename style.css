@@ -154,16 +154,6 @@ body {
   transform: translateX(-50%);
 }
 
-.resultBlock {
-  margin-top: 20px;
-  text-align: center;
-}
-
-.resultText {
-  margin-top: 20px;
-  text-align: center;
-}
-
 .closeBtn {
   background: transparent;
   border: none;
@@ -206,15 +196,10 @@ body {
 }
 
 .timerBlock {
-  margin-top: 10px;
-  width: 170px;
-  text-align: center;
+  margin-top: 20px;
 }
 
 .timerText {
-  font-size: 18px;
+  font-size: 22px;
   font-weight: bold;
-  background: #1b2635;
-  padding: 8px 12px;
-  border-radius: 12px;
 }
