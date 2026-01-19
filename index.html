@@ -24,6 +24,11 @@
     <div class="caseIcon"></div>
     <div class="caseTitle">Daily Case</div>
     <button id="openDaily" class="caseBtn">Открыть кейс</button>
+
+    <div id="timerBlock" class="timerBlock" style="display:none;">
+      <span>Следующий кейс через</span>
+      <div id="timerText" class="timerText">23:59:58</div>
+    </div>
   </div>
 </div>
 
@@ -65,21 +70,23 @@
       <div class="pointer"></div>
     </div>
 
-    <div id="resultText" class="resultText">Нажми "Открыть кейс"</div>
+    <div id="resultBlock" class="resultBlock">
+      <div id="resultText" class="resultText">Нажми "Открыть кейс"</div>
+    </div>
+
     <button id="openCaseBtn" class="caseBtn">Открыть кейс</button>
   </div>
 </div>
 
-<!-- WIN MODAL -->
-<div id="winModal" class="modal">
-  <div class="winContent">
-    <div id="winTitle" class="winTitle"></div>
-    <div id="winPrize" class="winPrize"></div>
-    <div class="winButtons">
-      <button id="getTonBtn" class="caseBtn">Получить</button>
-      <button id="toInvBtn" class="caseBtn">В инвентарь</button>
-      <button id="sellBtn" class="caseBtn">Продать за 3.27 TON</button>
-    </div>
+<!-- REWARD MODAL -->
+<div id="rewardModal" class="modal">
+  <div class="rewardContent">
+    <img id="rewardImg" class="rewardImg">
+    <div id="rewardText" class="rewardText"></div>
+
+    <button id="rewardBtnTon" class="caseBtn">Получить TON</button>
+    <button id="rewardBtnSell" class="caseBtn">Продать NFT</button>
+    <button id="rewardBtnInv" class="caseBtn">В инвентарь</button>
   </div>
 </div>
 
