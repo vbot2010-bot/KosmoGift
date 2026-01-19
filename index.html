@@ -49,11 +49,15 @@
   <button id="openInventory">Инвентарь</button>
 </div>
 
-<!-- SUBSCRIBE MODAL -->
-<div id="subscribeModal" class="modal">
-  <div class="subscribeContent">
-    <div class="subscribeText">Для открытия кейса нужно подписаться на канал</div>
-    <button id="subscribeBtn" class="caseBtn">Подписаться</button>
+<!-- MODAL POPOLNENIE -->
+<div id="modal" class="modal">
+  <div class="modalContent">
+    <div class="modalHeader">
+      <div>Пополнение</div>
+      <button id="closeModal" class="closeBtn">✕</button>
+    </div>
+    <input id="amount" placeholder="Введите сумму (минимум 0.1)" />
+    <button id="pay" class="caseBtn">Оплатить</button>
   </div>
 </div>
 
@@ -78,7 +82,6 @@
 <!-- REWARD MODAL -->
 <div id="rewardModal" class="modal">
   <div class="rewardContent">
-    <img id="rewardImg" class="rewardImg">
     <div id="rewardText" class="rewardText"></div>
 
     <button id="rewardBtnTon" class="caseBtn">Получить TON</button>
@@ -102,4 +105,4 @@
 
 <script src="main.js"></script>
 </body>
-  </html>
+      </html>
