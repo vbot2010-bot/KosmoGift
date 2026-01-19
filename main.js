@@ -1,9 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
+
   const tg = window.Telegram.WebApp;
   tg.expand();
 
   const user = tg.initDataUnsafe.user;
   const userId = String(user.id);
+
   const API = "https://kosmogift-worker.v-bot-2010.workers.dev";
 
   const avatar = document.getElementById("avatar");
@@ -72,7 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   connectWallet.onclick = async () => {
-    try { await tonConnectUI.connectWallet(); } catch {}
+    try { await tonConnectUI.connectWallet(); } catch (e) { alert("Ошибка подключения"); }
   };
 
   disconnectWallet.onclick = async () => {
@@ -122,7 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
     { name: "TON 0.05", chance: 0.75, type: "ton", amount: 0.05 },
     { name: "TON 0.06", chance: 0.5, type: "ton", amount: 0.06 },
     { name: "TON 0.07", chance: 0.24, type: "ton", amount: 0.07 },
-    { name: "NFT lol pop", chance: 0.01, type: "nft", amount: 0 }
+    { name: "NFT lol pop", chance: 0.01, type: "nft", amount: 3.27 }
   ];
 
   function pickPrize() {
@@ -163,7 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
     list.forEach(p => {
       const div = document.createElement("div");
       div.className = "drop";
-      div.innerText = `${p.name}\n(${p.chance}%)`;
+      div.innerText = `${p.name}`;
       strip.appendChild(div);
     });
   }
@@ -176,7 +178,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     animateStrip(winIndex, prizes.length, () => {
       showPrize(prize);
-      loadBalance();
       openCaseBtn.disabled = false;
     });
   };
