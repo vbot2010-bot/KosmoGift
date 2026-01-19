@@ -16,7 +16,10 @@
   <div class="top">
     <div class="userBar">
       <img id="avatar" class="avatar">
-      <span id="balance">0.00 TON</span>
+      <div class="balanceBlock">
+        <div id="balance" class="balance">0.00 TON</div>
+        <div class="subBalance">Баланс</div>
+      </div>
     </div>
   </div>
 
@@ -25,6 +28,10 @@
     <div class="caseTitle">Daily Case</div>
 
     <button id="openDaily" class="caseBtn">Открыть кейс</button>
+
+    <div id="timerBlock" class="timerBlock" style="display:none;">
+      <div id="timerText" class="timerText">23:59:58</div>
+    </div>
   </div>
 </div>
 
@@ -33,16 +40,19 @@
   <div class="top">
     <div class="userBar">
       <img id="profileAvatar" class="avatar big">
-      <span id="balanceProfile">0.00 TON</span>
+      <div class="balanceBlock">
+        <div id="balanceProfile" class="balance">0.00 TON</div>
+        <div class="subBalance">Баланс</div>
+      </div>
     </div>
   </div>
 
-  <div id="username"></div>
+  <div id="username" class="username"></div>
 
-  <button id="connectWallet" class="caseBtn">Подключить кошелёк</button>
-  <button id="disconnectWallet" class="caseBtn" style="display:none">Отключить кошелёк</button>
-  <button id="deposit" class="caseBtn">Пополнить баланс</button>
-  <button id="openInventory" class="caseBtn">Инвентарь</button>
+  <button id="connectWallet" class="mainBtn">Подключить кошелёк</button>
+  <button id="deposit" class="mainBtn">Пополнить баланс</button>
+  <button id="openInventory" class="mainBtn">Инвентарь</button>
+  <button id="disconnectWallet" class="mainBtn" style="display:none">Отключить кошелёк</button>
 </div>
 
 <!-- MODAL POPOLNENIE -->
@@ -57,6 +67,16 @@
   </div>
 </div>
 
+<!-- SUBSCRIBE MODAL -->
+<div id="subscribeModal" class="modal">
+  <div class="subscribeContent">
+    <div class="subscribeTitle">Подпишись на канал</div>
+    <div class="subscribeText">Для открытия кейса нужно подписаться на канал</div>
+    <button id="subscribeBtn" class="caseBtn">Подписаться</button>
+    <button id="skipSubscribe" class="caseBtn secondary">Пропустить</button>
+  </div>
+</div>
+
 <!-- CASE MODAL -->
 <div id="caseModal" class="modal">
   <div class="caseModalContent">
@@ -65,13 +85,6 @@
       <button id="closeCase" class="closeBtn">✕</button>
     </div>
 
-    <!-- окно подписки -->
-    <div id="subscribeBlock" class="subscribeBlock">
-      <div class="subText">Подпишись на канал</div>
-      <button id="subBtn" class="caseBtn">Подписаться</button>
-    </div>
-
-    <!-- рулетка -->
     <div class="stripWrap">
       <div id="strip" class="strip"></div>
       <div class="pointer"></div>
@@ -86,6 +99,7 @@
 <div id="rewardModal" class="modal">
   <div class="rewardContent">
     <div id="rewardText" class="rewardText"></div>
+
     <button id="rewardBtnTon" class="caseBtn">Получить TON</button>
     <button id="rewardBtnSell" class="caseBtn">Продать NFT</button>
     <button id="rewardBtnInv" class="caseBtn">В инвентарь</button>
@@ -101,8 +115,8 @@
 </div>
 
 <div class="nav">
-  <button id="btnHome">Главная</button>
-  <button id="btnProfile">Профиль</button>
+  <button id="btnHome" class="navBtn active">Главная</button>
+  <button id="btnProfile" class="navBtn">Профиль</button>
 </div>
 
 <script src="main.js"></script>
