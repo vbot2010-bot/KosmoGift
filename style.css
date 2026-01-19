@@ -1,138 +1,121 @@
 body {
   margin: 0;
-  background: #0f0f0f;
-  color: #fff;
   font-family: Arial, sans-serif;
+  background: #0e0e11;
+  color: white;
 }
 
-.page { display: none; padding: 20px; }
-.page.active { display: block; }
+.topBar {
+  padding: 10px;
+}
 
-.header {
+.userInfo {
   display: flex;
-  gap: 12px;
-  padding: 12px;
-  background: #1a1a1a;
+  gap: 10px;
+  align-items: center;
 }
 
 .avatar {
-  width: 48px;
-  height: 48px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
 }
 
-.profileAvatar {
+.avatar.big {
   width: 80px;
   height: 80px;
-  border-radius: 50%;
-  margin: 10px auto;
+}
+
+.page {
+  display: none;
+  padding: 20px;
+}
+
+.page.active {
   display: block;
 }
 
+.dailyCard {
+  background: #1c1c22;
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+}
+
+.dailyIcon {
+  font-size: 64px;
+}
+
 .mainBtn {
-  width: 100%;
-  padding: 14px;
-  margin-top: 12px;
+  margin-top: 15px;
+  padding: 12px;
+  border-radius: 10px;
   border: none;
-  border-radius: 14px;
-  background: #2f80ed;
-  color: #fff;
+  background: #4e7cff;
+  color: white;
   font-size: 16px;
 }
 
 .mainBtn.gray {
-  background: #3a3a3a;
-}
-
-.subBtn {
-  width: 100%;
-  padding: 10px;
-  background: #333;
-  border: none;
-  color: #aaa;
-  border-radius: 10px;
-  margin-top: 8px;
+  background: #555;
 }
 
 .nav {
   position: fixed;
   bottom: 0;
   width: 100%;
-  background: #1a1a1a;
   display: flex;
-  justify-content: space-around;
-  padding: 10px 0;
+}
+
+.nav button {
+  flex: 1;
+  padding: 15px;
+  background: #1c1c22;
+  color: white;
+  border: none;
 }
 
 .modal {
+  display: none;
   position: fixed;
   inset: 0;
-  display: none;
-  background: rgba(0,0,0,0.8);
+  background: rgba(0,0,0,.6);
   align-items: center;
   justify-content: center;
 }
 
-.caseBox {
-  background: #1c1c1c;
-  padding: 16px;
-  border-radius: 20px;
-  width: 90%;
-  max-width: 320px;
+.bottomModal {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: #1c1c22;
+  border-radius: 20px 20px 0 0;
+}
+
+.bottomContent {
+  padding: 20px;
+}
+
+.stripWrap {
+  overflow: hidden;
+  width: 300px;
 }
 
 .strip {
   display: flex;
   gap: 10px;
-  margin-bottom: 15px;
-  transform: translateX(0);
 }
 
 .drop {
-  min-width: 120px;
-  background: #2a2a2a;
+  min-width: 100px;
+  background: #2a2a33;
   padding: 20px;
-  border-radius: 12px;
+  border-radius: 10px;
   text-align: center;
 }
 
-#rewardModal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.75);
-  display: none;
-  align-items: center;
-  justify-content: center;
-}
-
-.rewardContent {
-  width: 260px;
-  height: 260px;
-  background: #1c1c1c;
-  border-radius: 20px;
-  padding: 16px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.rewardText {
-  font-size: 18px;
-  font-weight: bold;
-}
-
-.bottomModal {
-  position: fixed;
-  bottom: -100%;
-  left: 0;
-  width: 100%;
-  height: 25%;
-  background: #1c1c1c;
-  padding: 20px;
-  transition: 0.3s;
-}
-
-.bottomModal.show {
-  bottom: 0;
+.pointer {
+  height: 4px;
+  background: red;
 }
