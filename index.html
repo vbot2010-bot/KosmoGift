@@ -11,6 +11,7 @@
 </head>
 <body>
 
+<!-- HOME -->
 <div id="home" class="page active">
   <div class="top">
     <div class="userBar">
@@ -22,15 +23,11 @@
   <div class="caseBlock">
     <div class="caseIcon"></div>
     <div class="caseTitle">Daily Case</div>
-
     <button id="openDaily" class="caseBtn">Открыть кейс</button>
-
-    <div id="timerBlock" class="timerBlock" style="display:none;">
-      <div id="timerText" class="timerText">23:59:59</div>
-    </div>
   </div>
 </div>
 
+<!-- PROFILE -->
 <div id="profile" class="page">
   <div class="top">
     <div class="userBar">
@@ -39,16 +36,25 @@
     </div>
   </div>
 
-  <div id="username"></div>
+  <div id="username" class="username"></div>
 
-  <button id="connectWallet">Подключить кошелёк</button>
-  <button id="disconnectWallet" style="display:none">Отключить кошелёк</button>
-  <button id="deposit">Пополнить баланс</button>
-  <button id="openInventory">Инвентарь</button>
+  <button id="connectWallet" class="caseBtn">Подключить кошелёк</button>
+  <button id="disconnectWallet" class="caseBtn" style="display:none;">Отключить кошелёк</button>
+
+  <button id="deposit" class="caseBtn">Пополнить баланс</button>
+  <button id="openInventory" class="caseBtn">Инвентарь</button>
+</div>
+
+<!-- SUBSCRIBE MODAL -->
+<div id="subscribeModal" class="modalBottom">
+  <div class="subscribeContent">
+    <div class="subscribeText">Для открытия кейса нужно подписаться на канал</div>
+    <button id="subscribeBtn" class="caseBtn">Подписаться</button>
+  </div>
 </div>
 
 <!-- CASE MODAL -->
-<div id="caseModal" class="modal">
+<div id="caseModal" class="modalBottom">
   <div class="caseModalContent">
     <div class="caseHeader">
       <div class="caseTitle">Daily Case</div>
@@ -60,33 +66,34 @@
       <div class="pointer"></div>
     </div>
 
+    <div id="resultText" class="resultText">Нажми "Открыть кейс"</div>
     <button id="openCaseBtn" class="caseBtn">Открыть кейс</button>
   </div>
 </div>
 
-<!-- REWARD -->
-<div id="rewardModal" class="modal">
+<!-- REWARD MODAL -->
+<div id="rewardModal" class="modalCenter">
   <div class="rewardContent">
-    <div id="rewardText"></div>
-    <button id="rewardBtnTon" class="caseBtn">Забрать TON</button>
-    <button id="rewardBtnInv" class="caseBtn">В инвентарь</button>
+    <div id="rewardText" class="rewardText"></div>
+    <button id="rewardBtnTon" class="caseBtn">Получить TON</button>
     <button id="rewardBtnSell" class="caseBtn">Продать NFT</button>
+    <button id="rewardBtnInv" class="caseBtn">В инвентарь</button>
   </div>
 </div>
 
-<!-- INVENTORY -->
-<div id="inventoryModal" class="modal">
+<!-- INVENTORY MODAL -->
+<div id="inventoryModal" class="modalCenter">
   <div class="inventoryContent">
     <button id="closeInventory" class="closeBtn">✕</button>
-    <div id="inventoryList"></div>
+    <div id="inventoryList" class="inventoryList"></div>
   </div>
 </div>
 
 <div class="nav">
-  <button id="btnHome">Главная</button>
-  <button id="btnProfile">Профиль</button>
+  <button id="btnHome" class="navBtn">Главная</button>
+  <button id="btnProfile" class="navBtn">Профиль</button>
 </div>
 
 <script src="main.js"></script>
 </body>
-  </html>
+      </html>
