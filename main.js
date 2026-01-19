@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // ПОДПИСКА
   subscribeBtn.onclick = () => {
-    window.open("https://t.me/ТВОЙ_КАНАЛ", "_blank")
+    window.open("https://t.me/KosmoGiftOfficial", "_blank")
   }
 
   // ПЕРЕМЕННЫЕ ПРИЗОВ
