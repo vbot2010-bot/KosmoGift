@@ -1,63 +1,57 @@
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #0e0e11;
+  background: #0e1621;
   color: white;
+  font-family: Arial, sans-serif;
 }
 
-.topBar {
-  padding: 10px;
-}
+.page { display: none; }
+.page.active { display: block; }
 
-.userInfo {
+.top {
+  padding: 70px 20px 0;
   display: flex;
-  gap: 10px;
-  align-items: center;
+  justify-content: flex-end;
 }
 
 .avatar {
-  width: 42px;
-  height: 42px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
 }
 
-.avatar.big {
-  width: 80px;
-  height: 80px;
+.big { width: 60px; height: 60px; }
+
+.userBar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #1b2635;
+  padding: 10px 14px;
+  border-radius: 20px;
 }
 
-.page {
-  display: none;
-  padding: 20px;
+.caseBlock {
+  margin: 120px 20px;
+  width: 170px;
 }
 
-.page.active {
-  display: block;
+.caseIcon {
+  width: 70px;
+  height: 70px;
+  background: #7d7d7d;
+  border-radius: 15px;
+  margin-bottom: 8px;
 }
 
-.dailyCard {
-  background: #1c1c22;
-  border-radius: 16px;
-  padding: 20px;
-  text-align: center;
-}
-
-.dailyIcon {
-  font-size: 64px;
-}
-
-.mainBtn {
-  margin-top: 15px;
-  padding: 12px;
-  border-radius: 10px;
+.caseBtn {
+  width: 100%;
+  padding: 10px;
+  border-radius: 12px;
   border: none;
-  background: #4e7cff;
+  background: #3a86ff;
   color: white;
-  font-size: 16px;
-}
-
-.mainBtn.gray {
-  background: #555;
+  font-weight: bold;
 }
 
 .nav {
@@ -70,9 +64,6 @@ body {
 .nav button {
   flex: 1;
   padding: 15px;
-  background: #1c1c22;
-  color: white;
-  border: none;
 }
 
 .modal {
@@ -80,42 +71,47 @@ body {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,.6);
-  align-items: center;
   justify-content: center;
+  align-items: center;
 }
 
-.bottomModal {
-  display: none;
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  background: #1c1c22;
-  border-radius: 20px 20px 0 0;
-}
-
-.bottomContent {
+.caseModalContent,
+.rewardContent,
+.inventoryContent {
+  background: #7d7d7d;
   padding: 20px;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 420px;
 }
 
 .stripWrap {
+  height: 140px;
   overflow: hidden;
-  width: 300px;
+  background: #000;
+  border-radius: 15px;
+  margin: 20px 0;
 }
 
 .strip {
   display: flex;
-  gap: 10px;
+  gap: 18px;
 }
 
 .drop {
-  min-width: 100px;
-  background: #2a2a33;
-  padding: 20px;
-  border-radius: 10px;
-  text-align: center;
+  min-width: 200px;
+  height: 100px;
+  background: #222;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .pointer {
-  height: 4px;
-  background: red;
+  position: absolute;
+  width: 4px;
+  height: 140px;
+  background: yellow;
+  left: 50%;
 }
