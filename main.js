@@ -21,9 +21,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   const strip = document.getElementById("strip")
   const resultText = document.getElementById("resultText")
 
-  const subscribeModal = document.getElementById("subscribeModal")
-  const subscribeBtn = document.getElementById("subscribeBtn")
-
   const rewardModal = document.getElementById("rewardModal")
   const rewardText = document.getElementById("rewardText")
   const rewardBtnTon = document.getElementById("rewardBtnTon")
@@ -78,7 +75,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   btnHome.onclick = () => showPage(home)
   btnProfile.onclick = () => showPage(profile)
 
-  // ===== BALANCE =====
   async function updateBalance() {
     const res = await fetch(`${API}/balance?user=${userId}`)
     const data = await res.json()
@@ -86,7 +82,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     balanceProfile.innerText = data.balance.toFixed(2) + " TON"
   }
 
-  // ===== DAILY TIMER =====
   async function updateDailyTimer() {
     const res = await fetch(`${API}/daily-status?user=${userId}`)
     const data = await res.json()
@@ -111,12 +106,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   updateDailyTimer()
   updateBalance()
 
-  // ===== OPEN DAILY =====
   openDaily.onclick = async () => {
     const r = await fetch(`${API}/daily?user=${userId}`)
     const d = await r.json()
     if (d.error) return alert("Кейс доступен раз в 24 часа")
-
     caseModal.style.display = "flex"
   }
 
@@ -124,7 +117,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     caseModal.style.display = "none"
   }
 
-  // ===== OPEN CASE =====
   openCaseBtn.onclick = async () => {
     const prize = randomPrize()
 
@@ -193,7 +185,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }, 3500)
   }
 
-  // ===== INVENTORY =====
   openInventory.onclick = async () => {
     const res = await fetch(`${API}/inventory?user=${userId}`)
     const inv = await res.json()
@@ -228,7 +219,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   closeInventory.onclick = () => inventoryModal.style.display = "none"
 
-  // ===== WALLET (TONCONNECT) =====
   connectWallet.onclick = async () => {
     const ui = new TON_CONNECT_UI.TonConnectUI({
       manifestUrl: "https://kocmogift-v22.vercel.app/tonconnect-manifest.json"
@@ -248,24 +238,49 @@ document.addEventListener("DOMContentLoaded", async () => {
     alert("Кошелёк отключён")
   }
 
-  // ===== DEPOSIT =====
   deposit.onclick = async () => {
     const amount = prompt("Введите сумму TON для пополнения (например 0.05):")
     if (!amount) return
 
+    await fetch(`${API}/deposit-request`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user: userId, amount })
+    })
+
     const url = `https://tonkeeper.com/transfer/${TON_ADDRESS}?amount=${amount}`
     window.open(url, "_blank")
 
-    alert("После перевода нажмите кнопку ПРОВЕРИТЬ платеж")
+    alert("Платёж отправлен. Нажмите ПРОВЕРИТЬ платеж")
   }
 
-  // ===== CHECK PAYMENT =====
-  // (это проверка по твоему адресу через API)
-  // здесь нужно сделать endpoint /check-payment
-  // но пока сделаем просто ручную проверку через fetch
+  // Кнопка "Проверить платеж"
+  const checkBtn = document.createElement("button")
+  checkBtn.innerText = "Проверить платеж"
+  checkBtn.className = "caseBtn"
+  document.body.appendChild(checkBtn)
+  checkBtn.style.position = "fixed"
+  checkBtn.style.bottom = "70px"
+  checkBtn.style.right = "10px"
 
-  // ===== SUBSCRIBE =====
-  subscribeBtn.onclick = () => {
+  checkBtn.onclick = async () => {
+    const res = await fetch(`${API}/check-payment`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user: userId })
+    })
+    const data = await res.json()
+
+    if (data.ok) {
+      alert("Платёж найден! Баланс обновлён.")
+      updateBalance()
+    } else {
+      alert("Платёж не найден или уже зачислен: " + (data.message || ""))
+    }
+  }
+
+  // Ссылка на канал
+  document.getElementById("subscribeBtn").onclick = () => {
     window.open("https://t.me/KosmoGiftOfficial", "_blank")
   }
 })
