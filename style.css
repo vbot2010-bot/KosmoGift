@@ -65,7 +65,7 @@ body {
   background: #3a86ff;
   color: white;
   font-weight: bold;
-  margin-top: 12px;
+  cursor: pointer;
 }
 
 .nav {
@@ -77,6 +77,14 @@ body {
 .nav button {
   flex: 1;
   padding: 15px;
+  cursor: pointer;
+}
+
+/* distance between buttons */
+#connectWallet, #deposit, #openInventory {
+  display: block;
+  width: 90%;
+  margin: 12px auto;
 }
 
 /* MODALS */
@@ -93,19 +101,18 @@ body {
   z-index: 1000;
 }
 
-.modalContent {
-  width: 90%;
-  max-width: 320px;
-  background: #7d7d7d;
-  border-radius: 20px;
-  padding: 20px;
-  text-align: center;
+/* bottom modal */
+.bottomModal {
+  align-items: flex-end;
 }
 
-.modalHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.subscribeContent {
+  width: 100%;
+  height: 25vh;
+  background: #7d7d7d;
+  border-radius: 20px 20px 0 0;
+  padding: 20px;
+  text-align: center;
 }
 
 .caseModalContent {
@@ -183,6 +190,10 @@ body {
   text-align: center;
 }
 
+.rewardText {
+  margin-bottom: 20px;
+}
+
 .inventoryContent {
   width: 90%;
   max-width: 420px;
@@ -207,4 +218,4 @@ body {
 .timerText {
   font-size: 22px;
   font-weight: bold;
-  }
+}
