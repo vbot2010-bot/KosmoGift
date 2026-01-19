@@ -131,53 +131,59 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   /* ================= TIMER ================= */
-  function startTimer() {
-    timerBlock.style.display = "block";
+    function startTimerByRemaining(ms) {
+  timerBlock.style.display = "block";
 
-    const now = new Date();
-    const end = new Date();
-    end.setHours(23, 59, 59, 999);
+  const end = Date.now() + ms;
 
-    const tick = () => {
-      const diff = end - new Date();
-      if (diff <= 0) {
-        timerText.innerText = "00:00:00";
-        timerBlock.style.display = "none";
-        openDaily.style.display = "block";
-        return;
-      }
+  const tick = () => {
+    const diff = end - Date.now();
+    if (diff <= 0) {
+      timerText.innerText = "00:00:00";
+      timerBlock.style.display = "none";
+      openDaily.style.display = "block";
+      return;
+    }
 
-      const h = String(Math.floor(diff / 3600000)).padStart(2, "0");
-      const m = String(Math.floor((diff % 3600000) / 60000)).padStart(2, "0");
-      const s = String(Math.floor((diff % 60000) / 1000)).padStart(2, "0");
-      timerText.innerText = `${h}:${m}:${s}`;
-    };
+    const h = String(Math.floor(diff / 3600000)).padStart(2, "0");
+    const m = String(Math.floor((diff % 3600000) / 60000)).padStart(2, "0");
+    const s = String(Math.floor((diff % 60000) / 1000)).padStart(2, "0");
+    timerText.innerText = `${h}:${m}:${s}`;
+  };
 
-    tick();
-    setInterval(tick, 1000);
-  }
+  tick();
+  setInterval(tick, 1000);
+        }
 
   /* ================= DAILY CASE ================= */
   openDaily.onclick = async () => {
-    if (needSubscribe()) {
-      subscribeModal.style.display = "flex";
-      return;
-    }
+  if (needSubscribe()) {
+    subscribeModal.style.display = "flex";
+    return;
+  }
 
-    const r = await fetch(`${API}/daily?user=${userId}`);
-    const d = await r.json();
+  // проверяем статус
+  const status = await fetch(`${API}/daily-status?user=${userId}`);
+  const st = await status.json();
 
-    if (d.error === "already") {
-      alert("Кейс доступен раз в 24 часа");
-      return;
-    }
+  if (st.remaining > 0) {
+    alert("Кейс доступен раз в 24 часа");
+    startTimerByRemaining(st.remaining);
+    return;
+  }
 
-    caseModal.style.display = "flex";
-    resultBlock.style.display = "none";
-    resultText.innerText = "Нажми «Открыть кейс»";
-  };
+  const r = await fetch(`${API}/daily?user=${userId}`);
+  const d = await r.json();
 
-  closeCase.onclick = () => caseModal.style.display = "none";
+  if (d.error === "already") {
+    alert("Кейс доступен раз в 24 часа");
+    return;
+  }
+
+  caseModal.style.display = "flex";
+  resultBlock.style.display = "none";
+  resultText.innerText = "Нажми «Открыть кейс»";
+};
 
   /* ================= ROULETTE ================= */
   const prizes = [
