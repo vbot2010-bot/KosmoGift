@@ -195,89 +195,83 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // OPEN CASE
   openCaseBtn.onclick = async () => {
-    openCaseBtn.disabled = true
+  const prize = randomPrize();
 
-    const prize = randomPrize()
-
-    strip.innerHTML = ""
-    for (let i = 0; i < 20; i++) {
-      const div = document.createElement("div")
-      div.className = "drop"
-      div.innerText = prize.type === "ton" ? `${prize.value} TON` : prize.value
-      strip.appendChild(div)
-    }
-
-    const totalWidth = strip.scrollWidth
-    const randomShift = Math.floor(Math.random() * (totalWidth - 300)) + 150
-
-    strip.style.transition = "transform 3.5s cubic-bezier(.17,.67,.3,1)"
-    strip.style.transform = `translateX(-${randomShift}px)`
-
-    setTimeout(() => {
-      openCaseBtn.disabled = false
-
-      rewardModal.style.display = "flex"
-      rewardText.innerText = prize.type === "ton"
-        ? `Вы выиграли ${prize.value} TON`
-        : `Вы выиграли NFT "${prize.value}"`
-
-      if (prize.type === "ton") {
-        rewardBtnTon.style.display = "block"
-        rewardBtnSell.style.display = "none"
-        rewardBtnInv.style.display = "none"
-
-        rewardBtnTon.onclick = async () => {
-          await fetch(`${API}/add-balance`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ user: userId, amount: prize.value })
-          })
-          await loadBalance()
-          rewardModal.style.display = "none"
-          caseModal.style.display = "none"
-          checkDailyStatus()
-        }
-
-      } else {
-        rewardBtnTon.style.display = "none"
-        rewardBtnSell.style.display = "block"
-        rewardBtnInv.style.display = "block"
-
-        const nft = { name: prize.value, price: 3.27 }
-
-        rewardBtnInv.onclick = async () => {
-          await fetch(`${API}/add-nft`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ user: userId, nft })
-          })
-          rewardModal.style.display = "none"
-          caseModal.style.display = "none"
-          checkDailyStatus()
-        }
-
-        rewardBtnSell.onclick = async () => {
-          await fetch(`${API}/add-nft`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ user: userId, nft })
-          })
-
-          await fetch(`${API}/sell-nft`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ user: userId, index: 0 })
-          })
-
-          await loadBalance()
-          rewardModal.style.display = "none"
-          caseModal.style.display = "none"
-          checkDailyStatus()
-        }
-      }
-    }, 3600)
+  strip.innerHTML = "";
+  for (let i = 0; i < 20; i++) {
+    const div = document.createElement("div");
+    div.className = "drop";
+    div.innerText =
+      prize.type === "ton" ? `${prize.value} TON` : prize.value;
+    strip.appendChild(div);
   }
 
+  strip.style.transition = "transform 3s cubic-bezier(.17,.67,.3,1)";
+  strip.style.transform = "translateX(-600px)";
+
+  setTimeout(async () => {
+    rewardModal.style.display = "flex";
+    rewardText.innerText =
+      prize.type === "ton"
+        ? `Вы выиграли ${prize.value} TON`
+        : `Вы выиграли NFT "${prize.value}"`;
+
+    if (prize.type === "ton") {
+      rewardBtnTon.style.display = "block";
+      rewardBtnSell.style.display = "none";
+      rewardBtnInv.style.display = "none";
+
+      rewardBtnTon.onclick = async () => {
+        await fetch(`${API}/add-balance`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user: userId, amount: prize.value })
+        });
+
+        // ⛔ Таймер НЕ запускаем здесь
+        rewardModal.style.display = "none";
+        caseModal.style.display = "none";
+
+        // ✅ СЮДА добавляем запуск таймера
+        startDailyCooldown();
+      }
+    } else {
+      rewardBtnTon.style.display = "none";
+      rewardBtnSell.style.display = "block";
+      rewardBtnInv.style.display = "block";
+
+      const nft = { name: prize.value, price: 3.27 };
+
+      rewardBtnInv.onclick = async () => {
+        await fetch(`${API}/add-nft`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user: userId, nft })
+        });
+
+        rewardModal.style.display = "none";
+        caseModal.style.display = "none";
+
+        // ✅ Запуск таймера
+        startDailyCooldown();
+      }
+
+      rewardBtnSell.onclick = async () => {
+        await fetch(`${API}/add-balance`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user: userId, amount: 3.27 })
+        });
+
+        rewardModal.style.display = "none";
+        caseModal.style.display = "none";
+
+        // ✅ Запуск таймера
+        startDailyCooldown();
+      }
+    }
+  }, 3200);
+                    }
   // INVENTORY
   openInventory.onclick = async () => {
     inventoryModal.style.display = "flex"
