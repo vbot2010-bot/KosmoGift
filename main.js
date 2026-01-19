@@ -109,7 +109,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }]
     });
 
-    // добавление в баланс после оплаты
     await fetch(`${API}/add-balance`, {
       method: "POST",
       headers: {"Content-Type": "application/json"},
@@ -131,7 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
   updateBalance();
   setInterval(updateBalance, 5000);
 
-  // подписка (показывается 1 раз)
+  // подписка (1 раз)
   const subShown = localStorage.getItem("subShown");
   function showSubscribe(){
     if(subShown) return;
@@ -172,7 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   openDaily.onclick = async () => {
-    showSubscribe();
+    showSubscribe();        // подписка перед кейсом
     caseModal.style.display = "flex";
   };
 
@@ -182,15 +181,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const prize = randomPrize();
 
     strip.innerHTML = "";
-    for(let i=0;i<25;i++){
+    for(let i=0;i<20;i++){
       const div = document.createElement("div");
       div.className="drop";
-      div.innerText = prize.type === "ton" ? `${prize.value} TON` : prize.value;
+      const p = (i === 10) ? prize : prizes[Math.floor(Math.random()*prizes.length)];
+      div.innerText = p.type === "ton" ? `${p.value} TON` : p.value;
       strip.appendChild(div);
     }
 
-    strip.style.transition = "transform 5s cubic-bezier(.17,.67,.3,1)";
-    strip.style.transform = "translateX(-1500px)";
+    // анимация рулетки
+    strip.style.transition = "transform 3s cubic-bezier(.17,.67,.3,1)";
+    strip.style.transform = "translateX(-600px)";
 
     setTimeout(()=> {
       rewardModal.style.display = "flex";
@@ -214,10 +215,15 @@ document.addEventListener("DOMContentLoaded", () => {
       };
 
       rewardBtnSell.onclick = async () => {
+        await fetch(`${API}/add-nft`, {
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({ user:userId, nft: prize })
+        });
         await fetch(`${API}/sell-nft`, {
           method:"POST",
           headers:{"Content-Type":"application/json"},
-          body:JSON.stringify({ user:userId, index:0 }) // sell first nft
+          body:JSON.stringify({ user:userId, index:0 })
         });
         rewardModal.style.display="none";
         caseModal.style.display="none";
@@ -234,7 +240,7 @@ document.addEventListener("DOMContentLoaded", () => {
         caseModal.style.display="none";
       };
 
-    }, 5000);
+    }, 3000);
   };
 
   // инвентарь
