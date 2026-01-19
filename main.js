@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const user = tg.initDataUnsafe.user || {};
 
-  // элементы
   const avatar = document.getElementById("avatar");
   const profileAvatar = document.getElementById("profileAvatar");
   const username = document.getElementById("username");
@@ -34,15 +33,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const API_URL = "https://kosmogift-worker.v-bot-2010.workers.dev";
 
-  let balanceValue = 0;
   let walletAddress = null;
 
-  // аватар и ник
   avatar.src = user.photo_url || "";
   profileAvatar.src = user.photo_url || "";
   username.innerText = user.username || "Telegram User";
 
-  // nav
   btnHome.onclick = () => switchPage("home");
   btnProfile.onclick = () => switchPage("profile");
 
@@ -51,7 +47,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById(id).classList.add("active");
   }
 
-  // TONCONNECT
   const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
     manifestUrl: "https://kosmogift.pages.dev/tonconnect-manifest.json"
   });
@@ -87,30 +82,24 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // баланс
   async function loadBalance() {
     try {
       const res = await fetch(API_URL + "/balance?user_id=" + user.id);
       const data = await res.json();
-      balanceValue = parseFloat(data.balance || 0);
-      document.getElementById("balance").innerText = balanceValue.toFixed(2) + " TON";
-      document.getElementById("balanceProfile").innerText = balanceValue.toFixed(2) + " TON";
+      const bal = parseFloat(data.balance || 0);
+      document.getElementById("balance").innerText = bal.toFixed(2) + " TON";
+      document.getElementById("balanceProfile").innerText = bal.toFixed(2) + " TON";
     } catch (e) {
       console.log("Ошибка баланса", e);
     }
   }
   loadBalance();
 
-  // ---------- DEPOSIT (через TONCONNECT) ----------
   deposit.onclick = async () => {
     const amount = parseFloat(prompt("Сколько TON пополнить? (мин. 0.1)"));
-    if (!amount || isNaN(amount) || amount < 0.1) {
-      return alert("Минимум 0.1 TON");
-    }
+    if (!amount || isNaN(amount) || amount < 0.1) return alert("Минимум 0.1 TON");
 
-    if (!walletAddress) {
-      return alert("Сначала подключите кошелёк");
-    }
+    if (!walletAddress) return alert("Сначала подключите кошелёк");
 
     try {
       await tonConnectUI.sendTransaction({
@@ -120,8 +109,6 @@ document.addEventListener("DOMContentLoaded", () => {
           amount: (amount * 1e9).toString()
         }]
       });
-
-      // просто обновляем баланс (т.к. пополнение через твой кошелек)
       await loadBalance();
       alert("Пополнение прошло успешно!");
     } catch (e) {
@@ -129,7 +116,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  // ---------- SUBSCRIBE (1 раз) ----------
   let subscribed = localStorage.getItem("subscribed") === "true";
 
   function showSubscribe() {
@@ -144,23 +130,28 @@ document.addEventListener("DOMContentLoaded", () => {
     subscribeModal.style.display = "none";
   });
 
-  // ---------- DAILY CASE ----------
   closeCase.addEventListener("click", () => {
     caseModal.style.display = "none";
   });
 
   openDaily.addEventListener("click", async () => {
+
     showSubscribe();
 
-    const res = await fetch(API_URL + "/daily?user_id=" + user.id);
-    const d = await res.json();
+    try {
+      const res = await fetch(API_URL + "/daily?user_id=" + user.id);
+      const d = await res.json();
 
-    if (d.error === "already") {
-      return alert("Кейс можно открыть раз в 24 часа");
+      if (d.error === "already") {
+        return alert("Кейс можно открыть раз в 24 часа");
+      }
+
+      caseModal.style.display = "flex";
+      resultText.innerText = "Нажми \"Открыть кейс\"";
+
+    } catch (e) {
+      alert("Ошибка сервера /daily");
     }
-
-    caseModal.style.display = "flex";
-    resultText.innerText = "Нажми \"Открыть кейс\"";
   });
 
   openCaseBtn.addEventListener("click", async () => {
@@ -194,7 +185,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // ---------- INVENTORY ----------
   closeInventory.addEventListener("click", () => {
     inventoryModal.style.display = "none";
   });
