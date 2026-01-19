@@ -40,6 +40,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const rewardBtnSell = document.getElementById("rewardBtnSell");
   const rewardBtnInv = document.getElementById("rewardBtnInv");
 
+  const subscribeModal = document.getElementById("subscribeModal");
+  const subscribeBtn = document.getElementById("subscribeBtn");
+
   const inventoryModal = document.getElementById("inventoryModal");
   const inventoryList = document.getElementById("inventoryList");
   const closeInventory = document.getElementById("closeInventory");
@@ -175,16 +178,30 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   openDaily.onclick = async () => {
-    const res = await fetch(`${API}/daily?user=${userId}`);
-    const data = await res.json();
-    if (data.error) return alert("Кейс доступен раз в 24 часа");
-
-    caseModal.style.display = "flex";
+    subscribeModal.style.display = "flex";
   };
+
+  subscribeBtn.onclick = () => {
+    window.open("https://t.me/KosmoGiftOfficial", "_blank");
+  };
+
+  // если подписался
+  subscribeBtn.addEventListener("click", () => {
+    subscribeModal.style.display = "none";
+    openDailyCase();
+  });
+
+  function openDailyCase() {
+    caseModal.style.display = "flex";
+  }
 
   closeCase.onclick = () => caseModal.style.display = "none";
 
   openCaseBtn.onclick = async () => {
+    const res = await fetch(`${API}/daily?user=${userId}`);
+    const data = await res.json();
+    if (data.error) return alert("Кейс доступен раз в 24 часа");
+
     const prize = randomPrize();
 
     strip.innerHTML = "";
@@ -208,39 +225,41 @@ document.addEventListener("DOMContentLoaded", () => {
       rewardBtnSell.style.display = prize.type === "nft" ? "block" : "none";
       rewardBtnInv.style.display = prize.type === "nft" ? "block" : "none";
 
-      rewardBtnTon.onclick = async () => {
-        await fetch(`${API}/add-balance`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user: userId, amount: prize.value })
-        });
-        rewardModal.style.display = "none";
-        caseModal.style.display = "none";
-        updateBalance();
-      };
-
-      rewardBtnInv.onclick = async () => {
+      if (prize.type === "ton") {
+        rewardBtnTon.onclick = async () => {
+          await fetch(`${API}/add-balance`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ user: userId, amount: prize.value })
+          });
+          rewardModal.style.display = "none";
+          caseModal.style.display = "none";
+          updateBalance();
+        };
+      } else {
         const nft = { name: prize.value, price: 3.27 };
-        await fetch(`${API}/add-nft`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user: userId, nft })
-        });
-        rewardModal.style.display = "none";
-        caseModal.style.display = "none";
-      };
 
-      rewardBtnSell.onclick = async () => {
-        await fetch(`${API}/add-balance`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user: userId, amount: 3.27 })
-        });
-        rewardModal.style.display = "none";
-        caseModal.style.display = "none";
-        updateBalance();
-      };
+        rewardBtnInv.onclick = async () => {
+          await fetch(`${API}/add-nft`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ user: userId, nft })
+          });
+          rewardModal.style.display = "none";
+          caseModal.style.display = "none";
+        };
 
+        rewardBtnSell.onclick = async () => {
+          await fetch(`${API}/add-balance`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ user: userId, amount: nft.price })
+          });
+          rewardModal.style.display = "none";
+          caseModal.style.display = "none";
+          updateBalance();
+        };
+      }
     }, 4500);
   };
 
