@@ -23,6 +23,7 @@
   <div class="caseBlock">
     <div class="caseIcon"></div>
     <div class="caseTitle">Daily Case</div>
+
     <button id="openDaily" class="caseBtn">Открыть кейс</button>
   </div>
 </div>
@@ -36,17 +37,16 @@
     </div>
   </div>
 
-  <div id="username" class="username"></div>
+  <div id="username"></div>
 
   <button id="connectWallet" class="caseBtn">Подключить кошелёк</button>
-  <button id="disconnectWallet" class="caseBtn" style="display:none;">Отключить кошелёк</button>
-
+  <button id="disconnectWallet" class="caseBtn" style="display:none">Отключить кошелёк</button>
   <button id="deposit" class="caseBtn">Пополнить баланс</button>
   <button id="openInventory" class="caseBtn">Инвентарь</button>
 </div>
 
-<!-- MODAL DEPOSIT -->
-<div id="modal" class="modalCenter">
+<!-- MODAL POPOLNENIE -->
+<div id="modal" class="modal">
   <div class="modalContent">
     <div class="modalHeader">
       <div>Пополнение</div>
@@ -57,22 +57,21 @@
   </div>
 </div>
 
-<!-- SUBSCRIBE MODAL -->
-<div id="subscribeModal" class="modalBottom">
-  <div class="subscribeContent">
-    <div class="subscribeText">Для открытия кейса нужно подписаться на канал</div>
-    <button id="subscribeBtn" class="caseBtn">Подписаться</button>
-  </div>
-</div>
-
 <!-- CASE MODAL -->
-<div id="caseModal" class="modalBottom">
+<div id="caseModal" class="modal">
   <div class="caseModalContent">
     <div class="caseHeader">
       <div class="caseTitle">Daily Case</div>
       <button id="closeCase" class="closeBtn">✕</button>
     </div>
 
+    <!-- окно подписки -->
+    <div id="subscribeBlock" class="subscribeBlock">
+      <div class="subText">Подпишись на канал</div>
+      <button id="subBtn" class="caseBtn">Подписаться</button>
+    </div>
+
+    <!-- рулетка -->
     <div class="stripWrap">
       <div id="strip" class="strip"></div>
       <div class="pointer"></div>
@@ -84,7 +83,7 @@
 </div>
 
 <!-- REWARD MODAL -->
-<div id="rewardModal" class="modalCenter">
+<div id="rewardModal" class="modal">
   <div class="rewardContent">
     <div id="rewardText" class="rewardText"></div>
     <button id="rewardBtnTon" class="caseBtn">Получить TON</button>
@@ -94,7 +93,7 @@
 </div>
 
 <!-- INVENTORY MODAL -->
-<div id="inventoryModal" class="modalCenter">
+<div id="inventoryModal" class="modal">
   <div class="inventoryContent">
     <button id="closeInventory" class="closeBtn">✕</button>
     <div id="inventoryList" class="inventoryList"></div>
@@ -102,8 +101,8 @@
 </div>
 
 <div class="nav">
-  <button id="btnHome" class="navBtn">Главная</button>
-  <button id="btnProfile" class="navBtn">Профиль</button>
+  <button id="btnHome">Главная</button>
+  <button id="btnProfile">Профиль</button>
 </div>
 
 <script src="main.js"></script>
