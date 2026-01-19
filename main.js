@@ -50,6 +50,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const timerBlock = document.getElementById("timerBlock");
   const timerText = document.getElementById("timerText");
 
+  const caseTitle = document.getElementById("caseTitle");
+
   let subscribeShown = false;
   let isSpinning = false;
   let currentCase = "daily"; // daily | unlucky
@@ -133,7 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
   updateBalance();
   setInterval(updateBalance, 5000);
 
-  // PRIZES (Daily)
+  // PRIZES
   const dailyPrizes = [
     { type: "ton", value: 0.01, chance: 90 },
     { type: "ton", value: 0.02, chance: 5 },
@@ -145,7 +147,6 @@ document.addEventListener("DOMContentLoaded", () => {
     { type: "nft", value: "lol pop", chance: 0.01 }
   ];
 
-  // PRIZES (Unlucky)
   const unluckyPrizes = [
     { type: "ton", value: 0.2, chance: 70 },
     { type: "ton", value: 0.35, chance: 19 },
@@ -211,18 +212,23 @@ document.addEventListener("DOMContentLoaded", () => {
   setInterval(updateTimer, 1000);
   updateTimer();
 
+  // OPEN CASES
   openDaily.onclick = async () => {
     currentCase = "daily";
+    caseTitle.innerText = "Daily Case";
+
     if (!subscribeShown) {
       subscribeModal.style.display = "flex";
       subscribeShown = true;
       return;
     }
+
     caseModal.style.display = "flex";
   };
 
-  openUnlucky.onclick = () => {
+  openUnlucky.onclick = async () => {
     currentCase = "unlucky";
+    caseTitle.innerText = "Unlucky Case";
     caseModal.style.display = "flex";
   };
 
@@ -234,6 +240,7 @@ document.addEventListener("DOMContentLoaded", () => {
     caseModal.style.display = "flex";
   };
 
+  // OPEN CASE BUTTON
   openCaseBtn.onclick = async () => {
     if (isSpinning) return;
     isSpinning = true;
@@ -241,9 +248,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const prizes = currentCase === "daily" ? dailyPrizes : unluckyPrizes;
     const prize = randomPrize(prizes);
 
+    // reset strip
+    strip.style.transition = "none";
+    strip.style.transform = `translateX(0px)`;
     strip.innerHTML = "";
 
-    const itemsCount = 60;
+    // 12 spins
+    const spins = 12;
+    const itemsCount = 60 * spins;
     const stripItems = [];
 
     for (let i = 0; i < itemsCount; i++) {
@@ -275,7 +287,6 @@ document.addEventListener("DOMContentLoaded", () => {
       if (currentCase === "daily") setTimer();
 
       if (currentCase === "unlucky") {
-        // remove balance
         const res = await fetch(`${API}/remove-balance`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
