@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <title>Gift Mini App</title>
-
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -23,7 +22,6 @@
   </div>
 
   <div class="caseRow">
-
     <!-- DAILY CASE -->
     <div class="caseBlock">
       <div class="caseIcon"></div>
@@ -31,6 +29,7 @@
 
       <div id="caseAction">
         <button id="openDaily" class="caseBtn">Открыть кейс</button>
+
         <div id="timerBlock" class="timerBlock" style="display:none;">
           <div id="timerText" class="timerText">23:59:58</div>
         </div>
@@ -40,16 +39,12 @@
     <!-- UNLUCKY CASE -->
     <div class="caseBlock">
       <div class="caseIcon"></div>
-      <div class="caseTitle">Unlucky Case</div>
+      <div class="caseTitle">Unlucky Case (0.25 TON)</div>
 
       <div id="caseActionUnlucky">
-        <button id="openUnlucky" class="caseBtn caseBtnPrice">
-          <span>Открыть кейс</span>
-          <span class="price">0.25 TON</span>
-        </button>
+        <button id="openUnlucky" class="caseBtn">Открыть кейс</button>
       </div>
     </div>
-
   </div>
 </div>
 
@@ -64,11 +59,11 @@
 
   <div id="username"></div>
 
-  <button id="connectWallet">Подключить кошелёк</button>
-  <button id="disconnectWallet" style="display:none">Отключить кошелёк</button>
+  <button id="connectWallet" class="caseBtn">Подключить кошелёк</button>
+  <button id="disconnectWallet" class="caseBtn" style="display:none">Отключить кошелёк</button>
 
-  <button id="deposit">Пополнить баланс</button>
-  <button id="openInventory">Инвентарь</button>
+  <button id="deposit" class="caseBtn">Пополнить баланс</button>
+  <button id="openInventory" class="caseBtn">Инвентарь</button>
 </div>
 
 <!-- MODAL POPOLNENIE -->
@@ -84,7 +79,7 @@
 </div>
 
 <!-- SUBSCRIBE MODAL -->
-<div id="subscribeModal" class="modal subscribeModal">
+<div id="subscribeModal" class="modal">
   <div class="subscribeContent">
     <div class="subscribeText">Для открытия кейса нужно подписаться на канал</div>
     <button id="subscribeBtn" class="caseBtn">Подписаться</button>
@@ -104,7 +99,7 @@
       <div class="pointer"></div>
     </div>
 
-    <div id="resultText" class="resultText">Нажми "Открыть кейс"</div>
+    <div class="resultText" id="resultText">Нажми "Открыть кейс"</div>
     <button id="openCaseBtn" class="caseBtn">Открыть кейс</button>
   </div>
 </div>
@@ -134,13 +129,5 @@
 </div>
 
 <script src="main.js"></script>
-
-<script>
-  const tg = window.Telegram.WebApp;
-  tg.expand();
-  tg.MainButton.hide();
-  tg.BackButton.hide();
-</script>
-
 </body>
-  </html>
+</html>
