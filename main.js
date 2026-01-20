@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const rewardModal = document.getElementById("rewardModal");
   const rewardText = document.getElementById("rewardText");
-  const rewardBtnTon = document.getElementById("rewardBtnTon");
+  const rewardBtnOk = document.getElementById("rewardBtnTon"); // используем кнопку OK
   const rewardBtnSell = document.getElementById("rewardBtnSell");
   const rewardBtnInv = document.getElementById("rewardBtnInv");
 
@@ -228,7 +228,6 @@ document.addEventListener("DOMContentLoaded", () => {
   openUnlucky.onclick = async () => {
     currentCase = "unlucky";
 
-    // Проверка баланса
     if (currentBalance < 0.25) {
       alert("Недостаточно средств");
       return;
@@ -281,7 +280,7 @@ document.addEventListener("DOMContentLoaded", () => {
       stripItems.push(item);
     }
 
-    // ДОБАВЛЯЕМ приз в конец, но не 3 одинаковых
+    // Добавляем приз только один раз в конец
     stripItems.push(prize);
 
     stripItems.forEach(item => {
@@ -309,54 +308,47 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (currentCase === "daily") setTimer();
 
-      rewardModal.style.display = "flex";
-      rewardText.innerText = prize.type === "ton"
-        ? `Вы выиграли ${prize.value} TON`
-        : `Вы выиграли NFT "${prize.value}"`;
-
-      // Если TON — только OK
+      // ====== ВЫДАЧА ПРИЗА ======
       if (prize.type === "ton") {
-        rewardBtnTon.style.display = "block";
+        // начисляем автоматически
+        await fetch(`${API}/add-balance`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user: userId, amount: prize.value })
+        });
+        updateBalance();
+
+        rewardText.innerText = `Вы выиграли ${prize.value} TON`;
+        rewardBtnOk.style.display = "block";
         rewardBtnSell.style.display = "none";
         rewardBtnInv.style.display = "none";
 
-        rewardBtnTon.innerText = "OK";
-        rewardBtnTon.onclick = async () => {
-          await fetch(`${API}/add-balance`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ user: userId, amount: prize.value })
-          });
+        rewardBtnOk.innerText = "OK";
+        rewardBtnOk.onclick = () => {
           rewardModal.style.display = "none";
-          updateBalance();
         };
       }
 
-      // Если NFT — Продать / Забрать
       if (prize.type === "nft") {
-        rewardBtnTon.style.display = "none";
-        rewardBtnSell.style.display = "block";
-        rewardBtnInv.style.display = "block";
+        // сразу в инвентарь
+        await fetch(`${API}/add-nft`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user: userId, nft: { name: prize.value, price: 3.27 } })
+        });
 
-        rewardBtnInv.onclick = async () => {
-          await fetch(`${API}/add-nft`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ user: userId, nft: { name: prize.value, price: 3.27 } })
-          });
-          rewardModal.style.display = "none";
-        };
+        rewardText.innerText = `Вы выиграли NFT "${prize.value}"`;
+        rewardBtnOk.style.display = "block";
+        rewardBtnSell.style.display = "none";
+        rewardBtnInv.style.display = "none";
 
-        rewardBtnSell.onclick = async () => {
-          await fetch(`${API}/add-balance`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ user: userId, amount: 3.27 })
-          });
+        rewardBtnOk.innerText = "OK";
+        rewardBtnOk.onclick = () => {
           rewardModal.style.display = "none";
-          updateBalance();
         };
       }
+
+      rewardModal.style.display = "flex";
 
     }, 7200);
   };
