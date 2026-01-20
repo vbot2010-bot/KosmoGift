@@ -34,7 +34,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const rewardModal = document.getElementById("rewardModal");
   const rewardText = document.getElementById("rewardText");
   const rewardBtnOk = document.getElementById("rewardBtnOk");
-  const rewardBtnSell = document.getElementById("rewardBtnSell");
   const rewardBtnInv = document.getElementById("rewardBtnInv");
 
   const inventoryModal = document.getElementById("inventoryModal");
@@ -249,12 +248,13 @@ document.addEventListener("DOMContentLoaded", () => {
     caseModal.style.display = "flex";
   };
 
-  // OPEN CASE SPIN
+  // -----------------------
+  // КРУТКА (ВАЖНО)
+  // -----------------------
   openCaseBtn.onclick = async () => {
     if (isSpinning) return;
     isSpinning = true;
 
-    // Списание баланса
     if (currentCase === "unlucky") {
       await fetch(`${API}/add-balance`, {
         method: "POST",
@@ -264,14 +264,12 @@ document.addEventListener("DOMContentLoaded", () => {
       await updateBalance();
     }
 
-    // заранее выбираем приз
     const prize = currentCase === "daily"
       ? randomPrize(dailyPrizes)
       : randomPrize(unluckyPrizes);
 
     strip.innerHTML = "";
 
-    // Рандомные ячейки
     const itemsCount = 80;
     const stripItems = [];
 
@@ -282,8 +280,7 @@ document.addEventListener("DOMContentLoaded", () => {
       stripItems.push(item);
     }
 
-    // вставляем приз в конце
-    stripItems.push(prize);
+    stripItems.push(prize); // приз в конце
 
     stripItems.forEach(item => {
       const div = document.createElement("div");
@@ -299,18 +296,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
     strip.style.transition = "none";
     strip.style.transform = "translateX(0px)";
+    strip.offsetHeight; // РЕФЛОУ
 
     setTimeout(() => {
       strip.style.transition = "transform 7s cubic-bezier(.17,.67,.3,1)";
       strip.style.transform = `translateX(-${targetX}px)`;
-    }, 20);
+    }, 50);
 
     setTimeout(async () => {
       isSpinning = false;
 
       if (currentCase === "daily") setTimer();
 
-      // автомат начисление
+      // Авт начисление
       if (prize.type === "ton") {
         await fetch(`${API}/add-balance`, {
           method: "POST",
@@ -328,37 +326,26 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
 
-      // показываем reward modal
       rewardModal.style.display = "flex";
 
       rewardText.innerText = prize.type === "ton"
         ? `Вы выиграли ${prize.value} TON`
         : `Вы выиграли NFT "${prize.value}"`;
 
-      // скрываем все кнопки
-      rewardBtnOk.style.display = "none";
-      rewardBtnSell.style.display = "none";
-      rewardBtnInv.style.display = "none";
-
-      // показываем нужную
       if (prize.type === "ton") {
         rewardBtnOk.style.display = "block";
-        rewardBtnOk.innerText = "OK";
+        rewardBtnInv.style.display = "none";
       } else {
+        rewardBtnOk.style.display = "none";
         rewardBtnInv.style.display = "block";
-        rewardBtnInv.innerText = "В инвентарь";
       }
-
-      rewardBtnOk.onclick = () => {
-        rewardModal.style.display = "none";
-      };
-
-      rewardBtnInv.onclick = () => {
-        rewardModal.style.display = "none";
-      };
 
     }, 7200);
   };
+
+  // закрытие окна награды
+  rewardBtnOk.onclick = () => rewardModal.style.display = "none";
+  rewardBtnInv.onclick = () => rewardModal.style.display = "none";
 
   // INVENTORY
   document.getElementById("openInventory").onclick = async () => {
@@ -372,22 +359,8 @@ document.addEventListener("DOMContentLoaded", () => {
       card.innerHTML = `
         <div>${item.name}</div>
         <div>Цена: ${item.price} TON</div>
-        <button data-index="${index}" class="sellBtn">Продать</button>
       `;
       inventoryList.appendChild(card);
-    });
-
-    document.querySelectorAll(".sellBtn").forEach(btn => {
-      btn.onclick = async () => {
-        const idx = btn.dataset.index;
-        await fetch(`${API}/sell-nft`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user: userId, index: idx })
-        });
-        updateBalance();
-        document.getElementById("openInventory").click();
-      };
     });
 
     inventoryModal.style.display = "flex";
