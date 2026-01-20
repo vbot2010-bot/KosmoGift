@@ -228,7 +228,6 @@ document.addEventListener("DOMContentLoaded", () => {
   openUnlucky.onclick = async () => {
     currentCase = "unlucky";
 
-    // Проверка баланса
     if (currentBalance < 0.25) {
       alert("Недостаточно средств");
       return;
@@ -250,9 +249,13 @@ document.addEventListener("DOMContentLoaded", () => {
     caseModal.style.display = "flex";
   };
 
+  let dailyUsed = false; // <-- ключ
   openCaseBtn.onclick = async () => {
     if (isSpinning) return;
+    if (currentCase === "daily" && dailyUsed) return; // запрещаем повтор
+
     isSpinning = true;
+    dailyUsed = currentCase === "daily";
 
     // Списание баланса для Unlucky
     if (currentCase === "unlucky") {
@@ -280,7 +283,6 @@ document.addEventListener("DOMContentLoaded", () => {
       stripItems.push(item);
     }
 
-    // чтобы анимация работала 2-3 раза
     stripItems.push(prize);
     stripItems.push(prize);
     stripItems.push(prize);
@@ -297,11 +299,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const stripWrapWidth = document.querySelector(".stripWrap").clientWidth;
     const targetX = targetIndex * itemWidth - (stripWrapWidth / 2 - itemWidth / 2);
 
-    // ОБЯЗАТЕЛЬНО СБРОС ТРАНСФОРМА ПЕРЕД НОВОЙ АНИМАЦИЕЙ
     strip.style.transition = "none";
     strip.style.transform = "translateX(0px)";
 
-    // небольшой таймаут чтобы transition применился корректно
     setTimeout(() => {
       strip.style.transition = "transform 7s cubic-bezier(.17,.67,.3,1)";
       strip.style.transform = `translateX(-${targetX}px)`;
