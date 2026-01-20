@@ -1,146 +1,136 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <title>Gift Mini App</title>
+body {
+  margin: 0;
+  background: #0e1621;
+  color: white;
+  font-family: Arial, sans-serif;
+}
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+.page {
+  display: none;
+}
+.page.active {
+  display: block;
+}
 
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+.top {
+  padding: 70px 20px 0;
+  display: flex;
+  justify-content: flex-end;
+}
 
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
 
-<!-- HOME -->
-<div id="home" class="page active">
-  <div class="top">
-    <div class="userBar">
-      <img id="avatar" class="avatar">
-      <span id="balance">0.00 TON</span>
-    </div>
-  </div>
+.big {
+  width: 60px;
+  height: 60px;
+}
 
-  <div class="caseRow">
+.userBar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #1b2635;
+  padding: 10px 14px;
+  border-radius: 20px;
+}
 
-    <!-- DAILY CASE -->
-    <div class="caseBlock">
-      <div class="caseIcon"></div>
-      <div class="caseTitle">Daily Case</div>
+.caseRow {
+  display: flex;
+  justify-content: space-between;
+  margin: 120px 20px 0;
+}
 
-      <div id="caseAction">
-        <button id="openDaily" class="caseBtn">Открыть кейс</button>
-        <div id="timerBlock" class="timerBlock" style="display:none;">
-          <div id="timerText" class="timerText">23:59:58</div>
-        </div>
-      </div>
-    </div>
+.caseBlock {
+  width: 170px;
+}
 
-    <!-- UNLUCKY CASE -->
-    <div class="caseBlock">
-      <div class="caseIcon"></div>
-      <div class="caseTitle">Unlucky Case</div>
+.caseIcon {
+  width: 70px;
+  height: 70px;
+  background: #7d7d7d;
+  border-radius: 15px;
+  margin-bottom: 8px;
+}
 
-      <div id="caseActionUnlucky">
-        <button id="openUnlucky" class="caseBtn caseBtnPrice">
-          <span>Открыть кейс</span>
-          <span class="price">0.25 TON</span>
-        </button>
-      </div>
-    </div>
+.caseTitle {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
 
-  </div>
-</div>
+.caseBtn {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 12px;
+  background: #3a86ff;
+  color: white;
+  font-weight: bold;
+}
 
-<!-- PROFILE -->
-<div id="profile" class="page">
-  <div class="top">
-    <div class="userBar">
-      <img id="profileAvatar" class="avatar big">
-      <span id="balanceProfile">0.00 TON</span>
-    </div>
-  </div>
+/* ===== КНОПКА С ЦЕНОЙ ===== */
+.caseBtnPrice {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+}
 
-  <div id="username"></div>
+.caseBtnPrice .price {
+  font-size: 12px;
+  opacity: 0.8;
+  white-space: nowrap;
+}
 
-  <button id="connectWallet">Подключить кошелёк</button>
-  <button id="disconnectWallet" style="display:none">Отключить кошелёк</button>
+.nav {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+}
 
-  <button id="deposit">Пополнить баланс</button>
-  <button id="openInventory">Инвентарь</button>
-</div>
+.nav button {
+  flex: 1;
+  padding: 15px;
+}
 
-<!-- MODAL POPOLNENIE -->
-<div id="modal" class="modal">
-  <div class="modalContent">
-    <div class="modalHeader">
-      <div>Пополнение</div>
-      <button id="closeModal" class="closeBtn">✕</button>
-    </div>
-    <input id="amount" placeholder="Введите сумму (минимум 0.1)" />
-    <button id="pay" class="caseBtn">Оплатить</button>
-  </div>
-</div>
+/* ===== MODALS ===== */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
 
-<!-- SUBSCRIBE MODAL -->
-<div id="subscribeModal" class="modal subscribeModal">
-  <div class="subscribeContent">
-    <div class="subscribeText">Для открытия кейса нужно подписаться на канал</div>
-    <button id="subscribeBtn" class="caseBtn">Подписаться</button>
-  </div>
-</div>
+.subscribeModal {
+  justify-content: flex-end;
+}
 
-<!-- CASE MODAL -->
-<div id="caseModal" class="modal">
-  <div class="caseModalContent">
-    <div class="caseHeader">
-      <div class="caseTitle">Daily Case</div>
-      <button id="closeCase" class="closeBtn">✕</button>
-    </div>
+.subscribeContent {
+  width: 100%;
+  height: 25vh;
+  background: #7d7d7d;
+  border-radius: 20px 20px 0 0;
+  padding: 20px;
+  text-align: center;
+}
 
-    <div class="stripWrap">
-      <div id="strip" class="strip"></div>
-      <div class="pointer"></div>
-    </div>
+.modalContent,
+.rewardContent,
+.inventoryContent {
+  background: #7d7d7d;
+  border-radius: 20px;
+  padding: 20px;
+}
 
-    <div id="resultText" class="resultText">Нажми "Открыть кейс"</div>
-    <button id="openCaseBtn" class="caseBtn">Открыть кейс</button>
-  </div>
-</div>
-
-<!-- REWARD MODAL -->
-<div id="rewardModal" class="modal">
-  <div class="rewardContent">
-    <div id="rewardText" class="rewardText"></div>
-
-    <button id="rewardBtnTon" class="caseBtn">Получить TON</button>
-    <button id="rewardBtnSell" class="caseBtn">Продать NFT</button>
-    <button id="rewardBtnInv" class="caseBtn">В инвентарь</button>
-  </div>
-</div>
-
-<!-- INVENTORY MODAL -->
-<div id="inventoryModal" class="modal">
-  <div class="inventoryContent">
-    <button id="closeInventory" class="closeBtn">✕</button>
-    <div id="inventoryList" class="inventoryList"></div>
-  </div>
-</div>
-
-<div class="nav">
-  <button id="btnHome">Главная</button>
-  <button id="btnProfile">Профиль</button>
-</div>
-
-<script src="main.js"></script>
-
-<script>
-  const tg = window.Telegram.WebApp;
-  tg.expand();
-  tg.MainButton.hide();
-  tg.BackButton.hide();
-</script>
-
-</body>
-  </html>
+.closeBtn {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+}
