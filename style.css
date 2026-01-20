@@ -13,7 +13,7 @@ body {
 }
 
 .top {
-  padding: 70px 20px 0 20px;
+  padding: 70px 20px 0;
   display: flex;
   justify-content: flex-end;
 }
@@ -38,10 +38,14 @@ body {
   border-radius: 20px;
 }
 
+.caseRow {
+  display: flex;
+  justify-content: space-between;
+  margin: 120px 20px 0;
+}
+
 .caseBlock {
-  margin: 120px 20px 0 20px;
   width: 170px;
-  text-align: left;
 }
 
 .caseIcon {
@@ -67,46 +71,48 @@ body {
   font-weight: bold;
 }
 
+/* ===== КНОПКА С ЦЕНОЙ ===== */
+.caseBtnPrice {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+}
+
+.caseBtnPrice .price {
+  font-size: 12px;
+  opacity: 0.8;
+  white-space: nowrap;
+}
+
 .nav {
   position: fixed;
   bottom: 0;
   width: 100%;
   display: flex;
 }
+
 .nav button {
   flex: 1;
   padding: 15px;
 }
 
-/* MODALS */
+/* ===== MODALS ===== */
 .modal {
   display: none;
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   background: rgba(0,0,0,0.6);
   justify-content: center;
   align-items: center;
   z-index: 1000;
 }
 
-/* ===== ОКНО ПОДПИСКИ СНИЗУ ===== */
-#subscribeModal {
-  display: none;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 25vh;
-  background: rgba(0,0,0,0.6);
-  justify-content: center;
-  align-items: flex-end;
-  z-index: 1000;
+.subscribeModal {
+  justify-content: flex-end;
 }
 
-#subscribeModal .subscribeContent {
+.subscribeContent {
   width: 100%;
   height: 25vh;
   background: #7d7d7d;
@@ -115,126 +121,16 @@ body {
   text-align: center;
 }
 
-/* ===== ОКНО ПОПОЛНЕНИЯ НЕ ПРОЗРАЧНОЕ ===== */
-#modal .modalContent {
-  width: 90%;
-  max-width: 320px;
+.modalContent,
+.rewardContent,
+.inventoryContent {
   background: #7d7d7d;
   border-radius: 20px;
   padding: 20px;
-  text-align: center;
-}
-
-/* ===== CASE MODAL ===== */
-.caseModalContent {
-  width: 100%;
-  height: 75vh;
-  background: #7d7d7d;
-  border-radius: 20px 20px 0 0;
-  padding: 20px;
-  position: relative;
-  box-sizing: border-box;
-}
-
-.caseHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.stripWrap {
-  position: relative;
-  height: 140px;
-  overflow: hidden;
-  margin-top: 20px;
-  background: #000;
-  border-radius: 15px;
-}
-
-.strip {
-  display: flex;
-  gap: 18px;
-  padding: 20px 0;
-  transform: translateX(0);
-}
-
-.drop {
-  min-width: 200px;
-  height: 100px;
-  background: #222;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-}
-
-.pointer {
-  position: absolute;
-  width: 4px;
-  height: 140px;
-  background: #ff0;
-  left: 50%;
-  top: 0;
-  transform: translateX(-50%);
-}
-
-.resultText {
-  margin-top: 20px;
-  text-align: center;
 }
 
 .closeBtn {
   background: transparent;
   border: none;
   font-size: 24px;
-  cursor: pointer;
-  color: #000;
 }
-
-.rewardContent {
-  width: 90%;
-  max-width: 320px;
-  background: #7d7d7d;
-  border-radius: 20px;
-  padding: 20px;
-  text-align: center;
-}
-
-.rewardImg {
-  width: 120px;
-  height: 120px;
-  object-fit: cover;
-  margin-bottom: 10px;
-}
-
-.inventoryContent {
-  width: 90%;
-  max-width: 420px;
-  height: 60vh;
-  background: #7d7d7d;
-  border-radius: 20px;
-  padding: 20px;
-  overflow-y: auto;
-}
-
-.inventoryList .itemCard {
-  background: #000;
-  padding: 10px;
-  border-radius: 12px;
-  margin-bottom: 10px;
-}
-
-.timerBlock {
-  margin-top: 20px;
-}
-
-.timerText {
-  font-size: 22px;
-  font-weight: bold;
-}
-
-/* УБИРАЕМ ДРОП И ШАНСЫ */
-.dropInfo {
-  display: none !important;
-  }
