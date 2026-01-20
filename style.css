@@ -226,11 +226,22 @@ body {
 }
 
 /* ===== REWARD ===== */
+#rewardModal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .rewardContent {
-  width: 90%;
-  max-width: 320px;
+  width: 260px;
+  height: 260px;
   background: #1b2635;
-  border-radius: 20px;
+  border-radius: 18px;
   padding: 20px;
   text-align: center;
 }
