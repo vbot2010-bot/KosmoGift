@@ -1,6 +1,4 @@
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
@@ -10,13 +8,8 @@ body {
 }
 
 /* ===== СТРАНИЦЫ ===== */
-.page {
-  display: none;
-}
-
-.page.active {
-  display: block;
-}
+.page { display: none; }
+.page.active { display: block; }
 
 /* ===== TOP BAR ===== */
 .top {
@@ -34,16 +27,8 @@ body {
   border-radius: 20px;
 }
 
-.avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-}
-
-.avatar.big {
-  width: 60px;
-  height: 60px;
-}
+.avatar { width: 32px; height: 32px; border-radius: 50%; }
+.avatar.big { width: 60px; height: 60px; }
 
 /* ===== CASES ===== */
 .caseRow {
@@ -52,13 +37,10 @@ body {
   margin: 120px 20px 0 20px;
 }
 
-.caseBlock {
-  width: 170px;
-}
+.caseBlock { width: 170px; }
 
 .caseIcon {
-  width: 70px;
-  height: 70px;
+  width: 70px; height: 70px;
   background: #7d7d7d;
   border-radius: 15px;
   margin-bottom: 8px;
@@ -99,19 +81,19 @@ body {
   font-weight: bold;
 }
 
-/* ===== MODALS (ОБЩЕЕ) ===== */
+/* ===== MODALS ===== */
 .modal {
   display: none;
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   background: rgba(0,0,0,0.5);
   z-index: 1000;
+  justify-content: center;
+  align-items: center;
 }
 
-/* ===== SUBSCRIBE MODAL (СНИЗУ, НЕ БОЛЬШОЙ) ===== */
+/* ===== SUBSCRIBE MODAL ===== */
 #subscribeModal {
   display: none;
   justify-content: center;
@@ -127,10 +109,7 @@ body {
   text-align: center;
 }
 
-.subscribeText {
-  margin-bottom: 15px;
-  font-size: 15px;
-}
+.subscribeText { margin-bottom: 15px; font-size: 15px; }
 
 /* ===== POPUP ПОПОЛНЕНИЯ ===== */
 .modalContent {
@@ -144,9 +123,7 @@ body {
 }
 
 /* ===== CASE MODAL (РУЛЕТКА 75%) ===== */
-#caseModal {
-  background: rgba(0,0,0,0.5);
-}
+#caseModal { background: rgba(0,0,0,0.5); }
 
 .caseModalContent {
   width: 100%;
@@ -216,32 +193,24 @@ body {
 }
 
 /* ===== TIMER ===== */
-.timerBlock {
-  margin-top: 20px;
-}
-
+.timerBlock { margin-top: 20px; }
 .timerText {
   font-size: 22px;
   font-weight: bold;
 }
 
-/* ===== REWARD ===== */
+/* ===== REWARD (ЦЕНТР, МАЛЕНЬКОЕ) ===== */
 #rewardModal {
   display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
-  z-index: 2000;
-  display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
 }
 
 .rewardContent {
-  width: 260px;
-  height: 260px;
+  width: 90%;
+  max-width: 280px;
   background: #1b2635;
-  border-radius: 18px;
+  border-radius: 20px;
   padding: 20px;
   text-align: center;
 }
@@ -265,6 +234,4 @@ body {
 }
 
 /* ===== УБИРАЕМ ЛИШНЕЕ ===== */
-.dropInfo {
-  display: none !important;
-}
+.dropInfo { display: none !important; }
