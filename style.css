@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   background: #0e1621;
@@ -5,30 +9,20 @@ body {
   font-family: Arial, sans-serif;
 }
 
-/* ===== PAGES ===== */
+/* ===== СТРАНИЦЫ ===== */
 .page {
   display: none;
 }
+
 .page.active {
   display: block;
 }
 
 /* ===== TOP BAR ===== */
 .top {
-  padding: 70px 20px 0;
+  padding: 70px 20px 0 20px;
   display: flex;
   justify-content: flex-end;
-}
-
-.avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-}
-
-.big {
-  width: 60px;
-  height: 60px;
 }
 
 .userBar {
@@ -40,11 +34,22 @@ body {
   border-radius: 20px;
 }
 
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.avatar.big {
+  width: 60px;
+  height: 60px;
+}
+
 /* ===== CASES ===== */
 .caseRow {
   display: flex;
   justify-content: space-between;
-  margin: 120px 20px 0;
+  margin: 120px 20px 0 20px;
 }
 
 .caseBlock {
@@ -60,8 +65,9 @@ body {
 }
 
 .caseTitle {
-  font-size: 16px;
-  margin-bottom: 8px;
+  font-size: 15px;
+  margin-bottom: 10px;
+  line-height: 1.2;
 }
 
 .caseBtn {
@@ -72,79 +78,84 @@ body {
   background: #3a86ff;
   color: white;
   font-weight: bold;
+  cursor: pointer;
 }
 
-/* КНОПКА С ЦЕНОЙ */
-.caseBtnPrice {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 12px;
-}
-
-.caseBtnPrice .price {
-  font-size: 12px;
-  opacity: 0.8;
-  white-space: nowrap;
-}
-
-/* ===== NAV ===== */
+/* ===== BOTTOM NAV ===== */
 .nav {
   position: fixed;
   bottom: 0;
   width: 100%;
   display: flex;
+  background: #111;
 }
 
 .nav button {
   flex: 1;
   padding: 15px;
+  border: none;
+  background: #1b2635;
+  color: white;
+  font-weight: bold;
 }
 
-/* ===== ОБЩИЙ MODAL (только для затемнения) ===== */
+/* ===== MODALS (ОБЩЕЕ) ===== */
 .modal {
   display: none;
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background: rgba(0,0,0,0.5);
   z-index: 1000;
 }
 
-/* ================= SUBSCRIBE ================= */
-/* ❗ НЕ затемняем весь экран */
-.subscribeModal {
-  background: transparent;
+/* ===== SUBSCRIBE MODAL (СНИЗУ, НЕ БОЛЬШОЙ) ===== */
+#subscribeModal {
   display: none;
-  position: fixed;
-  inset: 0;
-  z-index: 1100;
-  display: flex;
   justify-content: center;
   align-items: flex-end;
 }
 
 .subscribeContent {
   width: 100%;
-  max-height: 180px;
-  background: #2b2b2b;
+  height: 25vh;
+  background: #1b2635;
   border-radius: 20px 20px 0 0;
   padding: 20px;
   text-align: center;
 }
 
-/* ================= CASE MODAL ================= */
-/* ❗ ПОЛНОСТЬЮ НЕ ПРОЗРАЧНЫЙ */
+.subscribeText {
+  margin-bottom: 15px;
+  font-size: 15px;
+}
+
+/* ===== POPUP ПОПОЛНЕНИЯ ===== */
+.modalContent {
+  width: 90%;
+  max-width: 320px;
+  background: #1b2635;
+  border-radius: 20px;
+  padding: 20px;
+  text-align: center;
+  margin: auto;
+}
+
+/* ===== CASE MODAL (РУЛЕТКА 75%) ===== */
 #caseModal {
-  background: #7d7d7d;
+  background: rgba(0,0,0,0.5);
 }
 
 .caseModalContent {
   width: 100%;
   height: 75vh;
-  background: #7d7d7d;
+  background: #1b2635;
   border-radius: 20px 20px 0 0;
   padding: 20px;
-  box-sizing: border-box;
+  position: absolute;
+  bottom: 0;
 }
 
 .caseHeader {
@@ -153,6 +164,15 @@ body {
   align-items: center;
 }
 
+.closeBtn {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  color: white;
+  cursor: pointer;
+}
+
+/* ===== ROULETTE ===== */
 .stripWrap {
   position: relative;
   height: 140px;
@@ -165,14 +185,26 @@ body {
 .strip {
   display: flex;
   gap: 18px;
-  padding: 20px 0;
+  padding: 20px;
+  transform: translateX(0);
+}
+
+.drop {
+  min-width: 200px;
+  height: 100px;
+  background: #222;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
 }
 
 .pointer {
   position: absolute;
   width: 4px;
   height: 140px;
-  background: #ff0;
+  background: yellow;
   left: 50%;
   top: 0;
   transform: translateX(-50%);
@@ -183,10 +215,45 @@ body {
   text-align: center;
 }
 
-/* ===== OTHERS ===== */
-.closeBtn {
-  background: transparent;
-  border: none;
-  font-size: 24px;
-  color: #000;
-    }
+/* ===== TIMER ===== */
+.timerBlock {
+  margin-top: 20px;
+}
+
+.timerText {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+/* ===== REWARD ===== */
+.rewardContent {
+  width: 90%;
+  max-width: 320px;
+  background: #1b2635;
+  border-radius: 20px;
+  padding: 20px;
+  text-align: center;
+}
+
+/* ===== INVENTORY ===== */
+.inventoryContent {
+  width: 90%;
+  max-width: 420px;
+  height: 60vh;
+  background: #1b2635;
+  border-radius: 20px;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.inventoryList .itemCard {
+  background: #000;
+  padding: 10px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+
+/* ===== УБИРАЕМ ЛИШНЕЕ ===== */
+.dropInfo {
+  display: none !important;
+}
