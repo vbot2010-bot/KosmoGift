@@ -97,6 +97,12 @@ document.addEventListener("DOMContentLoaded", () => {
     modal.style.display = "none";
   };
 
+  window.onclick = (event) => {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  };
+
   pay.onclick = async () => {
     const amount = parseFloat(amountInput.value);
 
@@ -241,10 +247,12 @@ document.addEventListener("DOMContentLoaded", () => {
     caseModal.style.display = "flex";
   };
 
+  // OPEN CASE SPIN
   openCaseBtn.onclick = async () => {
     if (isSpinning) return;
     isSpinning = true;
 
+    // Списание баланса
     if (currentCase === "unlucky") {
       await fetch(`${API}/add-balance`, {
         method: "POST",
@@ -254,12 +262,14 @@ document.addEventListener("DOMContentLoaded", () => {
       await updateBalance();
     }
 
+    // заранее выбираем приз
     const prize = currentCase === "daily"
       ? randomPrize(dailyPrizes)
       : randomPrize(unluckyPrizes);
 
     strip.innerHTML = "";
 
+    // Рандомные ячейки
     const itemsCount = 80;
     const stripItems = [];
 
@@ -270,7 +280,7 @@ document.addEventListener("DOMContentLoaded", () => {
       stripItems.push(item);
     }
 
-    // В конце - рандомные элементы + заранее выбранный приз
+    // вставляем приз в конце
     stripItems.push(prize);
 
     stripItems.forEach(item => {
@@ -298,7 +308,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (currentCase === "daily") setTimer();
 
-      // Авт начисление
+      // автомат начисление
       if (prize.type === "ton") {
         await fetch(`${API}/add-balance`, {
           method: "POST",
@@ -322,6 +332,7 @@ document.addEventListener("DOMContentLoaded", () => {
         : `Вы выиграли NFT "${prize.value}"`;
 
       rewardBtnOk.innerText = prize.type === "ton" ? "OK" : "В инвентарь";
+
       rewardBtnOk.onclick = () => {
         rewardModal.style.display = "none";
       };
