@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const rewardModal = document.getElementById("rewardModal");
   const rewardText = document.getElementById("rewardText");
-  const rewardBtnOk = document.getElementById("rewardBtnOk");
+  const rewardBtnTon = document.getElementById("rewardBtnTon");
   const rewardBtnSell = document.getElementById("rewardBtnSell");
   const rewardBtnInv = document.getElementById("rewardBtnInv");
 
@@ -91,18 +91,26 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // пополнение
-  deposit.onclick = () => { modal.style.display = "flex"; };
-  closeModal.onclick = () => { modal.style.display = "none"; };
+  deposit.onclick = () => {
+    modal.style.display = "flex";
+  };
+
+  closeModal.onclick = () => {
+    modal.style.display = "none";
+  };
 
   window.onclick = (event) => {
-    if (event.target == modal) modal.style.display = "none";
-    if (event.target == rewardModal) rewardModal.style.display = "none";
-    if (event.target == inventoryModal) inventoryModal.style.display = "none";
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
   };
 
   pay.onclick = async () => {
     const amount = parseFloat(amountInput.value);
-    if (!amount || amount < 0.1) return alert("Минимум 0.1 TON");
+
+    if (!amount || amount < 0.1) {
+      return alert("Минимум 0.1 TON");
+    }
 
     await tonConnectUI.sendTransaction({
       validUntil: Math.floor(Date.now() / 1000) + 600,
@@ -178,22 +186,20 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!endTime) {
       timerBlock.style.display = "none";
       openDaily.style.display = "block";
-      openDaily.disabled = false;
       return;
     }
 
     const remaining = endTime - Date.now();
+
     if (remaining <= 0) {
       localStorage.removeItem(TIMER_KEY);
       timerBlock.style.display = "none";
       openDaily.style.display = "block";
-      openDaily.disabled = false;
       return;
     }
 
     openDaily.style.display = "none";
     timerBlock.style.display = "flex";
-    openDaily.disabled = true;
 
     const hours = Math.floor(remaining / (1000 * 60 * 60));
     const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
@@ -211,19 +217,18 @@ document.addEventListener("DOMContentLoaded", () => {
   // OPEN CASE
   openDaily.onclick = async () => {
     currentCase = "daily";
-
     if (!subscribeShown) {
       subscribeModal.style.display = "flex";
       subscribeShown = true;
       return;
     }
-
     openCase("Daily Case");
   };
 
   openUnlucky.onclick = async () => {
     currentCase = "unlucky";
 
+    // Проверка баланса
     if (currentBalance < 0.25) {
       alert("Недостаточно средств");
       return;
@@ -242,13 +247,14 @@ document.addEventListener("DOMContentLoaded", () => {
   subscribeBtn.onclick = () => {
     window.open("https://t.me/KosmoGiftOfficial", "_blank");
     subscribeModal.style.display = "none";
-    openCase("Daily Case");
+    caseModal.style.display = "flex";
   };
 
   openCaseBtn.onclick = async () => {
     if (isSpinning) return;
     isSpinning = true;
 
+    // Списание баланса для Unlucky
     if (currentCase === "unlucky") {
       await fetch(`${API}/add-balance`, {
         method: "POST",
@@ -258,6 +264,7 @@ document.addEventListener("DOMContentLoaded", () => {
       await updateBalance();
     }
 
+    // Приз выбираем заранее
     const prize = currentCase === "daily"
       ? randomPrize(dailyPrizes)
       : randomPrize(unluckyPrizes);
@@ -274,7 +281,8 @@ document.addEventListener("DOMContentLoaded", () => {
       stripItems.push(item);
     }
 
-    stripItems.push(prize, prize, prize);
+    // ДОБАВЛЯЕМ приз в конец, но не 3 одинаковых
+    stripItems.push(prize);
 
     stripItems.forEach(item => {
       const div = document.createElement("div");
@@ -306,12 +314,14 @@ document.addEventListener("DOMContentLoaded", () => {
         ? `Вы выиграли ${prize.value} TON`
         : `Вы выиграли NFT "${prize.value}"`;
 
+      // Если TON — только OK
       if (prize.type === "ton") {
-        rewardBtnOk.style.display = "block";
+        rewardBtnTon.style.display = "block";
         rewardBtnSell.style.display = "none";
         rewardBtnInv.style.display = "none";
 
-        rewardBtnOk.onclick = async () => {
+        rewardBtnTon.innerText = "OK";
+        rewardBtnTon.onclick = async () => {
           await fetch(`${API}/add-balance`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -322,8 +332,9 @@ document.addEventListener("DOMContentLoaded", () => {
         };
       }
 
+      // Если NFT — Продать / Забрать
       if (prize.type === "nft") {
-        rewardBtnOk.style.display = "none";
+        rewardBtnTon.style.display = "none";
         rewardBtnSell.style.display = "block";
         rewardBtnInv.style.display = "block";
 
