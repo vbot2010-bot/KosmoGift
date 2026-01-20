@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <title>Gift Mini App</title>
 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
 
@@ -20,7 +22,7 @@
     </div>
   </div>
 
-  <div class="caseRow" style="display:flex; justify-content:space-between; margin: 120px 20px 0 20px;">
+  <div class="caseRow">
 
     <!-- DAILY CASE -->
     <div class="caseBlock">
@@ -38,10 +40,13 @@
     <!-- UNLUCKY CASE -->
     <div class="caseBlock">
       <div class="caseIcon"></div>
-      <div class="caseTitle">Unlucky Case (0.25 TON)</div>
+      <div class="caseTitle">Unlucky Case</div>
 
       <div id="caseActionUnlucky">
-        <button id="openUnlucky" class="caseBtn">Открыть кейс</button>
+        <button id="openUnlucky" class="caseBtn caseBtnPrice">
+          <span>Открыть кейс</span>
+          <span class="price">0.25 TON</span>
+        </button>
       </div>
     </div>
 
@@ -99,11 +104,6 @@
       <div class="pointer"></div>
     </div>
 
-    <div class="dropInfo">
-      <div class="dropInfoTitle">Дроп</div>
-      <div class="dropInfoText">Шанс выпадения: по честным шансам</div>
-    </div>
-
     <div id="resultText" class="resultText">Нажми "Открыть кейс"</div>
     <button id="openCaseBtn" class="caseBtn">Открыть кейс</button>
   </div>
@@ -134,5 +134,13 @@
 </div>
 
 <script src="main.js"></script>
+
+<script>
+  const tg = window.Telegram.WebApp;
+  tg.expand();
+  tg.MainButton.hide();
+  tg.BackButton.hide();
+</script>
+
 </body>
-</html>
+  </html>
