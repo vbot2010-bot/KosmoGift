@@ -34,6 +34,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const rewardModal = document.getElementById("rewardModal");
   const rewardText = document.getElementById("rewardText");
   const rewardBtnOk = document.getElementById("rewardBtnOk");
+  const rewardBtnSell = document.getElementById("rewardBtnSell");
+  const rewardBtnInv = document.getElementById("rewardBtnInv");
 
   const inventoryModal = document.getElementById("inventoryModal");
   const inventoryList = document.getElementById("inventoryList");
@@ -326,14 +328,32 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
 
+      // показываем reward modal
       rewardModal.style.display = "flex";
+
       rewardText.innerText = prize.type === "ton"
         ? `Вы выиграли ${prize.value} TON`
         : `Вы выиграли NFT "${prize.value}"`;
 
-      rewardBtnOk.innerText = prize.type === "ton" ? "OK" : "В инвентарь";
+      // скрываем все кнопки
+      rewardBtnOk.style.display = "none";
+      rewardBtnSell.style.display = "none";
+      rewardBtnInv.style.display = "none";
+
+      // показываем нужную
+      if (prize.type === "ton") {
+        rewardBtnOk.style.display = "block";
+        rewardBtnOk.innerText = "OK";
+      } else {
+        rewardBtnInv.style.display = "block";
+        rewardBtnInv.innerText = "В инвентарь";
+      }
 
       rewardBtnOk.onclick = () => {
+        rewardModal.style.display = "none";
+      };
+
+      rewardBtnInv.onclick = () => {
         rewardModal.style.display = "none";
       };
 
