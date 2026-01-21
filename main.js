@@ -10,15 +10,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const API = "https://kosmogift-worker.v-bot-2010.workers.dev";
 
   /* ================= ELEMENTS ================= */
-  const avatar = document.getElementById("avatar");
-  const profileAvatar = document.getElementById("profileAvatar");
-  const username = document.getElementById("username");
-
   const balanceEl = document.getElementById("balance");
   const balanceProfile = document.getElementById("balanceProfile");
-
-  const btnHome = document.getElementById("btnHome");
-  const btnProfile = document.getElementById("btnProfile");
 
   const connectWallet = document.getElementById("connectWallet");
   const disconnectWallet = document.getElementById("disconnectWallet");
@@ -40,10 +33,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const rewardModal = document.getElementById("rewardModal");
   const rewardText = document.getElementById("rewardText");
   const rewardBtnOk = document.getElementById("rewardBtnOk");
-  const rewardBtnInv = document.getElementById("rewardBtnInv");
-
-  const subscribeModal = document.getElementById("subscribeModal");
-  const subscribeBtn = document.getElementById("subscribeBtn");
 
   const timerBlock = document.getElementById("timerBlock");
   const timerText = document.getElementById("timerText");
@@ -52,20 +41,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentBalance = 0;
   let currentCase = null;
   let isSpinning = false;
-  let subscribed = false;
-
-  /* ================= USER ================= */
-  avatar.src = user.photo_url || "";
-  profileAvatar.src = user.photo_url || "";
-  username.innerText = user.username || "Telegram User";
-
-  btnHome.onclick = () => switchPage("home");
-  btnProfile.onclick = () => switchPage("profile");
-
-  function switchPage(id) {
-    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-    document.getElementById(id).classList.add("active");
-  }
 
   /* ================= TON CONNECT ================= */
   const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
@@ -112,16 +87,29 @@ document.addEventListener("DOMContentLoaded", () => {
   setInterval(updateBalance, 5000);
 
   /* ================= PRIZES ================= */
+
+  // DAILY
   const dailyPrizes = [
     { type: "ton", value: 0.01, chance: 90 },
-    { type: "ton", value: 0.03, chance: 9.9 },
-    { type: "nft", value: "Daily NFT", chance: 0.1 }
+    { type: "ton", value: 0.02, chance: 5 },
+    { type: "ton", value: 0.03, chance: 2.5 },
+    { type: "ton", value: 0.04, chance: 1 },
+    { type: "ton", value: 0.05, chance: 0.75 },
+    { type: "ton", value: 0.06, chance: 0.5 },
+    { type: "ton", value: 0.07, chance: 0.24 },
+    { type: "nft", value: "lol pop", chance: 0.01 }
   ];
 
+  // UNLUCKY
   const unluckyPrizes = [
     { type: "ton", value: 0.2, chance: 70 },
-    { type: "ton", value: 0.5, chance: 25 },
-    { type: "nft", value: "Rare NFT", chance: 5 }
+    { type: "ton", value: 0.35, chance: 19 },
+    { type: "ton", value: 0.6, chance: 7 },
+    { type: "ton", value: 1, chance: 2.5 },
+    { type: "nft", value: "Desk calendar", chance: 0.5 },
+    { type: "nft", value: "Top hat", chance: 0.25 },
+    { type: "nft", value: "Signet ring", chance: 0.15 },
+    { type: "nft", value: "durov's cap", chance: 0.001 }
   ];
 
   function pickPrize(list) {
@@ -131,7 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
       sum += p.chance;
       if (r <= sum) return p;
     }
-    return list[0];
+    return list[list.length - 1];
   }
 
   /* ================= DAILY TIMER ================= */
@@ -150,6 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function updateDailyTimer() {
     const t = localStorage.getItem(DAILY_KEY);
+
     if (!t || Date.now() > Number(t)) {
       openDaily.style.display = "block";
       timerBlock.style.display = "none";
@@ -165,9 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const s = Math.floor((left % 60000) / 1000);
 
     timerText.innerText =
-      String(h).padStart(2,"0") + ":" +
-      String(m).padStart(2,"0") + ":" +
-      String(s).padStart(2,"0");
+      `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
   }
 
   setInterval(updateDailyTimer, 1000);
@@ -175,18 +162,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* ================= OPEN CASE ================= */
   openDaily.onclick = () => {
-    if (!dailyReady()) return;
+    if (!dailyReady() || isSpinning) return;
     currentCase = "daily";
     caseModal.style.display = "flex";
   };
 
   openUnlucky.onclick = () => {
-    if (currentBalance < 0.25) return alert("Недостаточно средств");
+    if (currentBalance < 0.25 || isSpinning) return alert("Недостаточно TON");
     currentCase = "unlucky";
     caseModal.style.display = "flex";
   };
 
-  closeCase.onclick = () => caseModal.style.display = "none";
+  closeCase.onclick = () => {
+    if (isSpinning) return;
+    caseModal.style.display = "none";
+  };
 
   /* ================= SPIN ================= */
   openCaseBtn.onclick = async () => {
@@ -202,17 +192,14 @@ document.addEventListener("DOMContentLoaded", () => {
       await updateBalance();
     }
 
-    const prize = pickPrize(
-      currentCase === "daily" ? dailyPrizes : unluckyPrizes
-    );
+    const pool = currentCase === "daily" ? dailyPrizes : unluckyPrizes;
+    const prize = pickPrize(pool);
 
     strip.innerHTML = "";
     strip.style.transition = "none";
     strip.style.transform = "translateX(0)";
 
-    const pool = currentCase === "daily" ? dailyPrizes : unluckyPrizes;
     const items = [];
-
     for (let i = 0; i < 30; i++) {
       items.push(pool[Math.floor(Math.random() * pool.length)]);
     }
@@ -220,10 +207,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const winIndex = 25;
     items[winIndex] = prize;
 
-    items.forEach(i => {
+    items.forEach(p => {
       const d = document.createElement("div");
       d.className = "drop";
-      d.innerText = i.type === "ton" ? `${i.value} TON` : i.value;
+      d.innerText = p.type === "ton" ? `${p.value} TON` : p.value;
       strip.appendChild(d);
     });
 
@@ -256,10 +243,7 @@ document.addEventListener("DOMContentLoaded", () => {
       rewardText.innerText =
         prize.type === "ton"
           ? `Вы выиграли ${prize.value} TON`
-          : `Вы выиграли NFT "${prize.value}"`;
-
-      rewardBtnOk.style.display = prize.type === "ton" ? "block" : "none";
-      rewardBtnInv.style.display = prize.type === "nft" ? "block" : "none";
+          : `Вы выиграли NFT «${prize.value}»`;
 
       rewardModal.style.display = "flex";
       isSpinning = false;
@@ -267,8 +251,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 6500);
   };
 
-  rewardBtnOk.onclick =
-  rewardBtnInv.onclick = () => {
+  rewardBtnOk.onclick = () => {
     rewardModal.style.display = "none";
     caseModal.style.display = "none";
   };
