@@ -215,8 +215,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // OPEN CASE
   openDaily.onclick = async () => {
-    if (!dailyReady()) return;  // БЛОКИРУЕМ, если таймер активен
-
     currentCase = "daily";
     if (!subscribeShown) {
       subscribeModal.style.display = "flex";
@@ -237,11 +235,6 @@ document.addEventListener("DOMContentLoaded", () => {
     openCase("Unlucky Case");
   };
 
-  function dailyReady() {
-    const endTime = localStorage.getItem(TIMER_KEY);
-    return !endTime || Date.now() > Number(endTime);
-  }
-
   function openCase(title) {
     document.querySelector(".caseTitle").innerText = title;
     caseModal.style.display = "flex";
@@ -256,7 +249,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // -----------------------
-  // КРУТКА (ВАЖНО)
+  // КРУТКА
   // -----------------------
   openCaseBtn.onclick = async () => {
     if (isSpinning) return;
@@ -287,7 +280,6 @@ document.addEventListener("DOMContentLoaded", () => {
       stripItems.push(item);
     }
 
-    // ставим заранее выбранный приз в конец
     stripItems.push(prize);
 
     stripItems.forEach(item => {
@@ -304,7 +296,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     strip.style.transition = "none";
     strip.style.transform = "translateX(0px)";
-    strip.offsetHeight; // РЕФЛОУ
+    strip.offsetHeight;
 
     setTimeout(() => {
       strip.style.transition = "transform 7s cubic-bezier(.17,.67,.3,1)";
@@ -314,9 +306,8 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(async () => {
       isSpinning = false;
 
-      if (currentCase === "daily") setTimer(); // запускаем таймер после прокрута
+      if (currentCase === "daily") setTimer();
 
-      // Авт начисление
       if (prize.type === "ton") {
         await fetch(`${API}/add-balance`, {
           method: "POST",
@@ -351,7 +342,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 7200);
   };
 
-  // закрытие окна награды
   rewardBtnOk.onclick = () => rewardModal.style.display = "none";
   rewardBtnInv.onclick = () => rewardModal.style.display = "none";
 
@@ -364,14 +354,39 @@ document.addEventListener("DOMContentLoaded", () => {
     inv.forEach((item, index) => {
       const card = document.createElement("div");
       card.className = "itemCard";
+
+      let sellBtn = "";
+      if (item.type === "nft") {
+        sellBtn = `<button class="sellBtn" data-id="${item.id}" data-price="${item.price}">Продать</button>`;
+      }
+
       card.innerHTML = `
         <div>${item.name}</div>
         <div>Цена: ${item.price} TON</div>
+        ${sellBtn}
       `;
+
       inventoryList.appendChild(card);
     });
 
     inventoryModal.style.display = "flex";
+
+    // ПРОДАЖА NFT
+    document.querySelectorAll(".sellBtn").forEach(btn => {
+      btn.onclick = async () => {
+        const nftId = btn.getAttribute("data-id");
+        const price = parseFloat(btn.getAttribute("data-price"));
+
+        await fetch(`${API}/sell-nft`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user: userId, nftId, price })
+        });
+
+        await updateBalance();
+        document.getElementById("openInventory").click();
+      };
+    });
   };
 
   closeInventory.onclick = () => inventoryModal.style.display = "none";
