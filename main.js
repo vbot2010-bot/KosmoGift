@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   connectWallet.onclick = async () => {
-    await tonConnectUI.connectWallet();
+    await tonConnectUI.openModal();
   };
 
   disconnectWallet.onclick = async () => {
@@ -90,13 +90,8 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // пополнение
-  deposit.onclick = () => {
-    modal.style.display = "flex";
-  };
-
-  closeModal.onclick = () => {
-    modal.style.display = "none";
-  };
+  deposit.onclick = () => modal.style.display = "flex";
+  closeModal.onclick = () => modal.style.display = "none";
 
   window.onclick = (event) => {
     if (event.target == modal) {
@@ -106,7 +101,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   pay.onclick = async () => {
     const amount = parseFloat(amountInput.value);
-
     if (!amount || amount < 0.1) {
       return alert("Минимум 0.1 TON");
     }
@@ -249,18 +243,24 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // -----------------------
-  // КРУТКА
+  // КРУТКА (ВАЖНО)
   // -----------------------
   openCaseBtn.onclick = async () => {
     if (isSpinning) return;
     isSpinning = true;
 
     if (currentCase === "unlucky") {
-      await fetch(`${API}/add-balance`, {
+      const res = await fetch(`${API}/remove-balance`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user: userId, amount: -0.25 })
+        body: JSON.stringify({ user: userId, amount: 0.25 })
       });
+      const data = await res.json();
+      if (!data.ok) {
+        alert("Недостаточно средств");
+        isSpinning = false;
+        return;
+      }
       await updateBalance();
     }
 
@@ -308,6 +308,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (currentCase === "daily") setTimer();
 
+      // Авт начисление
       if (prize.type === "ton") {
         await fetch(`${API}/add-balance`, {
           method: "POST",
@@ -331,17 +332,13 @@ document.addEventListener("DOMContentLoaded", () => {
         ? `Вы выиграли ${prize.value} TON`
         : `Вы выиграли NFT "${prize.value}"`;
 
-      if (prize.type === "ton") {
-        rewardBtnOk.style.display = "block";
-        rewardBtnInv.style.display = "none";
-      } else {
-        rewardBtnOk.style.display = "none";
-        rewardBtnInv.style.display = "block";
-      }
+      rewardBtnOk.style.display = prize.type === "ton" ? "block" : "none";
+      rewardBtnInv.style.display = prize.type === "nft" ? "block" : "none";
 
     }, 7200);
   };
 
+  // закрытие окна награды
   rewardBtnOk.onclick = () => rewardModal.style.display = "none";
   rewardBtnInv.onclick = () => rewardModal.style.display = "none";
 
@@ -351,42 +348,38 @@ document.addEventListener("DOMContentLoaded", () => {
     const inv = await res.json();
 
     inventoryList.innerHTML = "";
+
     inv.forEach((item, index) => {
       const card = document.createElement("div");
       card.className = "itemCard";
-
-      let sellBtn = "";
-      if (item.type === "nft") {
-        sellBtn = `<button class="sellBtn" data-id="${item.id}" data-price="${item.price}">Продать</button>`;
-      }
-
       card.innerHTML = `
-        <div>${item.name}</div>
-        <div>Цена: ${item.price} TON</div>
-        ${sellBtn}
+        <div class="itemName">${item.name}</div>
+        <div class="itemPrice">Цена: ${item.price} TON</div>
+        <button class="sellBtn" data-index="${index}">Продать</button>
       `;
-
       inventoryList.appendChild(card);
     });
 
-    inventoryModal.style.display = "flex";
-
-    // ПРОДАЖА NFT
+    // обработка кнопок продать
     document.querySelectorAll(".sellBtn").forEach(btn => {
       btn.onclick = async () => {
-        const nftId = btn.getAttribute("data-id");
-        const price = parseFloat(btn.getAttribute("data-price"));
+        const index = btn.getAttribute("data-index");
 
-        await fetch(`${API}/sell-nft`, {
+        const res = await fetch(`${API}/sell-nft`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user: userId, nftId, price })
+          body: JSON.stringify({ user: userId, index: Number(index) })
         });
+
+        const data = await res.json();
+        if (!data.ok) return alert("Ошибка продажи");
 
         await updateBalance();
         document.getElementById("openInventory").click();
       };
     });
+
+    inventoryModal.style.display = "flex";
   };
 
   closeInventory.onclick = () => inventoryModal.style.display = "none";
